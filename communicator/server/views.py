@@ -45,4 +45,5 @@ class ServerListViewSet(viewsets.ViewSet):
             self.queryset = self.queryset[: int(qty)]
 
         serializer = ServerSerializer(self.queryset, many=True, context={"members_num": with_members_num})
+
         return Response(serializer.data)
