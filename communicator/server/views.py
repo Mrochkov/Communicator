@@ -4,7 +4,7 @@ from .serializer import ServerSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from django.db.models import Count
-
+from .schema import server_list_docs
 
 from .models import Server
 
@@ -12,6 +12,7 @@ from .models import Server
 class ServerListViewSet(viewsets.ViewSet):
     queryset = Server.objects.all()
 
+    @server_list_docs
     def list(self, request):
         category = request.query_params.get("category")
         qty = request.query_params.get("qty")
