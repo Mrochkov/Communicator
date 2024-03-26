@@ -20,18 +20,23 @@ class ServerListViewSet(viewsets.ViewSet):
         by_server_id = request.query_params.get("by_server_id")
         with_members_num = request.query_params.get("with_members_num") == "true"
 
-        if by_user or by_server_id and not request.user.is_authentificated:
-            raise AuthenticationFailed()
+        # if by_user or by_server_id and not request.user.is_authentificated:
+        #    raise AuthenticationFailed()
 
         if category:
             self.queryset= self.queryset.filter(category__name=category)
 
         if by_user:
-            user_id = request.user.id
-            self.queryset = self.queryset.filter(member=user_id)
+            if by_user and request.user.is_authenticated:
+                user_id = request.user.id
+                self.queryset = self.queryset.filter(member=user_id)
+            else:
+                raise AuthenticationFailed()
 
 
         if by_server_id:
+            if by_user and request.user.is_authenticated:
+                raise AuthenticationFailed()
             try:
                 self.queryset = self.queryset.filter(id=by_server_id)
                 if not self.queryset.exists():
