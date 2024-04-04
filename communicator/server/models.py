@@ -1,9 +1,23 @@
 from django.db import models
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+
+def category_icon_path(instance, filename):
+    return f"category/{instance.id}/category_icon_folder/{filename}"
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
+    icon = models.FileField(upload_to=category_icon_path, null=True, blank=True)
+
+
+    def save(self, *args, **kwargs):
+        if self.id:
+            exists = get_object_or_404(Category, id=self.id)
+            if exists.icon != self.icon:
+                exists.icon.delete(save=False)
+        super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
