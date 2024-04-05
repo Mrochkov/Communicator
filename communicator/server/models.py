@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.dispatch import receiver
+from .validator import validate_image_size, validate_image_extension
 
 def server_icon_path(instance, filename):
     return f"server/{instance.id}/server_icon/{filename}"
@@ -54,8 +55,9 @@ class Channel(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="channel_owner")
     topic = models.CharField(max_length=100)
     server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name="channel_server")
-    banner = models.ImageField(upload_to=server_banner_path, null=True, blank=True)
-    icon = models.ImageField(upload_to=server_icon_path, null=True, blank=True)
+    banner = models.ImageField(upload_to=server_banner_path, null=True, blank=True, validators=[validate_image_extension])
+    icon = models.ImageField(upload_to=server_icon_path, null=True, blank=True, validators=[validate_image_size, validate_image_extension])
+
 
     def save(self, *args, **kwargs):
         if self.id:
