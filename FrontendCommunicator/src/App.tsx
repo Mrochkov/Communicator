@@ -1,5 +1,5 @@
 import Homepage from "./components/Homepage"
-import {createBrowserRouter, createRoutesFromElements, Route, RouteProvider} from "react-router-dom";
+import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -9,8 +9,8 @@ const router = createBrowserRouter(
     )
 );
 
-const App: React.FC = () => {
-    return <RouteProvider router={router} />;
+const App = () => {
+    return <RouterProvider router={router} />;
 
 };
 
