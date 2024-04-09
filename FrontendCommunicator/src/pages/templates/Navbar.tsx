@@ -14,8 +14,8 @@ const Navbar = () => {
 
             <Link href="/" underline="none" color="inherit">
                 <Typography
-                    variant="h1"
-                    noWrap 
+                    variant="h6"
+                    noWrap
                     component="div"
                     sx={{
                         display: {fontWeight: 700,
