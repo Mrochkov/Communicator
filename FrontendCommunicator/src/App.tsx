@@ -1,5 +1,7 @@
-import Homepage from "./components/Homepage"
+import Homepage from "./pages/Homepage.tsx"
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
+import {ThemeProvider} from "@mui/material";
+import {MuiTheme} from "./theme/theme.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -10,8 +12,15 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-    return <RouterProvider router={router} />;
-
+    const theme = MuiTheme();
+    return (
+        <ThemeProvider theme={theme}>
+            <RouterProvider router={router} />
+        </ThemeProvider>
+        );
 };
+
+
+
 
 export default App;
