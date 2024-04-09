@@ -14,7 +14,7 @@ const Navbar = () => {
 
             <Link href="/" underline="none" color="inherit">
                 <Typography variant="h6" noWrap component="div" sx={{ display: {fontWeight: 700, letterSpacing: "-0.5px"} }}>
-
+                    Logo
                 </Typography>
             </Link>
         </Toolbar>
