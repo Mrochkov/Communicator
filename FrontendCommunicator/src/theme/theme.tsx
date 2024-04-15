@@ -5,10 +5,18 @@ declare module "@mui/material/styles" {
         navbar: {
             height: number;
         };
+        draw: {
+            width: number;
+            closed: number;
+        };
     }
     interface ThemeOptions {
         navbar: {
             height: number;
+        };
+        draw: {
+            width: number;
+            closed: number;
         };
     }
 }
@@ -20,7 +28,11 @@ export const MuiTheme = () => {
             fontFamily: ["IBM Plex Sans", "sans-serif"].join(","),
         },
         navbar: {
-            height:50,
+            height: 50,
+        },
+        draw: {
+            width: 240,
+            closed: 70,
         },
         components:{
             MuiAppBar: {
