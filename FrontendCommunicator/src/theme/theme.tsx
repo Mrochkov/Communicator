@@ -9,6 +9,9 @@ declare module "@mui/material/styles" {
             width: number;
             closed: number;
         };
+        secondDraw: {
+            width: number;
+        };
     }
     interface ThemeOptions {
         navbar: {
@@ -17,6 +20,9 @@ declare module "@mui/material/styles" {
         draw: {
             width: number;
             closed: number;
+        };
+        secondDraw: {
+            width: number;
         };
     }
 }
@@ -33,6 +39,9 @@ export const MuiTheme = () => {
         draw: {
             width: 240,
             closed: 70,
+        },
+        secondDraw: {
+            width: 240,
         },
         components:{
             MuiAppBar: {
