@@ -35,7 +35,7 @@ const Draw = () => {
             "& .MuiDrawer-paper": openedMixin(),
         }),
         ...(!open && {
-            ...openedMixin(),
+            ...closedMixin(),
             "& .MuiDrawer-paper": closedMixin(),
         }),
     }));
