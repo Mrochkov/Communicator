@@ -14,13 +14,11 @@ const useAxiosInterceptor = (): AxiosInstance => {
         },
         async (error) => {
             const originalRequest = error.config;
-            if(error.response?.status === 401) {
+            if(error.response?.status === 403) {
                 const goHomepage = () => navigate("/test")
                 goHomepage();
             }
             throw error;
-
-
         }
     )
     return jwtAxios;
