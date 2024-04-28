@@ -1,6 +1,6 @@
 import {Box, Typography} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import theme from "../../theme/theme.tsx";
+
 const Main = () => {
     const theme = useTheme();
 
