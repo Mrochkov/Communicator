@@ -1,5 +1,5 @@
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
-import useCRUD from "../../hooks/useCRUD.ts";
+import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import React, { useEffect } from "react";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
@@ -18,7 +18,7 @@ type Props = {
     open: boolean;
 };
 const TrendingChannels: React.FC<Props> = ({open}) => {
-    const {dataCRUD, error, isLoading, fetchData} = useCRUD<Server>([], "/server/select/");
+    const {dataCRUD, error, isLoading, fetchData} = thisUseCRUD<Server>([], "/server/select/");
 
     useEffect(() => {
         fetchData();

@@ -1,12 +1,11 @@
 import axios, {AxiosInstance} from 'axios';
-import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config.ts";
 
 const API_BASE_URL = BASE_URL
 
-const useAxiosInterceptor = (): AxiosInstance => {
-    const jwtAxios = axios.create({ baseURL: API_BASE_URL })
-    const navigate = useNavigate()
+
+const jwtAxiosInterceptor = (): AxiosInstance => {
+    const jwtAxios = axios.create({ baseURL: API_BASE_URL });
 
     jwtAxios.interceptors.response.use(
         (response) => {
@@ -15,12 +14,10 @@ const useAxiosInterceptor = (): AxiosInstance => {
         async (error) => {
             const originalRequest = error.config;
             if(error.response?.status === 403) {
-                const goHomepage = () => navigate("/test")
-                goHomepage();
             }
             throw error;
         }
     )
     return jwtAxios;
 }
-export default useAxiosInterceptor();
+export default jwtAxiosInterceptor();
