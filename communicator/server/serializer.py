@@ -1,19 +1,21 @@
 from rest_framework import serializers
 from .models import Server, Category, Channel
 
+
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
         fields = "__all__"
 
+
 class ServerSerializer(serializers.ModelSerializer):
     channel_server = ChannelSerializer(many=True)
     members_num = serializers.SerializerMethodField()
+    category = serializers.StringRelatedField()
 
     class Meta:
         model = Server
         exclude = ("member",)
-
 
     def get_members_num(self, obj):
         if hasattr(obj, "members_num"):
