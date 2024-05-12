@@ -4,6 +4,7 @@ import Draw from "./templates/Draw.tsx";
 import SecondDraw from "./templates/SecondDraw.tsx";
 import Main from "./templates/Main.tsx";
 import TrendingChannels from "../components/Draw/TrendingChannels.tsx";
+import Explore from "../components/SecondDraw/Explore.tsx";
 
 const Homepage = () => {
     return (
@@ -11,9 +12,11 @@ const Homepage = () => {
             <CssBaseline/>
             <Navbar/>
             <Draw>
-                <TrendingChannels/>
+                <TrendingChannels open={false} />
             </Draw>
-            <SecondDraw/>
+            <SecondDraw>
+                <Explore />
+            </SecondDraw>
             <Main/>
         </Box>
     );
