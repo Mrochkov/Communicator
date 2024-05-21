@@ -27,6 +27,7 @@ class Category(models.Model):
             exists = get_object_or_404(Category, id=self.id)
             if exists.icon != self.icon:
                 exists.icon.delete(save=False)
+        self.name = self.name.lower()
         super(Category, self).save(*args, **kwargs)
 
     @receiver(models.signals.pre_delete, sender="server.Category")

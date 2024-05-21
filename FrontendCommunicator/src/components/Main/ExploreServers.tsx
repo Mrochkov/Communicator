@@ -1,10 +1,10 @@
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
+import {List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Typography, Container} from "@mui/material";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import React, { useEffect } from "react";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import { MEDIA_URL } from "../../config.ts";
-import { Link } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {Grid} from "@mui/material/Grid";
 import {CardContent} from "@mui/material/CardContent";
 import {Card} from "@mui/material/Card";
@@ -19,6 +19,20 @@ interface Server {
 }
 
 const ExploreServers = () => {
-    return <></>
+    const { categoryName } = useParams();
+    const url = categoryName ? `/server/select/?category=${categoryName}` : "/server/select";
+    const { dataCRUD, fetchData } = useCrud<Server>([], url)
+
+    useEffect(() => {
+        fetchData();
+    }, [categoryName]);
+
+    return <>
+        <Container maxWidth="lg">
+            <Box sx={{ pt: 6 }}>
+                <Typography variant="h3" noWrap component="h1" sx={{display: {sm: "block", fontWeight: 700, fontSize: "48px", letterSpacing: "-2px"}, textAlign:  }}
+            </Box>
+        </Container>
+    </>
 }
 export default ExploreServers;
