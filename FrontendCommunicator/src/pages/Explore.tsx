@@ -5,6 +5,8 @@ import SecondDraw from "./templates/SecondDraw.tsx";
 import Main from "./templates/Main.tsx";
 import TrendingChannels from "../components/Draw/TrendingChannels.tsx";
 import Explore from "../components/SecondDraw/Explore.tsx";
+import ExploreServers from "../components/Main/ExploreServers.tsx";
+
 
 const Homepage = () => {
     return (
@@ -17,7 +19,10 @@ const Homepage = () => {
             <SecondDraw>
                 <Explore />
             </SecondDraw>
-            <Main/>
+            <Main>
+                <ExploreServers />
+            </Main>
+
         </Box>
     );
 

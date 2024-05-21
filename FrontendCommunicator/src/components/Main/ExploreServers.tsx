@@ -21,7 +21,7 @@ interface Server {
 const ExploreServers = () => {
     const { categoryName } = useParams();
     const url = categoryName ? `/server/select/?category=${categoryName}` : "/server/select";
-    const { dataCRUD, fetchData } = useCrud<Server>([], url)
+    const { dataCRUD, fetchData } = thisUseCRUD<Server>([], url)
 
     useEffect(() => {
         fetchData();
@@ -30,7 +30,12 @@ const ExploreServers = () => {
     return <>
         <Container maxWidth="lg">
             <Box sx={{ pt: 6 }}>
-                <Typography variant="h3" noWrap component="h1" sx={{display: {sm: "block", fontWeight: 700, fontSize: "48px", letterSpacing: "-2px"}, textAlign:  }}
+                <Typography variant="h3" noWrap component="h1"
+                            sx={{display: {sm: "block", fontWeight: 700, fontSize: "48px", letterSpacing: "-2px"}, textAlign: {xs: "cemter", sm: "left" },
+                            }}
+                >
+                    {categoryName ? categoryName : "Trending Channels"}
+                </Typography>
             </Box>
         </Container>
     </>

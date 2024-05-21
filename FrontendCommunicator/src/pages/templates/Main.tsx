@@ -1,7 +1,12 @@
-import {Box, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import {ReactNode} from "react";
 
-const Main = () => {
+type Props = {
+    children: ReactNode;
+}
+
+const Main: React.FC<Props> = ({children}) => {
     const theme = useTheme();
 
     return(
@@ -10,9 +15,7 @@ const Main = () => {
             height: `calc(100vh - ${theme.navbar.height}px )`,
             overflow: "hidden",
         }}>
-            {[...Array(100)].map((_, i) => (
-                <Typography key={i} paragraph>{i + 1}</Typography>
-            ))}
+            {children}
         </Box>
 
     );
