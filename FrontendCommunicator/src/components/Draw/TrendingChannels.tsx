@@ -43,7 +43,7 @@ const TrendingChannels: React.FC<Props> = ({open}) => {
                                 </ListItemAvatar>
                             </ListItemIcon>
                             <ListItemText primary={
-                                <Typography variant="body2" sx={{fontWeight: 700, lineHeight: 1.2, teOverflow: "ellipsis", overflow: "hidden", whitespace: "nowrap"}}>
+                                <Typography variant="body2" sx={{fontWeight: 700, lineHeight: 1.2, textOverflow: "ellipsis", overflow: "hidden", whitespace: "nowrap"}}>
                                     {item.name}
                                 </Typography>}
                                           secondary={<Typography variant="body2" sx={{fontWeight: 500, lineHeight: 1.2, color: "textSecondary", }}>{item.category}</Typography>
