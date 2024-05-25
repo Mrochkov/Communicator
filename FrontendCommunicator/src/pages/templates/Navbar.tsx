@@ -2,6 +2,7 @@ import {AppBar, Box, Drawer, IconButton, Link, Toolbar, Typography, useMediaQuer
 import {useTheme} from "@mui/material/styles";
 import MenuIcon from '@mui/icons-material/Menu';
 import {useEffect, useState} from "react";
+import Explore from "../Explore.tsx";
 
 const Navbar = () => {
     const [sideMenu, setSideMenu] = useState(false)
@@ -25,6 +26,12 @@ const Navbar = () => {
             setSideMenu(open);
     };
 
+    const list = () => (
+        <Box sx={{paddingTop: `${theme.navbar.height}px`, minWidth: 200 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+            <Explore />
+        </Box>
+    );
+    
     return (
     <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 2, backGroundColor: theme.palette.background.default, borderBottom: `1px solid ${theme.palette.divider}` }}>
         <Toolbar variant="dense"
@@ -41,9 +48,7 @@ const Navbar = () => {
             </Box>
 
             <Drawer anchor="left" open={sideMenu} onClose={toggleDrawer(false)}>
-            {[...Array(100)].map((_, i) => (
-                <Typography key={i} paragraph>{i + 1}</Typography>
-            ))}
+                {list()}
             </Drawer>
 
             <Link href="/" underline="none" color="inherit">
