@@ -11,7 +11,7 @@ const ToggleDarkMode: React.FC<ToggleDarkModeProps> = ({children}) => {
 
     const [mode, setMode] = useState<"light" | "dark">(
         () => (localStorage.getItem("lightMode") as "light" | "dark"
-    ) || (useMediaQuery("([prefers-scheme: dark") ? "dark" : "light");
+    ) || (useMediaQuery("([prefers-scheme: dark") ? "dark" : "light"));
 
     const toggleDarkMode = React.useCallback(() => {
         setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));

@@ -3,6 +3,7 @@ import {useTheme} from "@mui/material/styles";
 import MenuIcon from '@mui/icons-material/Menu';
 import {useEffect, useState} from "react";
 import Explore from "../Explore.tsx";
+import AccountButton from "../../components/Navbar/AccountButton.tsx";
 
 const Navbar = () => {
     const [sideMenu, setSideMenu] = useState(false)
@@ -64,6 +65,8 @@ const Navbar = () => {
                     Logo
                 </Typography>
             </Link>
+            <Box sx={{ flexGrow: 1 }}></Box>
+            <AccountButton />
         </Toolbar>
     </AppBar>
 
