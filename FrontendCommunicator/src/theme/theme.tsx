@@ -27,7 +27,7 @@ declare module "@mui/material/styles" {
     }
 }
 
-export const MuiTheme = () => {
+export const MuiTheme = (mode: "light" | "dark") => {
     let theme = createTheme({
 
         typography: {
@@ -51,6 +51,9 @@ export const MuiTheme = () => {
         },
         secondDraw: {
             width: 240,
+        },
+        palette:{
+            mode,
         },
         components:{
             MuiAppBar: {

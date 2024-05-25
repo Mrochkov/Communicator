@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery} from "@mui/material";
-
+import {CssBaseline, ThemeProvider, useMediaQuery} from "@mui/material";
+import {ModesContext} from "../context/DarkModeContext.tsx"
+import MuiTheme from "../theme/theme.tsx";
 
 interface ToggleDarkModeProps {
     children: React.ReactNode
@@ -22,16 +23,16 @@ const ToggleDarkMode: React.FC<ToggleDarkModeProps> = ({children}) => {
 
     const lightMode = useMemo(() => ({toggleDarkMode}), [toggleDarkMode]);
 
-    const theme = React.useMemo(() => createMuiTheme(mode), [mode]);
+    const theme = React.useMemo(() => MuiTheme(mode), [mode]);
 
     return (
-        <ColorModeContext.Provider values={lightMode}>
+        <ModesContext.Provider value={lightMode}>
 
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 {children}
             </ThemeProvider>
-        </ColorModeContext.Provider>
+        </ModesContext.Provider>
     );
 };
 export default ToggleDarkMode;

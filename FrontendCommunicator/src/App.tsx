@@ -3,6 +3,7 @@ import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} fr
 import {ThemeProvider} from "@mui/material";
 import {MuiTheme} from "./theme/theme.tsx";
 import Explore from "./pages/Explore.tsx";
+import ToggleDarkMode from "./components/ToggleDarkMode.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -14,11 +15,10 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-    const theme = MuiTheme();
     return (
-        <ThemeProvider theme={theme}>
+        <ToggleDarkMode>
             <RouterProvider router={router} />
-        </ThemeProvider>
+        </ToggleDarkMode>
         );
 };
 
