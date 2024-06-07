@@ -21,7 +21,7 @@ from rest_framework.routers import DefaultRouter
 from server.views import ServerListViewSet, CategoryListViewSet
 from django.conf import settings
 from django.conf.urls.static import static
-
+from chat.consumer import MyConsumer
 
 router = DefaultRouter()
 router.register("api/server/select", ServerListViewSet)
@@ -33,6 +33,8 @@ urlpatterns = [
     path('api/docs/schema/ui/', SpectacularSwaggerView.as_view()),
 
 ] + router.urls
+
+websocket_urlpatterns = [path("ws/test", MyConsumer.as_asgi())]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA)

@@ -21,7 +21,7 @@ from . import urls # noqa isort:skip
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        #"websocket": URLRouter(urls.websocket_urlpatterns),
+        "websocket": URLRouter(urls.websocket_urlpatterns),
 
     }
 )
