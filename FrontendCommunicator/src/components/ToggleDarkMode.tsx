@@ -1,39 +1,46 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {CssBaseline, ThemeProvider, useMediaQuery} from "@mui/material";
-import {ModesContext} from "../context/DarkModeContext.tsx"
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
+import { ModesContext } from "../context/DarkModeContext.tsx";
 import MuiTheme from "../theme/theme.tsx";
 import Cookies from "js-cookie";
 
 interface ToggleDarkModeProps {
-    children: React.ReactNode
+  children: React.ReactNode;
 }
 
-const ToggleDarkMode: React.FC<ToggleDarkModeProps> = ({children}) => {
+const ToggleDarkMode: React.FC<ToggleDarkModeProps> = ({ children }) => {
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
-    const [mode, setMode] = useState<"light" | "dark">(
-        () => Cookies.get("lightMode") as "light" | "dark"
-    ) || (useMediaQuery("([prefers-scheme: dark])") ? "dark" : "light");
+  const getInitialMode = () => {
+    const cookieMode = Cookies.get("lightMode") as "light" | "dark" | undefined;
+    if (cookieMode) {
+      return cookieMode;
+    }
+    return prefersDarkMode ? "dark" : "light";
+  };
 
-    const toggleDarkMode = React.useCallback(() => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-    }, []);
+  const [mode, setMode] = useState<"light" | "dark">(getInitialMode);
 
-    useEffect(() => {
-        Cookies.set("lightMode", mode);
-    }, [mode]);
+  const toggleDarkMode = useCallback(() => {
+    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+  }, []);
 
-    const lightMode = useMemo(() => ({toggleDarkMode}), [toggleDarkMode]);
+  useEffect(() => {
+    Cookies.set("lightMode", mode, { expires: 365 });
+  }, [mode]);
 
-    const theme = React.useMemo(() => MuiTheme(mode), [mode]);
+  const lightMode = useMemo(() => ({ toggleDarkMode }), [toggleDarkMode]);
 
-    return (
-        <ModesContext.Provider value={lightMode}>
+  const theme = useMemo(() => MuiTheme(mode), [mode]);
 
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                {children}
-            </ThemeProvider>
-        </ModesContext.Provider>
-    );
+  return (
+    <ModesContext.Provider value={lightMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </ModesContext.Provider>
+  );
 };
+
 export default ToggleDarkMode;
