@@ -14,17 +14,14 @@ interface Server {
     icon: string;
 }
 
+interface ServerChannelsProps {
+    data: Server[];
+}
+
 type Props = {
     open: boolean;
 };
-const ServerUsers: React.FC<Props> = ({open}) => {
-    const {dataCRUD, error, isLoading, fetchData} = thisUseCRUD<Server>([], "/server/select/");
-
-    useEffect(() => {
-        fetchData();
-        }, []);
-
-
+const ServerUsers: React.FC<Props & ServerChannelsProps> = ({open, data}) => {
     return<>
         <Box sx={{ height: 50, p: 2, display: "flex", alignItems: "center", flex: "1 1 100%"}}>
             <Typography sx={{display: open ? "block" : "none"}}>
@@ -32,7 +29,7 @@ const ServerUsers: React.FC<Props> = ({open}) => {
             </Typography>
         </Box>
         <List>
-            {dataCRUD.map((item) =>
+            {data.map((item) =>
                 <ListItem key={item.id} disablePadding sx={{display: "block"}} dense={true}>
                     <Link to={`/server/${item.id}`} style={{ textDecoration: "none", color: "inherit"}}>
                         <ListItemButton sx={{minHeight: 0, }}>
