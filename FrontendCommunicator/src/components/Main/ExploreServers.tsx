@@ -41,7 +41,7 @@ const ExploreServers = () => {
                             sx={{display: {sm: "block", fontWeight: 700, letterSpacing: "-2px", textTransform: "capitalize"}, textAlign: {xs: "cemter", sm: "left" },
                             }}
                 >
-                    {categoryName ? categoryName : "Trending Channels"}
+                    {categoryName ? categoryName : "Trending ServerChannels"}
                 </Typography>
             </Box>
             <Box>
