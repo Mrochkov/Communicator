@@ -2,7 +2,6 @@ import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Typogr
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import React, { useEffect } from "react";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
 import { MEDIA_URL } from "../../config.ts";
 import { Link } from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
