@@ -29,7 +29,7 @@ const Server = () => {
         fetchData()
     }, [] );
 
-    /*
+
     const isCorrectChannel = (): Boolean => {
         if (!channelId) {
             return true;
@@ -41,7 +41,11 @@ const Server = () => {
         );
     };
 
-     */
+    useEffect(() =>{
+        if (!isCorrectChannel()) {
+            navigate(`/server/${serverId}`);
+        }
+    }, [isCorrectChannel, channelId]);
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -51,7 +55,7 @@ const Server = () => {
                 <ServerUsers open={false} data={dataCRUD} />
             </Draw>
             <SecondDraw>
-                <ServerChannels />
+                <ServerChannels data={dataCRUD} />
             </SecondDraw>
             <Main>
                 <TextingTemplate />
