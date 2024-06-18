@@ -1,14 +1,25 @@
 import useWebSocket from "react-use-websocket";
 import {useState} from "react";
+import {useParams} from "react-router-dom";
+import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
+import { Server } from "../../@types/server";
 
-
-const socketUrl = "ws://127.0.0.1:8000/ws/test";
-
-
+interface Message {
+    sender: string;
+    content: string;
+    timestamp: string;
+}
 
 const textingTemplate = () => {
-    const [newMessage, setNewMessage] = useState<string[]>([]);
+    const [newMessage, setNewMessage] = useState<Message[]>([]);
     const [message, setMessage] = useState("");
+    const { serverId, channelId } = useParams();
+
+    const { fetchData } = thisUseCRUD<Server>([], `/messages/?channel_id=${channelId}`);
+
+    const socketUrl = channelId ? `ws://127.0.0.1:8000/${serverId}/${channelId}` : null;
+
+
     const { sendJsonMessage } = useWebSocket(socketUrl, {
     onOpen: () => {
         console.log("Connected");
@@ -27,18 +38,21 @@ const textingTemplate = () => {
 
     return (
     <div>
-        {newMessage.map((msg, index) => {
+        {newMessage.map((msg: Message, index: number) => {
             return(
                 <div key={index}>
                     <p>
-                        {msg}
+                        {msg.sender}
+                    </p>
+                    <p>
+                        {msg.content}
                     </p>
                 </div>
             );
         })}
         <form>
             <label>
-                Enter Message:
+            Enter Message:
                 <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
 
             </label>

@@ -34,7 +34,7 @@ urlpatterns = [
 
 ] + router.urls
 
-websocket_urlpatterns = [path("ws/test", ChatConsumer.as_asgi())]
+websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA)
