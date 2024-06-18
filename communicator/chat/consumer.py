@@ -38,8 +38,6 @@ class ChatConsumer(JsonWebsocketConsumer):
 
         new_message = Message.objects.create(conversation=conversation, sender_id=sender_id, content=message)
 
-
-
         async_to_sync(self.channel_layer.group_send)(
             self.channel_id,
             {

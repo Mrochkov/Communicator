@@ -54,7 +54,7 @@ const ExploreServers = () => {
             </Box>
 
             <Typography variant="h6" sx={{pt: 6, pb: 1, fontWeight: 700, letterSpacing: "-1px"}}>
-                Recommended channels
+                Click on a channel to join in and see what's there!
             </Typography>
             <Grid container spacing={{xs: 0, sm: 2}}>
                 {dataCRUD.map((item) => (

@@ -3,10 +3,11 @@ import {useState} from "react";
 import {useParams} from "react-router-dom";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import { Server } from "../../@types/server";
-import {Box, List, ListItem, ListItemText, Typography} from "@mui/material";
+import {Box, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
 import TextingChannelsTemplate from "./TextingChannelsTemplate.tsx";
 import Avatar from "@mui/material/Avatar";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
+import {useTheme} from "@mui/material/styles";
 
 interface Message {
     sender: string;
@@ -19,12 +20,19 @@ interface ServerChannelProps {
 
 }
 
+interface SendMessageData {
+    type: string;
+    message: string;
+    [key: string]: any;
+}
+
 const textingTemplate = (props: ServerChannelProps) => {
     const [newMessage, setNewMessage] = useState<Message[]>([]);
     const [message, setMessage] = useState("");
     const { serverId, channelId } = useParams();
     const {data } = props;
     const server_name = data?.[0]?.name ?? "Server";
+    const theme = useTheme();
     const { fetchData } = thisUseCRUD<Server>([], `/messages/?channel_id=${channelId}`);
 
     const socketUrl = channelId ? `ws://127.0.0.1:8000/${serverId}/${channelId}` : null;
@@ -49,8 +57,28 @@ const textingTemplate = (props: ServerChannelProps) => {
     onMessage: (msg) => {
         const data = JSON.parse(msg.data);
         setNewMessage((prev_msg) => [...prev_msg, data.new_message]);
+        setMessage("");
     },
 });
+
+     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+         if (e.key === "Enter"){
+             e.preventDefault();
+             sendJsonMessage({
+                 type: "message",
+                 message,
+             } as SendMessageData);
+         }
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        sendJsonMessage({
+            type: "message",
+            message,
+        } as SendMessageData)
+    };
+
 
     return (
         <>
@@ -68,6 +96,7 @@ const textingTemplate = (props: ServerChannelProps) => {
             )
             :
             (
+                <>
                     <Box sx={{overflow: "hidden", p:0, height: `calc(100vh - 100px)` }}>
                         <List sx={{width: "100%", bgcolor: "background.paper" }}>
                             {newMessage.map((msg: Message, index: number) => {
@@ -90,36 +119,20 @@ const textingTemplate = (props: ServerChannelProps) => {
                                 );
                             })}
                         </List>
-                    </Box>)}
+                    </Box>
 
+                    <Box sx={{position: "sticky", bottom: 0, width: "100%" }}>
+                        <form onSubmit={handleSubmit} style={{bottom: 0, right: 0, padding: "1rem", backgroundColor: theme.palette.background.default, zIndex: 1, }}>
+                            <Box sx={{display: "flex" }}>
+                                <TextField fullWidth multiline value={message} minRows={1} maxRows={4} onKeyDown={handleKeyDown} onChange={(e) => setMessage(e.target.value)} sx={{flexGrow: 1}} />
 
-            {/*<div>
-                {newMessage.map((msg: Message, index: number) => {
-                    return(
-                        <div key={index}>
-                            <p>
-                                {msg.sender}
-                            </p>
-                            <p>
-                                {msg.content}
-                            </p>
-                        </div>
-                    );
-                })}
-                <form>
-                    <label>
-                    Enter Message:
-                        <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+                            </Box>
+                        </form>
 
-                    </label>
-                </form>
-                <button onClick={() => {sendJsonMessage({type: "message", message});
-                }}
-                >
-                    Send message
-                </button>
-            </div>
-            */}
+                    </Box>
+                    </>
+            )}
+
         </>
 
     );
