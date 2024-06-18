@@ -62,7 +62,7 @@ const Navbar = () => {
                             letterSpacing: "-0.5px"}
                     }}
                 >
-                    Logo
+                    Home
                 </Typography>
             </Link>
             <Box sx={{ flexGrow: 1 }}></Box>

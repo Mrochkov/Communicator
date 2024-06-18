@@ -3,8 +3,10 @@ import {useState} from "react";
 import {useParams} from "react-router-dom";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import { Server } from "../../@types/server";
-import {Box, Typography} from "@mui/material";
+import {Box, List, ListItem, ListItemText, Typography} from "@mui/material";
 import TextingChannelsTemplate from "./TextingChannelsTemplate.tsx";
+import Avatar from "@mui/material/Avatar";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
 
 interface Message {
     sender: string;
@@ -62,10 +64,36 @@ const textingTemplate = (props: ServerChannelProps) => {
                     <Typography sx={{py: "50px"}}>Choose a channel to start talking!</Typography>
 
                 </Box>
-            </Box>)
+            </Box>
+            )
             :
-            (<>chatting</>)}
-            <div>
+            (
+                    <Box sx={{overflow: "hidden", p:0, height: `calc(100vh - 100px)` }}>
+                        <List sx={{width: "100%", bgcolor: "background.paper" }}>
+                            {newMessage.map((msg: Message, index: number) => {
+                                return(
+                                    <ListItem key={index} alignItems="flex-start">
+                                        <ListItemAvatar>
+                                            <Avatar alt="user image" />
+                                        </ListItemAvatar>
+                                        <ListItemText primaryTypographyProps={{fontSize: "12px", variant: "body2"}}
+                                                      primary={<Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}} >{msg.sender_id}</Typography>}
+                                        secondary={
+                                            <Box>
+                                                <Typography variant="body1" style={{overflow: "visible", whiteSpace: "normal", textOverflow: "clip"}} sx={{display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px"}} component="span" color="text.primary">
+                                                    {msg.content}
+                                                </Typography>
+                                            </Box>
+                                        }
+                                        />
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    </Box>)}
+
+
+            {/*<div>
                 {newMessage.map((msg: Message, index: number) => {
                     return(
                         <div key={index}>
@@ -91,6 +119,7 @@ const textingTemplate = (props: ServerChannelProps) => {
                     Send message
                 </button>
             </div>
+            */}
         </>
 
     );
