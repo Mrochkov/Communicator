@@ -8,7 +8,6 @@ class MessageSerializer(serializers.Serializer):
     content = serializers.StringRelatedField()
     timestamp = serializers.DateTimeField()
 
-
     class Meta:
         model = Message
         fields = ["id", "sender_id", "content", "timestamp"]
