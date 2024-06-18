@@ -58,7 +58,7 @@ const Server = () => {
                 <ServerChannels data={dataCRUD} />
             </SecondDraw>
             <Main>
-                <TextingTemplate />
+                <TextingTemplate data={dataCRUD} />
             </Main>
         </Box>
     );

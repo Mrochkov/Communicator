@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useParams} from "react-router-dom";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import { Server } from "../../@types/server";
+import {Box, Typography} from "@mui/material";
 
 interface Message {
     sender: string;
@@ -10,11 +11,17 @@ interface Message {
     timestamp: string;
 }
 
-const textingTemplate = () => {
+interface ServerChannelProps {
+    data: Server[];
+
+}
+
+const textingTemplate = (props: ServerChannelProps) => {
     const [newMessage, setNewMessage] = useState<Message[]>([]);
     const [message, setMessage] = useState("");
     const { serverId, channelId } = useParams();
-
+    const {data } = props;
+    const server_name = data?.[0]?.name ?? "Server";
     const { fetchData } = thisUseCRUD<Server>([], `/messages/?channel_id=${channelId}`);
 
     const socketUrl = channelId ? `ws://127.0.0.1:8000/${serverId}/${channelId}` : null;
@@ -43,32 +50,43 @@ const textingTemplate = () => {
 });
 
     return (
-    <div>
-        {newMessage.map((msg: Message, index: number) => {
-            return(
-                <div key={index}>
-                    <p>
-                        {msg.sender}
-                    </p>
-                    <p>
-                        {msg.content}
-                    </p>
-                </div>
-            );
-        })}
-        <form>
-            <label>
-            Enter Message:
-                <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+        <>{channelId == undefined ? (<Box sx={{overflow: "hidden", p: {xs: 0}, height: `calc(80vh)`, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <Box sx={{textAlign: "center"}}>
+                    <Typography variant="h4" fontWeight={700} letterSpacing={"-0.5px"} sx={{px: 5, maxWidth: "600"}}>
+                        Welcome to {server_name}
+                    </Typography>
+                    <Typography>{data?.[0]?.description ?? "This is our home"}</Typography>
+                </Box>
+            </Box>)
+            :
+            (<>chatting</>)}
+            <div>
+                {newMessage.map((msg: Message, index: number) => {
+                    return(
+                        <div key={index}>
+                            <p>
+                                {msg.sender}
+                            </p>
+                            <p>
+                                {msg.content}
+                            </p>
+                        </div>
+                    );
+                })}
+                <form>
+                    <label>
+                    Enter Message:
+                        <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
 
-            </label>
-        </form>
-        <button onClick={() => {sendJsonMessage({type: "message", message});
-        }}
-        >
-            Send message
-        </button>
-    </div>
+                    </label>
+                </form>
+                <button onClick={() => {sendJsonMessage({type: "message", message});
+                }}
+                >
+                    Send message
+                </button>
+            </div>
+        </>
 
     );
 
