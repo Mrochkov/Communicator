@@ -21,8 +21,14 @@ const textingTemplate = () => {
 
 
     const { sendJsonMessage } = useWebSocket(socketUrl, {
-    onOpen: () => {
-        console.log("Connected");
+    onOpen: async () => {
+        try{
+            const data = await fetchData();
+            setNewMessage([])
+            setNewMessage(Array.isArray(data) ? data : [])
+        } catch (error){
+            console.log(error);
+        }
     },
     onClose: () => {
         console.log("Closed");
