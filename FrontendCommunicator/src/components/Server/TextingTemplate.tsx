@@ -4,6 +4,7 @@ import {useParams} from "react-router-dom";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import { Server } from "../../@types/server";
 import {Box, Typography} from "@mui/material";
+import TextingChannelsTemplate from "./TextingChannelsTemplate.tsx";
 
 interface Message {
     sender: string;
@@ -50,12 +51,16 @@ const textingTemplate = (props: ServerChannelProps) => {
 });
 
     return (
-        <>{channelId == undefined ? (<Box sx={{overflow: "hidden", p: {xs: 0}, height: `calc(80vh)`, display: "flex", justifyContent: "center", alignItems: "center"}}>
+        <>
+            <TextingChannelsTemplate data={data} />
+            {channelId == undefined ? (<Box sx={{overflow: "hidden", p: {xs: 0}, height: `calc(80vh)`, display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <Box sx={{textAlign: "center"}}>
                     <Typography variant="h4" fontWeight={700} letterSpacing={"-0.5px"} sx={{px: 5, maxWidth: "600"}}>
                         Welcome to {server_name}
                     </Typography>
                     <Typography>{data?.[0]?.description ?? "This is our home"}</Typography>
+                    <Typography sx={{py: "50px"}}>Choose a channel to start talking!</Typography>
+
                 </Box>
             </Box>)
             :
