@@ -21,9 +21,6 @@ const ScrollingBox = styled(Box)(() => ({
     "&::-webkit-scrollbar-thumb:hover": {
         backgroundColor: "#555",
     },
-    "&::-webkit-scrollbar-track": {
-        // backgroundColor: "#f0f0f0",
-    },
     "&::-webkit-scrollbar-corner": {
         backgroundColor: "transparent",
     },

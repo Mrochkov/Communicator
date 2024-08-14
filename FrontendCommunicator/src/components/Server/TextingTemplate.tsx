@@ -108,7 +108,7 @@ const textingTemplate = (props: ServerChannelProps) => {
                                                 <Avatar alt="user image" />
                                             </ListItemAvatar>
                                             <ListItemText primaryTypographyProps={{fontSize: "12px", variant: "body2"}}
-                                                          primary={<Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}} >{msg.sender_id}</Typography>}
+                                                          primary={<Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}}>{msg.sender_id}{msg.sender}</Typography>}
                                             secondary={
                                                 <Fragment>
                                                     <Typography variant="body1" style={{overflow: "visible", whiteSpace: "normal", textOverflow: "clip"}} sx={{display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px"}} component="span" color="text.primary">

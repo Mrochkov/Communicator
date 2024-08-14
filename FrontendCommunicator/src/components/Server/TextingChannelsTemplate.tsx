@@ -15,9 +15,7 @@ import {Server} from "../../@types/server";
 import {useParams} from "react-router-dom";
 import ServerChannels from "./ServerChannels.tsx";
 import {useEffect, useState} from "react";
-import {MoreVertIcon} from "@mui/icons-material/MoreVert";
 import {MoreVert} from "@mui/icons-material";
-import Explore from "../../pages/Explore.tsx";
 
 interface ServerChannelProps {
     data: Server[];
