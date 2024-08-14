@@ -81,6 +81,13 @@ const textingTemplate = (props: ServerChannelProps) => {
     };
 
 
+    function timeStampFormat(timestamp: string): string {
+        const date = new Date(Date.parse(timestamp));
+        const dateFormatted = `${date.getDay()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+        const timeFormatted = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hourCycle: "h24",});
+        return `${dateFormatted} at ${timeFormatted}`;
+    }
+
     return (
         <>
             <TextingChannelsTemplate data={data} />
@@ -108,7 +115,17 @@ const textingTemplate = (props: ServerChannelProps) => {
                                                 <Avatar alt="user image" />
                                             </ListItemAvatar>
                                             <ListItemText primaryTypographyProps={{fontSize: "12px", variant: "body2"}}
-                                                          primary={<Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}}>{msg.sender_id}{msg.sender}</Typography>}
+                                                          primary={
+                                                <>
+                                                <Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}}>
+                                                              {msg.sender_id}{msg.sender}
+                                                </Typography>
+                                                <Typography component="span" variant="caption" color="textSecpndary">
+                                                    {" at "}
+                                                    {timeStampFormat(msg.timestamp)}
+                                                </Typography>
+                                                </>
+                                                              }
                                             secondary={
                                                 <Fragment>
                                                     <Typography variant="body1" style={{overflow: "visible", whiteSpace: "normal", textOverflow: "clip"}} sx={{display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px"}} component="span" color="text.primary">
