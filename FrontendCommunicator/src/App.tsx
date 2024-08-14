@@ -3,6 +3,7 @@ import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} fr
 import Explore from "./pages/Explore.tsx";
 import ToggleDarkMode from "./components/ToggleDarkMode.tsx";
 import Server from "./pages/Server.tsx";
+import Login from "./pages/Login.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -10,6 +11,7 @@ const router = createBrowserRouter(
             <Route path="/" element={<Homepage />} />
             <Route path="/server/:serverId/:channelId?" element={<Server />} />
             <Route path="/explore/:categoryName" element={<Explore />} />
+            <Route path="/login" element={<Login />} />
         </Route>
     )
 );

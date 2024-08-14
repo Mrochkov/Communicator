@@ -83,7 +83,7 @@ const textingTemplate = (props: ServerChannelProps) => {
 
     function timeStampFormat(timestamp: string): string {
         const date = new Date(Date.parse(timestamp));
-        const dateFormatted = `${date.getDay()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+        const dateFormatted = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
         const timeFormatted = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hourCycle: "h24",});
         return `${dateFormatted} at ${timeFormatted}`;
     }
