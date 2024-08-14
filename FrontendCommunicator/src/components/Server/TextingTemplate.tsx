@@ -1,5 +1,5 @@
 import useWebSocket from "react-use-websocket";
-import {useState} from "react";
+import React, {Fragment, useState} from "react";
 import {useParams} from "react-router-dom";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 import { Server } from "../../@types/server";
@@ -8,6 +8,7 @@ import TextingChannelsTemplate from "./TextingChannelsTemplate.tsx";
 import Avatar from "@mui/material/Avatar";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import {useTheme} from "@mui/material/styles";
+import Scrolling from "../Main/Scrolling.tsx";
 
 interface Message {
     sender: string;
@@ -98,27 +99,29 @@ const textingTemplate = (props: ServerChannelProps) => {
             (
                 <>
                     <Box sx={{overflow: "hidden", p:0, height: `calc(100vh - 100px)` }}>
-                        <List sx={{width: "100%", bgcolor: "background.paper" }}>
-                            {newMessage.map((msg: Message, index: number) => {
-                                return(
-                                    <ListItem key={index} alignItems="flex-start">
-                                        <ListItemAvatar>
-                                            <Avatar alt="user image" />
-                                        </ListItemAvatar>
-                                        <ListItemText primaryTypographyProps={{fontSize: "12px", variant: "body2"}}
-                                                      primary={<Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}} >{msg.sender_id}</Typography>}
-                                        secondary={
-                                            <Box>
-                                                <Typography variant="body1" style={{overflow: "visible", whiteSpace: "normal", textOverflow: "clip"}} sx={{display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px"}} component="span" color="text.primary">
-                                                    {msg.content}
-                                                </Typography>
-                                            </Box>
-                                        }
-                                        />
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
+                        <Scrolling>
+                            <List sx={{width: "100%", bgcolor: "background.paper" }}>
+                                {newMessage.map((msg: Message, index: number) => {
+                                    return(
+                                        <ListItem key={index} alignItems="flex-start">
+                                            <ListItemAvatar>
+                                                <Avatar alt="user image" />
+                                            </ListItemAvatar>
+                                            <ListItemText primaryTypographyProps={{fontSize: "12px", variant: "body2"}}
+                                                          primary={<Typography component="span" variant="body1" color="text.primary" sx={{display: "inline", fontWeight: 600}} >{msg.sender_id}</Typography>}
+                                            secondary={
+                                                <Fragment>
+                                                    <Typography variant="body1" style={{overflow: "visible", whiteSpace: "normal", textOverflow: "clip"}} sx={{display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px"}} component="span" color="text.primary">
+                                                        {msg.content}
+                                                    </Typography>
+                                                </Fragment>
+                                            }
+                                            />
+                                        </ListItem>
+                                    );
+                                })}
+                            </List>
+                        </Scrolling>
                     </Box>
 
                     <Box sx={{position: "sticky", bottom: 0, width: "100%" }}>
