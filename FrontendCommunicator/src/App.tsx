@@ -4,6 +4,8 @@ import Explore from "./pages/Explore.tsx";
 import ToggleDarkMode from "./components/ToggleDarkMode.tsx";
 import Server from "./pages/Server.tsx";
 import Login from "./pages/Login.tsx";
+import {AuthServiceProvider} from "./context/AuthContext.tsx";
+
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -18,9 +20,11 @@ const router = createBrowserRouter(
 
 const App = () => {
     return (
-        <ToggleDarkMode>
-            <RouterProvider router={router} />
-        </ToggleDarkMode>
+        <AuthServiceProvider>
+            <ToggleDarkMode>
+                <RouterProvider router={router} />
+            </ToggleDarkMode>
+        </AuthServiceProvider>
         );
 };
 

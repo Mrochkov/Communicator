@@ -1,14 +1,25 @@
 import {useFormik} from "formik";
 import {useNavigate} from "react-router-dom";
+import {useAuthServiceContext} from "../context/AuthContext.tsx";
 
 const Login = () => {
+    const {login} = useAuthServiceContext();
     const navigate = useNavigate();
     const formik = useFormik({
     initialValues: {
         username: "",
         password: "",
     },
-    onSubmit: () => {},
+    onSubmit: async (values) => {
+        const {username, password} = values;
+        const res = await login(username, password);
+        if(res) {
+            console.log(res);
+        } else {
+            navigate("/");
+        }
+
+    },
 });
 return(
     <div>
