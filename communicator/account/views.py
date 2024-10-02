@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Account
 from .serializers import UserSerializer
-from .schema import user_list_docs
+from .schemas import user_list_docs
 
 
 class UserViewSet(viewsets.ModelViewSet):

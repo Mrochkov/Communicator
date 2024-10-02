@@ -3,7 +3,7 @@ from drf_spectacular.types import OpenApiTypes
 from .serializers import UserSerializer
 
 user_list_docs = extend_schema(
-    responses=UserSerializer(),
+    responses=UserSerializer(many=True),
     parameters=[
         OpenApiParameter(
             name="user_id",
