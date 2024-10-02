@@ -23,6 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
 from chat.views import MessageViewSet
+from account.views import UserViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -32,6 +33,8 @@ router = DefaultRouter()
 router.register("api/server/select", ServerListViewSet)
 router.register("api/server/category", CategoryListViewSet)
 router.register("api/messages", MessageViewSet, basename="message")
+router.register("api/user", UserViewSet, basename="user")
+
 
 
 urlpatterns = [
