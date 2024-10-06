@@ -4,15 +4,13 @@ import {useState} from "react";
 
 
 export function useAuthService(): AuthServiceProps {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-        const autheticated = localStorage.getItem("isAuthenticated")
-        console.log(autheticated);
-        if (autheticated !== null ) {
-            return Boolean(autheticated);
-        } else {
-            return false;
-        }
-    })
+    const getAuthenticationValue = () => {
+        const authenticated = localStorage.getItem("isAuthenticated");
+        return authenticated !== null && authenticated === "true";
+    };
+
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>((getAuthenticationValue))
+
 
     const getUserDetails = async () => {
         try{
@@ -70,5 +68,16 @@ export function useAuthService(): AuthServiceProps {
             return err.response.status;
         }
     }
-    return {login, isAuthenticated};
+
+    const logout = () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("UserId")
+        localStorage.removeItem("username")
+        localStorage.setItem("isAuthenticated", "false")
+        setIsAuthenticated(false);
+    }
+
+
+    return {login, isAuthenticated, logout};
 }
