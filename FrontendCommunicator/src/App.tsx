@@ -6,7 +6,7 @@ import Server from "./pages/Server.tsx";
 import Login from "./pages/Login.tsx";
 import {AuthServiceProvider} from "./context/AuthContext.tsx";
 import TestLogin from "./pages/TestLogin.tsx";
-
+import ProtectedRoute from "./service/ProtectedRoute.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -15,7 +15,11 @@ const router = createBrowserRouter(
             <Route path="/server/:serverId/:channelId?" element={<Server />} />
             <Route path="/explore/:categoryName" element={<Explore />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/testlogin" element={<TestLogin />} />
+            <Route path="/testlogin" element={
+                <ProtectedRoute>
+                    <TestLogin />
+                </ProtectedRoute>
+            } />
 
         </Route>
     )
