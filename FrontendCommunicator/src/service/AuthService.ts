@@ -1,8 +1,10 @@
 import {AuthServiceProps} from "../@types/auth-service";
 import axios from "axios";
+import {useState} from "react";
 
 
 export function useAuthService(): AuthServiceProps {
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     const getUserDetails = async () => {
         try{
@@ -18,6 +20,7 @@ export function useAuthService(): AuthServiceProps {
             );
             const userDetails = response.data
             localStorage.setItem("username", userDetails.username);
+            setIsAuthenticated(true);
 
         } catch (err: any) {
             return err;
@@ -49,12 +52,13 @@ export function useAuthService(): AuthServiceProps {
             localStorage.setItem("access_token", access);
             localStorage.setItem("refresh_token", refresh);
             localStorage.setItem("UserId", getUserIdUsingToken(access))
-
+            setIsAuthenticated(true)
             getUserDetails()
 
         } catch (err: any) {
+            setIsAuthenticated(false)
             return err;
         }
     }
-    return {login};
+    return {login, isAuthenticated};
 }
