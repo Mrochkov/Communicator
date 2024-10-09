@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -130,9 +131,14 @@ AUTH_USER_MODEL = "account.Account"
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_AUTHENTICATION_CLASS": [
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         #'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
@@ -153,3 +159,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
+
+SIMPLE_JWT= {
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}

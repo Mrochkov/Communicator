@@ -29,9 +29,9 @@ export function useAuthService(): AuthServiceProps {
             setIsAuthenticated(true);
             localStorage.setItem("isAuthenticated", "true");
         } catch (err: any) {
-            setIsAuthenticated(false);
+            //setIsAuthenticated(false);
             //localStorage.setItem("isAuthenticated", "false");
-            return err;
+            return err.response.status;
         }
     }
 
@@ -59,7 +59,8 @@ export function useAuthService(): AuthServiceProps {
 
             localStorage.setItem("access_token", access);
             localStorage.setItem("refresh_token", refresh);
-            localStorage.setItem("UserId", getUserIdUsingToken(access))
+            localStorage.setItem("userId", getUserIdUsingToken(access))
+            localStorage.setItem("username", username)
             localStorage.setItem("isAuthenticated", "true")
             setIsAuthenticated(true)
             getUserDetails()
@@ -72,7 +73,7 @@ export function useAuthService(): AuthServiceProps {
     const logout = () => {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-        localStorage.removeItem("UserId")
+        localStorage.removeItem("userId")
         localStorage.removeItem("username")
         localStorage.setItem("isAuthenticated", "false")
         setIsAuthenticated(false);
