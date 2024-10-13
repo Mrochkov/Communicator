@@ -29,8 +29,8 @@ export function useAuthService(): AuthServiceProps {
             setIsAuthenticated(true);
             localStorage.setItem("isAuthenticated", "true");
         } catch (err: any) {
-            //setIsAuthenticated(false);
-            //localStorage.setItem("isAuthenticated", "false");
+            setIsAuthenticated(false);
+            localStorage.setItem("isAuthenticated", "false");
             return err.response.status;
         }
     }

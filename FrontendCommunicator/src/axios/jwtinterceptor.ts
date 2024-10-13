@@ -26,8 +26,8 @@ const jwtAxiosInterceptor = (navigate: ReturnType<typeof useNavigate>): AxiosIns
                         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
                         return jwtAxios(originalRequest);
                     } catch (refreshError) {
-                        //localStorage.removeItem("access_token");
-                        //localStorage.removeItem("refresh_token");
+                        localStorage.removeItem("access_token");
+                        localStorage.removeItem("refresh_token");
                         navigate('/login');
                         throw refreshError;
                     }

@@ -4,6 +4,7 @@ from .models import Account
 from .serializers import UserSerializer
 from .schemas import user_list_docs
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -16,3 +17,13 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = Account.objects.get(id=user_id)
         serializer = UserSerializer(queryset)
         return Response(serializer.data)
+
+class JWTCookieMixin:
+    def finalize_response(self, request, response, *args, **kwargs):
+        token = response.data.get('refresh')
+        print(token)
+        return super().finalize_response(request, response, *args, **kwargs)
+
+
+class JWTCookieTokenObtainPairView(JWTCookieMixin, TokenObtainPairView):
+    pass

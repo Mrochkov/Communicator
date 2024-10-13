@@ -12,8 +12,6 @@ const TestLogin = () => {
 
     const getUserDetails = async () => {
         try{
-
-
             const userId = localStorage.getItem("userId")
             const accessToken = localStorage.getItem("access_token")
 
