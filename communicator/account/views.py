@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class JWTCookieMixin:
     def finalize_response(self, request, response, *args, **kwargs):
-        if response.datget("refresh"):
+        if response.data.get("refresh"):
             response.set_cookie(
                 settings.SIMPLE_JWT["REFRESH_TOKEN_NAME"],
                 response.data["refresh"],
@@ -28,7 +28,7 @@ class JWTCookieMixin:
                 httponly=True,
                 samesite=settings.SIMPLE_JWT["JWT_COOKIE_SAMESITE"],
             )
-        if response.datget("access"):
+        if response.data.get("access"):
             response.set_cookie(
                 settings.SIMPLE_JWT["ACCESS_TOKEN_NAME"],
                 response.data["access"],
@@ -37,7 +37,10 @@ class JWTCookieMixin:
                 samesite=settings.SIMPLE_JWT["JWT_COOKIE_SAMESITE"],
             )
 
-        #del response.data["access"]
+        user_id = request.user.id
+        response.data["user_id"] = user_id
+
+        del response.data["access"]
 
         return super().finalize_response(request, response, *args, **kwargs)
 

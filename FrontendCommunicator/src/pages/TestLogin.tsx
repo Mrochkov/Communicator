@@ -12,23 +12,18 @@ const TestLogin = () => {
 
     const getUserDetails = async () => {
         try{
-            const userId = localStorage.getItem("userId")
-            const accessToken = localStorage.getItem("access_token")
-
             const response = await jwtAxios.get(
-                `http://127.0.0.1:8000/api/user/?user_id=${userId}`,
+                `http://127.0.0.1:8000/api/user/?user_id=1`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
+                    withCredentials: true
                 }
             );
             const userDetails = response.data
             setUsername(userDetails.username);
         } catch (err: any) {
-        console.error("Error fetching user details:", err);
+        return err;
         }
-    }
+    };
 
     return <><div>{isAuthenticated.toString()}</div>
     <div>

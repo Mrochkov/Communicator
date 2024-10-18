@@ -55,8 +55,10 @@ export function useAuthService(): AuthServiceProps {
                 }, {withCredentials: true}
             );
 
+            console.log(response.data)
             localStorage.setItem("isAuthenticated", "true")
             setIsAuthenticated(true)
+
             //getUserDetails()
 
         } catch (err: any) {
