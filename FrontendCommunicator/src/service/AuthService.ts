@@ -12,39 +12,24 @@ export function useAuthService(): AuthServiceProps {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>((getAuthenticationValue))
 
 
-    // const getUserDetails = async () => {
-    //     try{
-    //         const userId = localStorage.getItem("userId")
-    //         const accessToken = localStorage.getItem("access_token")
-    //         const response = await axios.get(
-    //             `http://127.0.0.1:8000/api/user/?user_id=${userId}`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${accessToken}`
-    //                 }
-    //             }
-    //         );
-    //         const userDetails = response.data
-    //         localStorage.setItem("username", userDetails.username);
-    //         setIsAuthenticated(true);
-    //         localStorage.setItem("isAuthenticated", "true");
-    //     } catch (err: any) {
-    //         setIsAuthenticated(false);
-    //         localStorage.setItem("isAuthenticated", "false");
-    //         return err.response.status;
-    //     }
-    // }
+    const getUserDetails = async () => {
+        try{
+            const userId = localStorage.getItem("user_id")
+            const response = await axios.get(
+                `http://127.0.0.1:8000/api/user/?user_id=${userId}`,
+                {withCredentials: true}
+            );
+            const userDetails = response.data
+            localStorage.setItem("username", userDetails.username);
+            setIsAuthenticated(true);
+            localStorage.setItem("isAuthenticated", "true");
+        } catch (err: any) {
+            setIsAuthenticated(false);
+            localStorage.setItem("isAuthenticated", "false");
+            return err.response.status;
+        }
+    }
 
-    // const getUserIdUsingToken = (access : string) => {
-    //     const token = access
-    //     const tokenComponents = token.split('.')
-    //     const encodedPayload = tokenComponents[1]
-    //     const decodedPayload = atob(encodedPayload)
-    //     const payloadData = JSON.parse(decodedPayload)
-    //     const userId = payloadData.user_id
-    //
-    //     return userId;
-    // }
 
     const login = async (username: string, password: string) => {
         try{
@@ -55,11 +40,13 @@ export function useAuthService(): AuthServiceProps {
                 }, {withCredentials: true}
             );
 
-            console.log(response.data)
+            //console.log(response.data)
+            const user_id = response.data.user_id
             localStorage.setItem("isAuthenticated", "true")
+            localStorage.setItem("user_id", user_id)
             setIsAuthenticated(true)
 
-            //getUserDetails()
+            getUserDetails()
 
         } catch (err: any) {
             return err.response.status;
@@ -68,6 +55,8 @@ export function useAuthService(): AuthServiceProps {
 
     const logout = () => {
         localStorage.setItem("isAuthenticated", "false")
+        localStorage.removeItem("user_id")
+        localStorage.removeItem("username")
         setIsAuthenticated(false);
     }
 
