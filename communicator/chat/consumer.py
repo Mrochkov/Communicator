@@ -14,9 +14,14 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.user = None
 
     def connect(self):
+
+        self.user = self.scope["user"]
+        self.accept()
+        if not self.user.is_authenticated:
+            self.close(code=4001)
+
         # Called on connection.
         # To accept the connection call:
-        self.accept()
         self.channel_id = self.scope["url_route"]["kwargs"]["channelId"]
 
         self.user = User.objects.get(id=1)

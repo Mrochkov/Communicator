@@ -17,11 +17,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'communicator.settings')
 django_application = get_asgi_application()
 
 from . import urls # noqa isort:skip
+from chat.middleware import ChatMiddleware # noqa isort:skip
 
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": URLRouter(urls.websocket_urlpatterns),
+        "websocket": ChatMiddleware(URLRouter(urls.websocket_urlpatterns)),
 
     }
 )

@@ -12,7 +12,12 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
             <Route path="/" element={<Homepage />} />
-            <Route path="/server/:serverId/:channelId?" element={<Server />} />
+            <Route path="/server/:serverId/:channelId?" element={
+                <ProtectedRoute>
+                    <Server />
+                </ProtectedRoute>
+            }
+            />
             <Route path="/explore/:categoryName" element={<Explore />} />
             <Route path="/login" element={<Login />} />
             <Route path="/testlogin" element={
