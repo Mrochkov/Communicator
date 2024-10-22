@@ -1,6 +1,7 @@
 import {AuthServiceProps} from "../@types/auth-service";
 import axios from "axios";
 import {useState} from "react";
+import {BASE_URL} from "../config.ts";
 
 
 export function useAuthService(): AuthServiceProps {
@@ -53,6 +54,16 @@ export function useAuthService(): AuthServiceProps {
         }
     }
 
+    const refreshAccessToken = async () => {
+        try{
+            await axios.post(
+                `${BASE_URL}/token/refresh/`, {}, {withCredentials: true}
+            )
+        } catch (refreshError) {
+            return Promise.reject(refreshError)
+        }
+    }
+
     const logout = () => {
         localStorage.setItem("isAuthenticated", "false")
         localStorage.removeItem("user_id")
@@ -61,5 +72,5 @@ export function useAuthService(): AuthServiceProps {
     }
 
 
-    return {login, isAuthenticated, logout};
+    return {login, isAuthenticated, logout, refreshAccessToken};
 }
