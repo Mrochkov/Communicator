@@ -19,7 +19,7 @@ const thisUseCRUD = <T>(initialData: T[], apiURL: string): ThisUseCrudInterface<
     const fetchData = async () => {
         setIsLoading(true)
         try{
-            const response = await axiosInstance.get(`${BASE_URL}${apiURL}`, {})
+            const response = await axiosInstance.get(`${BASE_URL}${apiURL}`, {withCredentials: true})
             const data = response.data;
             setDataCRUD(data);
             setError(null);
