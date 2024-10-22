@@ -3,11 +3,12 @@ import { BASE_URL } from "../config.ts";
 import {useNavigate} from "react-router-dom";
 import {useAuthService} from "../service/AuthService.ts";
 
-const API_BASE_URL = BASE_URL
+//const API_BASE_URL = BASE_URL
 
 
-const jwtAxiosInterceptor = (navigate: ReturnType<typeof useNavigate>): AxiosInstance => {
-    const jwtAxios = axios.create({ baseURL: API_BASE_URL });
+const jwtAxiosInterceptor = () => {
+    const jwtAxios = axios.create({});
+    const navigate = useNavigate();
     const {logout} = useAuthService();
     jwtAxios.interceptors.response.use(
         (response) => { return response;},

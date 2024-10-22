@@ -14,12 +14,12 @@ const thisUseCRUD = <T>(initialData: T[], apiURL: string): ThisUseCrudInterface<
     const [dataCRUD, setDataCRUD] = useState<T[]>(initialData);
     const [error, setError] = useState<Error | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const axiosInstance = jwtAxiosInterceptor();
 
     const fetchData = async () => {
         setIsLoading(true)
         try{
-
-            const response = await jwtAxiosInterceptor.get(`${BASE_URL}${apiURL}`, {})
+            const response = await axiosInstance.get(`${BASE_URL}${apiURL}`, {})
             const data = response.data;
             setDataCRUD(data);
             setError(null);

@@ -7,12 +7,11 @@ import {useNavigate} from "react-router-dom";
 const TestLogin = () => {
     const {isAuthenticated, logout} = useAuthServiceContext();
     const [username, setUsername] = useState("");
-    const navigate = useNavigate();
-    const jwtAxios = jwtAxiosInterceptor(navigate);
+    const axiosInstance = jwtAxiosInterceptor();
 
     const getUserDetails = async () => {
         try{
-            const response = await jwtAxios.get(
+            const response = await axiosInstance.get(
                 `http://127.0.0.1:8000/api/user/?user_id=1`,
                 {
                     withCredentials: true
