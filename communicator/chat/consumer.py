@@ -18,6 +18,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.user = self.scope["user"]
         self.accept()
         if not self.user.is_authenticated:
+            print(self.user)
             self.close(code=4001)
 
         # Called on connection.

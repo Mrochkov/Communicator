@@ -19,15 +19,19 @@ def get_user(scope):
         return AnonymousUser()
 
 
-
 class ChatMiddleware:
     def __init__(self, app):
         self.app = app
 
     async def __call__(self, scope, receive, send):
         headers_dict = dict(scope["headers"])
-        cookies_string = headers_dict(b"cookie", b"").decode()
-        cookies = {cookie.split("=")[0]: cookie.split("=")[1] for cookie in cookies_string.split("; ")}
+
+        cookies_string = headers_dict.get(b"cookie", b"").decode()
+
+        cookies = {}
+        if cookies_string:
+            cookies = {cookie.split("=")[0]: cookie.split("=")[1] for cookie in cookies_string.split("; ")}
+
         access_token = cookies.get("access_token")
 
         scope["token"] = access_token
