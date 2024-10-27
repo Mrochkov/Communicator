@@ -2,9 +2,11 @@ import {AuthServiceProps} from "../@types/auth-service";
 import axios from "axios";
 import {useState} from "react";
 import {BASE_URL} from "../config.ts";
-
+import {useNavigate} from "react-router-dom";
 
 export function useAuthService(): AuthServiceProps {
+
+    const navigate = useNavigate();
     const getAuthenticationValue = () => {
         const authenticated = localStorage.getItem("isAuthenticated");
         return authenticated !== null && authenticated === "true";
@@ -64,11 +66,21 @@ export function useAuthService(): AuthServiceProps {
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
         localStorage.setItem("isAuthenticated", "false")
         localStorage.removeItem("user_id")
         localStorage.removeItem("username")
         setIsAuthenticated(false);
+        navigate("/login")
+
+        try{
+            await axios.post(
+                `${BASE_URL}/logout/`, {}, {withCredentials: true}
+            )
+        } catch (refreshError) {
+            return Promise.reject(refreshError)
+        }
+
     }
 
 

@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
 from chat.views import MessageViewSet
-from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView
+from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView
 
 
 router = DefaultRouter()
@@ -39,6 +39,7 @@ urlpatterns = [
     path('api/docs/schema/ui/', SpectacularSwaggerView.as_view()),
     path('api/token/', JWTCookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', JWTCookieTokenRefreshView.as_view(), name='token_refresh'),
+    path('api/logout/', LogoutView.as_view(), name='logout'),
 ] + router.urls
 
 websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]
