@@ -33,7 +33,6 @@ router.register("api/messages", MessageViewSet, basename="message")
 router.register("api/user", UserViewSet, basename="user")
 
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/docs/schema/', SpectacularAPIView.as_view(), name="schema"),

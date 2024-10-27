@@ -1,7 +1,6 @@
 import jwtAxiosInterceptor from "../axios/jwtinterceptor";
 import { BASE_URL } from "../config";
 import { useState } from 'react';
-import {useNavigate} from "react-router-dom";
 
 interface ThisUseCrudInterface<T>{
     dataCRUD: T[];
