@@ -56,6 +56,22 @@ export function useAuthService(): AuthServiceProps {
         }
     }
 
+
+    const signUp = async (username: string, password: string) => {
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/signup/", {
+                    username,
+                    password,
+                }, {withCredentials: true}
+            );
+            return response.status
+
+        } catch (err: any) {
+            return err.response.status;
+        }
+    }
+
     const refreshAccessToken = async () => {
         try{
             await axios.post(
@@ -84,5 +100,5 @@ export function useAuthService(): AuthServiceProps {
     }
 
 
-    return {login, isAuthenticated, logout, refreshAccessToken};
+    return {login, isAuthenticated, logout, refreshAccessToken, signUp};
 }

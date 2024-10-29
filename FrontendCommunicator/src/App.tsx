@@ -7,7 +7,7 @@ import Login from "./pages/Login.tsx";
 import {AuthServiceProvider} from "./context/AuthContext.tsx";
 import TestLogin from "./pages/TestLogin.tsx";
 import ProtectedRoute from "./service/ProtectedRoute.tsx";
-
+import SignUp from "./pages/SignUp.tsx";
 
 const App = () => {
     return (
@@ -17,11 +17,14 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/server/:serverId/:channelId?" element={
+                            <ProtectedRoute>
                                 <Server />
+                            </ProtectedRoute>
                         }
                         />
                         <Route path="/explore/:categoryName" element={<Explore />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<SignUp />} />
                         <Route path="/testlogin" element={
                             <ProtectedRoute>
                                 <TestLogin />

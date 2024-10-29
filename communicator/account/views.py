@@ -1,12 +1,30 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Account
-from .serializers import UserSerializer, CustomTokenObtainPairSerializer, JWTCookieTokenRefreshSerializer
+from .serializers import UserSerializer, CustomTokenObtainPairSerializer, JWTCookieTokenRefreshSerializer, SignUpSerializer
 from .schemas import user_list_docs
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
+
+class SignUpView(APIView):
+    def post(self, request):
+        serializer = SignUpSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data["username"]
+            forbidden_usernames = ["admin", "superuser", "root"]
+            if username is forbidden_usernames:
+                return Response({"error": "This username is forbidden."}, status=status.HTTP_409_CONFLICT)
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        errors = serializer.errors
+        if "username" in errors and "non_field_errors" not in errors:
+            return Response({"errors": "This username already exists"}, status=status.HTTP_409_CONFLICT)
+
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):

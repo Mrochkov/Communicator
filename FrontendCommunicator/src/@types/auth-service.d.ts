@@ -3,4 +3,5 @@ export interface AuthServiceProps {
     isAuthenticated: boolean;
     logout: () => void;
     refreshAccessToken: () => Promise<void>
+    signUp: (username: string, password: string) => Promise<any>;
 }
