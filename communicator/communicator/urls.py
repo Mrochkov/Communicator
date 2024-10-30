@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from rest_framework.routers import DefaultRouter
-from server.views import ServerListViewSet, CategoryListViewSet
+from server.views import ServerListViewSet, CategoryListViewSet, MembershipViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
@@ -31,7 +31,7 @@ router.register("api/server/select", ServerListViewSet)
 router.register("api/server/category", CategoryListViewSet)
 router.register("api/messages", MessageViewSet, basename="message")
 router.register("api/user", UserViewSet, basename="user")
-
+router.register(r'api/membership/(?P<server_id>/d+)/membership/', MembershipViewSet, basename='membership'),
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -11,7 +11,8 @@ const jwtAxiosInterceptor = () => {
     const navigate = useNavigate();
     const {logout} = useAuthService();
     jwtAxios.interceptors.response.use(
-        (response) => { return response;},
+        (response) => { return response;
+            },
 
         async (error) => {
             const originalRequest = error.config;
@@ -31,7 +32,7 @@ const jwtAxiosInterceptor = () => {
                         return Promise.reject(refreshError);
                     }
             }
-            throw error;
+            return Promise.reject(error);
         }
     );
 

@@ -16,6 +16,7 @@ import {useParams} from "react-router-dom";
 import ServerChannels from "./ServerChannels.tsx";
 import {useEffect, useState} from "react";
 import {MoreVert} from "@mui/icons-material";
+import JoinButton from "../Membership/JoinButton.tsx";
 
 interface ServerChannelProps {
     data: Server[];
@@ -70,6 +71,7 @@ const TextingChannelsTemplate = (props: ServerChannelProps) => {
                     {channelName}
                 </Typography>
                 <Box sx={{ flexGrow: 1 }}></Box>
+                <JoinButton />
                 <Box sx={{display: {xs: "block", sm: "none"} }}>
                     <IconButton color="inherit" edge="end" onClick={toggleDrawer(true)}>
                         <MoreVert />

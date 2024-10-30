@@ -18,3 +18,4 @@ export function useAuthServiceContext(): AuthServiceProps {
     }
     return context;
 }
+export default AuthServiceProvider;

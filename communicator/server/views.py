@@ -1,14 +1,49 @@
-from django.shortcuts import render
-from rest_framework import viewsets
+from django.shortcuts import render, get_object_or_404
+from rest_framework import viewsets, status
 from .serializer import ServerSerializer, CategorySerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
 from .schema import server_list_docs
-
+from rest_framework.decorators import action
 from .models import Server, Category
 from drf_spectacular.utils import extend_schema
+
+
+
+
+class MembershipViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+    def create(self, request, server_id):
+        server = get_object_or_404(Server, id=server_id)
+        user = request.user
+        if server.member.filter(id=user.id).exists():
+            return Response({"error": "User is already a member"}, status=status.HTTP_409_CONFLICT)
+
+        server.member.add(user)
+        return Response({"message": "You have joined successfully"}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["DELETE"])
+    def remove_member(self, request, server_id):
+        server = get_object_or_404(Server, id=server_id)
+        user = request.user
+        if not server.member.filter(id=user.id).exists():
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        if server.owner == user:
+            return Response({"error": "Owner cannot leave the server"}, status=status.HTTP_409_CONFLICT)
+
+        server.member.remove(user)
+        return Response({"message": "User was removed from the server"}, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=["GET"])
+    def is_member(self, request, server_id=None):
+        server = get_object_or_404(Server, id=server_id)
+        user = request.user
+        is_member = server.member.filter(id=user.id).exists()
+        return Response({"is_member": is_member})
 
 
 class CategoryListViewSet(viewsets.ViewSet):
