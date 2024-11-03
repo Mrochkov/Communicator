@@ -1,12 +1,12 @@
-import { Box, IconButton, Menu, MenuItem, Typography } from "@mui/material";
+import { Box, IconButton, Menu, MenuItem, Typography, Button } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import DarkModeSwitch from "./DarkMode/DarkModeSwitch.tsx";
 import { useState } from "react";
-import {useAuthServiceContext} from "../../context/AuthContext.tsx";
+import { useAuthServiceContext } from "../../context/AuthContext.tsx";
 
 const AccountButton = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { username } = useAuthServiceContext();
+    const { username, logout } = useAuthServiceContext();
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -33,13 +33,24 @@ const AccountButton = () => {
     );
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="end" color="inherit" onClick={handleProfileMenuOpen}>
-                <AccountCircle />
-            </IconButton>
-            <Typography variant="body1" sx={{ display: { xs: 'none', sm: 'block' }, marginLeft: 1 }}>
-                {username || "My Profile"} {/* Display username if available */}
-            </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <Box sx={{ flexGrow: 1 }} />
+
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconButton edge="end" color="inherit" onClick={handleProfileMenuOpen}>
+                    <AccountCircle />
+                </IconButton>
+                <Typography variant="body1" sx={{ display: { xs: 'none', sm: 'block' }, marginLeft: 1 }}>
+                    {username || "My Profile"}
+                </Typography>
+            </Box>
+
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                <Button color="inherit" onClick={logout}>
+                    Logout
+                </Button>
+            </Box>
+
             {renderMenu}
         </Box>
     );
