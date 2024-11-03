@@ -15,7 +15,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.channel_id = None
         self.user = None
-        # self.is_member = None
+        self.is_member = False
         # self.server_id = kwargs.get('server_id')
 
     def update_membership(self, event):

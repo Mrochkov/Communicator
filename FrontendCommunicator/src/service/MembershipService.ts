@@ -51,8 +51,8 @@ const useMembership = (): useServerInterface => {
     setIsLoading(true);
     try {
         const response = await jwtAxios.get(`${BASE_URL}/membership/${serverId}/membership/is_member/`, { withCredentials: true });
-        setIsUserMember(response.data.is_member); // Set the state based on API response
-        console.log("Updated isUserMember:", response.data.is_member); // Debug log to confirm it
+        setIsUserMember(response.data.is_member);
+        console.log("Updated isUserMember:", response.data.is_member);
         return response.data.is_member;
     } catch (error: any) {
         setError(error);
