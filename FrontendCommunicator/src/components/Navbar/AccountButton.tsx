@@ -2,9 +2,11 @@ import { Box, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import DarkModeSwitch from "./DarkMode/DarkModeSwitch.tsx";
 import { useState } from "react";
+import {useAuthServiceContext} from "../../context/AuthContext.tsx";
 
 const AccountButton = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const { username } = useAuthServiceContext();
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -17,7 +19,13 @@ const AccountButton = () => {
     };
 
     const renderMenu = (
-        <Menu anchorEl={anchorEl} anchorOrigin={{ vertical: "bottom", horizontal: "right" }} open={isMenuOpen} keepMounted onClose={handleMenuClose}>
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            open={isMenuOpen}
+            keepMounted
+            onClose={handleMenuClose}
+        >
             <MenuItem>
                 <DarkModeSwitch />
             </MenuItem>
@@ -30,7 +38,7 @@ const AccountButton = () => {
                 <AccountCircle />
             </IconButton>
             <Typography variant="body1" sx={{ display: { xs: 'none', sm: 'block' }, marginLeft: 1 }}>
-                My Profile
+                {username || "My Profile"} {/* Display username if available */}
             </Typography>
             {renderMenu}
         </Box>

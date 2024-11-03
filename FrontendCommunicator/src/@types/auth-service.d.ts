@@ -4,4 +4,5 @@ export interface AuthServiceProps {
     logout: () => void;
     refreshAccessToken: () => Promise<void>
     signUp: (username: string, password: string) => Promise<any>;
+    username: string;
 }
