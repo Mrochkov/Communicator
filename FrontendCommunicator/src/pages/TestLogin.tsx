@@ -8,11 +8,12 @@ const TestLogin = () => {
     const {isAuthenticated, logout} = useAuthServiceContext();
     const [username, setUsername] = useState("");
     const axiosInstance = jwtAxiosInterceptor();
+    const userId = localStorage.getItem("user_id")
 
     const getUserDetails = async () => {
         try{
             const response = await axiosInstance.get(
-                `http://127.0.0.1:8000/api/user/?user_id=1`,
+                `http://127.0.0.1:8000/api/user/?user_id=${userId}`,
                 {
                     withCredentials: true
                 }

@@ -10,7 +10,7 @@ def server_icon_path(instance, filename):
 
 
 def server_banner_path(instance, filename):
-    return f"media/server/{instance.id}/server_banner/{filename}"
+    return f"server/{instance.id}/server_banner/{filename}"
 
 
 def category_icon_path(instance, filename):

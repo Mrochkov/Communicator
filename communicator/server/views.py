@@ -9,12 +9,12 @@ from .schema import server_list_docs
 from rest_framework.decorators import action
 from .models import Server, Category
 from drf_spectacular.utils import extend_schema
-
-
-
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 class MembershipViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
+
     def create(self, request, server_id):
         server = get_object_or_404(Server, id=server_id)
         user = request.user
@@ -22,6 +22,17 @@ class MembershipViewSet(viewsets.ViewSet):
             return Response({"error": "User is already a member"}, status=status.HTTP_409_CONFLICT)
 
         server.member.add(user)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"server_{server_id}",
+            {
+                "type": "update_membership",
+                "user_id": user.id,
+                "is_member": True
+            }
+        )
+
         return Response({"message": "You have joined successfully"}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["DELETE"])

@@ -31,7 +31,7 @@ router.register("api/server/select", ServerListViewSet)
 router.register("api/server/category", CategoryListViewSet)
 router.register("api/messages", MessageViewSet, basename="message")
 router.register("api/user", UserViewSet, basename="user")
-router.register(r'api/membership/(?P<server_id>/d+)/membership/', MembershipViewSet, basename='membership'),
+router.register(r"api/membership/(?P<server_id>\d+)/membership", MembershipViewSet, basename='membership')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

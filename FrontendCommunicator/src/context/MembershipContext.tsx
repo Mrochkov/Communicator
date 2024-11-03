@@ -2,7 +2,6 @@ import React, {createContext, useContext} from "react";
 import {AuthServiceProps} from "../@types/auth-service";
 import useMembership from "../service/MembershipService";
 import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 
 interface useServerInterface {
     joinServer: (serverId: number) => Promise<void>;

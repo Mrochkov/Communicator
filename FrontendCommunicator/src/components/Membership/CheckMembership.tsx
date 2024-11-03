@@ -9,20 +9,18 @@ interface CheckMembershipProps {
 
 const CheckMembership: React.FC<CheckMembershipProps> = ({children}) => {
     const {serverId} = useParams();
-    const {isMember} = useMembershipContext();
+    const {isMember, isUserMember} = useMembershipContext();
 
-        useEffect(() => {
-            const membershipCheck = async () => {
-                try {
-                    await isMember(Number(serverId));
-                }catch (error) {
-                    console.log("Error checking membership status", error);
-
-                }
-            };
-            membershipCheck();
-
-        }, [serverId]);
+    useEffect(() => {
+    const membershipCheck = async () => {
+        try {
+            await isMember(Number(serverId));
+        } catch (error) {
+            console.log("Error checking membership status", error);
+        }
+    };
+    membershipCheck();
+}, [serverId, isUserMember]);
         return <>{children}</>;
 }
 export default CheckMembership;

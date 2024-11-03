@@ -20,18 +20,19 @@ const useMembership = (): useServerInterface => {
     const [isLoading, setIsLoading] = useState(false)
     const [isUserMember, setIsUserMember] = useState(false)
 
-    const joinServer = async (serverId: number): Promise<void> =>{
-        setIsLoading(true);
-        try{
-            await jwtAxios.post(`${BASE_URL}/membership/${serverId}/membership/`, {}, {withCredentials: true});
-            setIsLoading(false)
-            setIsUserMember(true)
-        }catch (error: any) {
-            setError(error)
-            setIsLoading(false)
-            throw error;
-        }
+    const joinServer = async (serverId: number): Promise<void> => {
+    setIsLoading(true);
+    try {
+        await jwtAxios.post(`${BASE_URL}/membership/${serverId}/membership/`, {}, { withCredentials: true });
+        setIsUserMember(true);  // Immediately set after successful join
+        console.log("User has joined the server");
+    } catch (error: any) {
+        setError(error);
+        console.error("Error trying to join server:", error.response?.data || error.message);
+    } finally {
+        setIsLoading(false);
     }
+    };
 
     const leaveServer = async (serverId: number): Promise<void> =>{
         setIsLoading(true);
@@ -46,18 +47,21 @@ const useMembership = (): useServerInterface => {
         }
     }
 
-    const isMember = async (serverId: number): Promise<any> =>{
-        setIsLoading(true);
-        try{
-            const response = await jwtAxios.get(`${BASE_URL}/membership/${serverId}/membership/is_member`, {withCredentials: true});
-            setIsLoading(false)
-            setIsUserMember(response.data.is_user)
-        }catch (error: any) {
-            setError(error)
-            setIsLoading(false)
-            throw error;
-        }
+    const isMember = async (serverId: number): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+        const response = await jwtAxios.get(`${BASE_URL}/membership/${serverId}/membership/is_member/`, { withCredentials: true });
+        setIsUserMember(response.data.is_member); // Set the state based on API response
+        console.log("Updated isUserMember:", response.data.is_member); // Debug log to confirm it
+        return response.data.is_member;
+    } catch (error: any) {
+        setError(error);
+        console.error("Error checking membership status:", error.response?.data || error.message);
+        return false;
+    } finally {
+        setIsLoading(false);
     }
+    };
 
     return {joinServer, leaveServer, isMember, isUserMember, isLoading, error}
 }
