@@ -11,7 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = "__all__"
+        fields = ['id', 'name']
 
 
 class ServerSerializer(serializers.ModelSerializer):

@@ -1,16 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, status
-from .serializer import ServerSerializer, CategorySerializer
+from .serializer import ServerSerializer, CategorySerializer, ChannelSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
 from .schema import server_list_docs
 from rest_framework.decorators import action
-from .models import Server, Category
+from .models import Server, Category, Channel
 from drf_spectacular.utils import extend_schema
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+import logging
 
 class MembershipViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
@@ -110,3 +111,23 @@ class ServerListViewSet(viewsets.ViewSet):
         serializer = ServerSerializer(self.queryset, many=True, context={"members_num": with_members_num})
 
         return Response(serializer.data)
+
+
+class ChannelViewSet(viewsets.ModelViewSet):
+    serializer_class = ChannelSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        server_id = self.kwargs['server_id']
+        return Channel.objects.filter(server_id=server_id)
+
+    def create(self, request, server_id=None):
+        server = get_object_or_404(Server, id=server_id)
+
+        serializer = self.get_serializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+
+        channel = serializer.save(server=server, owner=request.user)
+
+        return Response(ChannelSerializer(channel).data, status=status.HTTP_201_CREATED)
