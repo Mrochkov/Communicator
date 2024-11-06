@@ -65,42 +65,16 @@ const ServerChannels = (props: ServerChannelsProps) => {
 
   return (
     <>
-      <Box
-        sx={{
-          height: "50px",
-          display: "flex",
-          alignItems: "center",
-          px: 2,
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          position: "sticky",
-          top: 1,
-          backgroundColor: theme.palette.background.default,
-        }}
-      >
-        <Typography
-          variant="body1"
-          style={{
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-          }}
-        >
+      <Box sx={{height: "50px", display: "flex", alignItems: "center", px: 2, borderBottom: `1px solid ${theme.palette.divider}`, position: "sticky", top: 1, backgroundColor: theme.palette.background.default,}}>
+        <Typography variant="body1" style={{textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap",}}>
           {server_name}
         </Typography>
       </Box>
       <List sx={{ py: 0 }}>
         {data.flatMap((obj) =>
           obj.channel_server.map((item) => (
-            <ListItem
-              disablePadding
-              key={item.id}
-              sx={{ display: "block", maxHeight: "40px" }}
-              dense={true}
-            >
-              <Link
-                to={`/server/${serverId}/${item.id}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
+            <ListItem disablePadding key={item.id} sx={{ display: "block", maxHeight: "40px" }} dense={true}>
+              <Link to={`/server/${serverId}/${item.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <ListItemButton sx={{ minHeight: 48 }}>
                   <ListItemText
                     primary={
@@ -115,44 +89,16 @@ const ServerChannels = (props: ServerChannelsProps) => {
           ))
         )}
       </List>
-      <Button
-        onClick={handleOpen}
-        variant="contained"
-        sx={{ m: 2 }}
-      >
+      <Button onClick={handleOpen} variant="contained" sx={{ m: 2, backgroundColor: 'gray', color: 'white' }}>
         Add Channel
       </Button>
       <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            width: 400,
-          }}
-        >
-          <Typography variant="h6" component="h2" gutterBottom>
+        <Box sx={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, borderRadius: 2, width: 400,}}>
+          <Typography variant="h6" component="h2" gutterBottom >
             Add New Channel
           </Typography>
-          <TextField
-            label="Channel Name"
-            variant="outlined"
-            fullWidth
-            value={channelName}
-            onChange={handleChannelNameChange}
-            sx={{ mb: 2 }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddChannel}
-            disabled={!channelName}
-          >
+          <TextField label="Channel Name" variant="outlined" fullWidth value={channelName} onChange={handleChannelNameChange} sx={{ mb: 2 }}/>
+          <Button variant="contained" color="primary" onClick={handleAddChannel} disabled={!channelName} >
             Add Channel
           </Button>
         </Box>

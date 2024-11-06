@@ -1,4 +1,4 @@
-from .models import Account
+"id",from .models import Account
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -29,7 +29,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ("username",)
+        fields = ("id","username",)
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

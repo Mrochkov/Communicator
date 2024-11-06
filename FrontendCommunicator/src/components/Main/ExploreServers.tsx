@@ -15,6 +15,8 @@ import Avatar from "@mui/material/Avatar";
 import { MEDIA_URL } from "../../config.ts";
 import {Link, useParams} from "react-router-dom";
 
+const PLACEHOLDER_BANNER_URL = "https://media.giphy.com/media/26FPGD4iGDgsqHThS/giphy.gif";
+
 
 interface Server {
     id: number;
@@ -45,7 +47,7 @@ const ExploreServers = () => {
             </Box>
             <Box>
                 <Typography variant="h6" noWrap component="h2" color="textSecondary"
-                            sx={{display: {sm: "block", fontWeight: 700, letterSpacing: "-1px"}, textAlign: {xs: "cemter", sm: "left" },
+                            sx={{display: {sm: "block", fontWeight: 700, letterSpacing: "-1px"}, textAlign: {xs: "center", sm: "left" },
                             }}
                 >
                     {categoryName ? `Channels talking about ${categoryName}` : "Check out other popular channels"}
@@ -60,7 +62,7 @@ const ExploreServers = () => {
                     <Grid item key={item.id} xs={12} sm={6} md={6} lg={3}>
                         <Card sx={{height: "100%", display: "flex", flexDirection: "column", boxShadow: "none", backgroundImage: "none", borderRadius: 0 }}>
                             <Link to={`/server/${item.id}`} style={{textDecoration: "none", color: "inherit"}}>
-                                <CardMedia component="img" image={item.banner ? `${MEDIA_URL}${item.icon}` : "https://source.unplash.com/random/"} alt="random" sx={{display: {xs: "none", sm: "block"}, }} />
+                                <CardMedia component="img" src={item.banner ? `${MEDIA_URL}${item.banner}` : PLACEHOLDER_BANNER_URL} alt="server banner" />
                                     <CardContent sx={{ flexGrow: 1, padding: 0,"&:last-child": {paddingBottom: 0}, }}>
                                         <List>
                                             <ListItem disablePadding>
