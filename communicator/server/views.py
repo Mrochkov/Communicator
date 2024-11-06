@@ -69,7 +69,6 @@ class CategoryListViewSet(viewsets.ViewSet):
 
 class ServerListViewSet(viewsets.ViewSet):
     queryset = Server.objects.all()
-    # permission_classes = [IsAuthenticated]
 
     @server_list_docs
     def list(self, request):
@@ -79,22 +78,14 @@ class ServerListViewSet(viewsets.ViewSet):
         by_server_id = request.query_params.get("by_server_id")
         with_members_num = request.query_params.get("with_members_num") == "true"
 
-        # if by_user or by_server_id and not request.user.is_authentificated:
-        #    raise AuthenticationFailed()
-
         if category:
-            self.queryset= self.queryset.filter(category__name=category)
+            self.queryset = self.queryset.filter(category__name=category)
 
-        if by_user:
-            if by_user and request.user.is_authenticated:
-                user_id = request.user.id
-                self.queryset = self.queryset.filter(member=user_id)
-            else:
-                raise AuthenticationFailed()
+        if by_user and request.user.is_authenticated:
+            user_id = request.user.id
+            self.queryset = self.queryset.filter(member=user_id)
 
         if by_server_id:
-            # if by_user and request.user.is_authenticated:
-                # raise AuthenticationFailed()
             try:
                 self.queryset = self.queryset.filter(id=by_server_id)
                 if not self.queryset.exists():
@@ -103,7 +94,11 @@ class ServerListViewSet(viewsets.ViewSet):
                 raise ValidationError(detail="Server value error")
 
         if with_members_num:
+            # Annotate with the number of members for each server
             self.queryset = self.queryset.annotate(members_num=Count("member"))
+
+        # Prefetch related members to optimize the query
+        self.queryset = self.queryset.prefetch_related("member")
 
         if qty:
             self.queryset = self.queryset[: int(qty)]
