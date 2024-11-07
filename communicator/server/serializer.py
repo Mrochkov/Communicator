@@ -62,3 +62,9 @@ class ServerCreateSerializer(serializers.ModelSerializer):
 
         server = Server.objects.create(**validated_data)
         return server
+
+
+class ServerUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Server
+        fields = ['id', 'name', 'owner', 'category', 'description', 'icon', 'banner']

@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useTheme } from "@mui/material/styles";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
+import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
 
 interface Server {
   id: number;
@@ -33,30 +34,20 @@ type Props = {
 
 const TrendingChannels: React.FC<Props> = ({ open }) => {
   const jwtAxios = jwtAxiosInterceptor();
-  const [dataCRUD, setDataCRUD] = useState<Server[]>([]);
+  const [useDataCRUD, setDataCRUD] = useState<Server[]>([]); // State to store all servers
   const [openModal, setOpenModal] = useState(false);
   const [serverName, setServerName] = useState("");
   const [serverCategory, setServerCategory] = useState("");
   const [serverIcon, setServerIcon] = useState<any>(null);
   const [serverBanner, setServerBanner] = useState<any>(null);
+  const { dataCRUD, error, isLoading, fetchData } = thisUseCRUD<Server>([], "/server/select/");
 
   const theme = useTheme();
 
   useEffect(() => {
-  axios.get("/server/select/")
-    .then((response) => {
-      if (Array.isArray(response.data)) {
-        console.log(response.data); // Check the data structure
-        setDataCRUD(response.data);
-      } else {
-        setDataCRUD([]);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      setDataCRUD([]);
-    });
-}, []);
+        fetchData();
+    }, []);
+
 
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => {
@@ -81,14 +72,21 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   }
 
   try {
+    // Make the request to create the new server
     const response = await jwtAxios.post("http://127.0.0.1:8000/api/server/create/", formData, {
       headers: {
         "Content-Type": "multipart/form-data", // Ensure it's set to multipart/form-data for file uploads
       },
       withCredentials: true,
     });
+
     // Add the new server to the list
     setDataCRUD((prevData) => [...prevData, response.data]);
+
+    // Refresh the server list immediately by calling fetchData
+    fetchData();
+
+    // Close the modal and reset the form fields
     handleClose();
   } catch (error) {
     console.error("Error creating server:", error.response?.data || error.message);
@@ -99,38 +97,46 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
     <>
       <Box sx={{ height: "50px", display: "flex", alignItems: "center", px: 2, borderBottom: `1px solid ${theme.palette.divider}`, position: "sticky", top: 1, backgroundColor: theme.palette.background.default }}>
         <Typography variant="body1" sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-          Servers
+          All Servers
         </Typography>
       </Box>
-      <List>
-        {dataCRUD.map((item) => (
-          <ListItem key={`${item.id}-${item.name}`} disablePadding sx={{ display: "block" }} dense>
-            <Link to={`/server/${item.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-              <ListItemButton sx={{ minHeight: 48 }}>
-                <ListItemIcon sx={{ minWidth: 0, justifyContent: "center" }}>
-                  <ListItemAvatar sx={{ minWidth: "50px" }}>
-                    <Avatar alt="Server Icon" src={`${MEDIA_URL}${item.icon}`} />
-                  </ListItemAvatar>
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography variant="body2" sx={{ fontWeight: 700, lineHeight: 1.2, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-                      {item.name}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.2, color: "textSecondary" }}>
-                      {item.category}
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
+
+      <Box sx={{ p: 2 }}>
+        {dataCRUD.length === 0 ? (
+          <Typography variant="body2" color="textSecondary">No servers available.</Typography>
+        ) : (
+          <List>
+            {dataCRUD.map((item) => (
+              <ListItem key={`${item.id}-${item.name}`} disablePadding sx={{ display: "block" }} dense>
+                <Link to={`/server/${item.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <ListItemButton sx={{ minHeight: 48 }}>
+                    <ListItemIcon sx={{ minWidth: 0, justifyContent: "center" }}>
+                      <ListItemAvatar sx={{ minWidth: "50px" }}>
+                        <Avatar alt="Server Icon" src={`${MEDIA_URL}${item.icon}`} />
+                      </ListItemAvatar>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body2" sx={{ fontWeight: 700, lineHeight: 1.2, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                          {item.name}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.2, color: "textSecondary" }}>
+                          {item.category}
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </Box>
 
       <Divider />
+
       <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
         <Button variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }} onClick={handleOpen}>
           Create new server

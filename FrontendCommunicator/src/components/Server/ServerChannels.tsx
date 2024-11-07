@@ -15,7 +15,6 @@ import { useTheme } from "@mui/material/styles";
 import { Server } from "../../@types/server";
 import axios from "axios";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
-import {withConverter} from "js-cookie";
 
 interface ServerChannelsProps {
   data: Server[];
@@ -30,6 +29,8 @@ const ServerChannels = (props: ServerChannelsProps) => {
 
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
+  const [channels, setChannels] = useState(data?.[0]?.channel_server || []); // Initial state for channels
+  const [refreshFlag, setRefreshFlag] = useState(false);  // A flag to trigger re-fetching the data
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -42,37 +43,75 @@ const ServerChannels = (props: ServerChannelsProps) => {
   };
 
   const handleAddChannel = async () => {
-    try {
-        const response = await jwtAxios.post(`http://127.0.0.1:8000/api/server/${serverId}/channels/`, {
-            name: channelName,
-        }, { withCredentials: true });
-        console.log('Channel added:', response.data);
-        handleClose();
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Error adding channel:', error.response?.data || error.message);
-            if (error.response) {
-                // Log more detailed error information
-                console.error('Error Status:', error.response.status);
-                console.error('Error Data:', error.response.data);
-                console.error('Error Headers:', error.response.headers);
-            }
-        } else {
-            console.error('Unexpected error:', error);
-        }
+  try {
+    const response = await jwtAxios.post(
+      `http://127.0.0.1:8000/api/server/${serverId}/channels/`,
+      {
+        name: channelName,
+      },
+      { withCredentials: true }
+    );
+    console.log("Channel added:", response.data);
+
+    // Refresh the page after the channel is added
+    window.location.reload();
+
+    handleClose();
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error adding channel:", error.response?.data || error.message);
+    } else {
+      console.error("Unexpected error:", error);
     }
+  }
 };
+
+  const fetchChannels = async () => {
+    try {
+      const response = await jwtAxios.get(
+        `http://127.0.0.1:8000/api/server/${serverId}/channels/`,
+        { withCredentials: true }
+      );
+      setChannels(response.data); // Update state with the fetched channels
+    } catch (error) {
+      console.error("Error fetching channels:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchChannels(); // Re-fetch channels when component mounts or when refreshFlag changes
+  }, [serverId, refreshFlag]); // Depend on `refreshFlag` to trigger re-fetch
 
   return (
     <>
-      <Box sx={{height: "50px", display: "flex", alignItems: "center", px: 2, borderBottom: `1px solid ${theme.palette.divider}`, position: "sticky", top: 1, backgroundColor: theme.palette.background.default,}}>
-        <Typography variant="body1" style={{textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap",}}>
+      <Box
+        sx={{
+          height: "50px",
+          display: "flex",
+          alignItems: "center",
+          px: 2,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          position: "sticky",
+          top: 1,
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Typography
+          variant="body1"
+          style={{
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+          }}
+        >
           {server_name}
         </Typography>
       </Box>
       <List sx={{ py: 0 }}>
-        {data.flatMap((obj) =>
-          obj.channel_server.map((item) => (
+        {channels.length === 0 ? (
+          <Typography variant="body2" sx={{ p: 2 }}>No channels available.</Typography>
+        ) : (
+          channels.map((item) => (
             <ListItem disablePadding key={item.id} sx={{ display: "block", maxHeight: "40px" }} dense={true}>
               <Link to={`/server/${serverId}/${item.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <ListItemButton sx={{ minHeight: 48 }}>
@@ -93,12 +132,31 @@ const ServerChannels = (props: ServerChannelsProps) => {
         Add Channel
       </Button>
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, borderRadius: 2, width: 400,}}>
-          <Typography variant="h6" component="h2" gutterBottom >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            width: 400,
+          }}
+        >
+          <Typography variant="h6" component="h2" gutterBottom>
             Add New Channel
           </Typography>
-          <TextField label="Channel Name" variant="outlined" fullWidth value={channelName} onChange={handleChannelNameChange} sx={{ mb: 2 }}/>
-          <Button variant="contained" color="primary" onClick={handleAddChannel} disabled={!channelName} >
+          <TextField
+            label="Channel Name"
+            variant="outlined"
+            fullWidth
+            value={channelName}
+            onChange={handleChannelNameChange}
+            sx={{ mb: 2 }}
+          />
+          <Button variant="contained" color="primary" onClick={handleAddChannel} disabled={!channelName}>
             Add Channel
           </Button>
         </Box>
