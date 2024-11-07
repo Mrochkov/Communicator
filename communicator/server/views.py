@@ -137,10 +137,10 @@ class ServerCreateView(generics.CreateAPIView):
 
 
 class UserServersView(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access this endpoint
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        print(f"Request from user: {request.user}")  # Log the user making the request
+        print(f"Request from user: {request.user}")
         user = request.user
-        servers = user.servers.all()  # Example filter logic
+        servers = user.servers.all()
         return Response([server.serialize() for server in servers])

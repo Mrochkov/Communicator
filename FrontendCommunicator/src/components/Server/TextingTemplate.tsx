@@ -31,7 +31,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
     const server_name = data?.[0]?.name ?? "Server";
     const theme = useTheme();
     const { newMessage, message, setMessage, sendJsonMessage } = chatWebSocketHook(channelId || "", serverId || "");
-    const { isUserMember } = useMembershipContext(); // Check if the user is a member
+    const { isUserMember } = useMembershipContext();
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && isUserMember) {

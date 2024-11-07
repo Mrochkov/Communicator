@@ -34,7 +34,7 @@ type Props = {
 
 const TrendingChannels: React.FC<Props> = ({ open }) => {
   const jwtAxios = jwtAxiosInterceptor();
-  const [useDataCRUD, setDataCRUD] = useState<Server[]>([]); // State to store all servers
+  const [useDataCRUD, setDataCRUD] = useState<Server[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [serverName, setServerName] = useState("");
   const [serverCategory, setServerCategory] = useState("");
@@ -63,7 +63,6 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   formData.append("name", serverName);
   formData.append("category", serverCategory);
 
-  // Make sure files are appended if they exist
   if (serverIcon) {
     formData.append("icon", serverIcon);
   }
@@ -72,21 +71,17 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   }
 
   try {
-    // Make the request to create the new server
     const response = await jwtAxios.post("http://127.0.0.1:8000/api/server/create/", formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // Ensure it's set to multipart/form-data for file uploads
+        "Content-Type": "multipart/form-data",
       },
       withCredentials: true,
     });
 
-    // Add the new server to the list
     setDataCRUD((prevData) => [...prevData, response.data]);
 
-    // Refresh the server list immediately by calling fetchData
     fetchData();
 
-    // Close the modal and reset the form fields
     handleClose();
   } catch (error) {
     console.error("Error creating server:", error.response?.data || error.message);
@@ -143,7 +138,6 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
         </Button>
       </Box>
 
-      {/* Modal to Create Server */}
       <Modal open={openModal} onClose={handleClose}>
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, borderRadius: 2, width: 400 }}>
           <Typography variant="h6" component="h2" gutterBottom>

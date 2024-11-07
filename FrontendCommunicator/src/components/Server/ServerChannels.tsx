@@ -29,8 +29,8 @@ const ServerChannels = (props: ServerChannelsProps) => {
 
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
-  const [channels, setChannels] = useState(data?.[0]?.channel_server || []); // Initial state for channels
-  const [refreshFlag, setRefreshFlag] = useState(false);  // A flag to trigger re-fetching the data
+  const [channels, setChannels] = useState(data?.[0]?.channel_server || []);
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -53,7 +53,6 @@ const ServerChannels = (props: ServerChannelsProps) => {
     );
     console.log("Channel added:", response.data);
 
-    // Refresh the page after the channel is added
     window.location.reload();
 
     handleClose();
@@ -72,15 +71,15 @@ const ServerChannels = (props: ServerChannelsProps) => {
         `http://127.0.0.1:8000/api/server/${serverId}/channels/`,
         { withCredentials: true }
       );
-      setChannels(response.data); // Update state with the fetched channels
+      setChannels(response.data);
     } catch (error) {
       console.error("Error fetching channels:", error);
     }
   };
 
   useEffect(() => {
-    fetchChannels(); // Re-fetch channels when component mounts or when refreshFlag changes
-  }, [serverId, refreshFlag]); // Depend on `refreshFlag` to trigger re-fetch
+    fetchChannels();
+  }, [serverId, refreshFlag]);
 
   return (
     <>
@@ -128,9 +127,11 @@ const ServerChannels = (props: ServerChannelsProps) => {
           ))
         )}
       </List>
-      <Button onClick={handleOpen} variant="contained" sx={{ m: 2, backgroundColor: 'gray', color: 'white' }}>
-        Add Channel
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
+        <Button onClick={handleOpen} variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }}>
+          Add Channel
+        </Button>
+      </Box>
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{

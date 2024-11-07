@@ -20,7 +20,7 @@ const Homepage = () => {
                 <Explore />
             </SecondDraw>
             <Main>
-                <ExploreServers />
+                <TrendingChannels open={false} />
             </Main>
 
         </Box>

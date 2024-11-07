@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Server, Category, Channel
-from account.serializers import UserSerializer  # Absolute import of UserSerializer
+from account.serializers import UserSerializer
 
 from account.models import Account
 
