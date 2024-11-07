@@ -1,12 +1,17 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Account
-from .serializers import UserSerializer, CustomTokenObtainPairSerializer, JWTCookieTokenRefreshSerializer, SignUpSerializer
+from .serializers import UserSerializer, CustomTokenObtainPairSerializer, JWTCookieTokenRefreshSerializer, \
+    SignUpSerializer, AccountSerializer
 from .schemas import user_list_docs
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
+
+from django.contrib.auth.models import User
 
 class SignUpView(APIView):
     def post(self, request):
@@ -79,3 +84,30 @@ class JWTCookieTokenObtainPairView(JWTCookieMixin, TokenObtainPairView):
 
 class JWTCookieTokenRefreshView(JWTCookieMixin, TokenRefreshView):
     serializer_class = JWTCookieTokenRefreshSerializer
+
+
+class AvatarUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        if 'avatar' in request.FILES:
+            user.avatar = request.FILES['avatar']
+            user.save()
+            print(f'Avatar saved at {user.avatar.url}')
+
+            return Response({'avatar': user.avatar.url}, status=status.HTTP_200_OK)
+        return Response({'detail': 'No avatar uploaded.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserAvatarByIdView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id, *args, **kwargs):
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise NotFound("User not found")
+
+        avatar_url = user.account.avatar.url if user.account.avatar else None
+        return Response({"avatar_url": avatar_url})

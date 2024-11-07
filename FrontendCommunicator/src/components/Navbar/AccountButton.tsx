@@ -3,6 +3,7 @@ import { AccountCircle } from "@mui/icons-material";
 import DarkModeSwitch from "./DarkMode/DarkModeSwitch.tsx";
 import { useState } from "react";
 import { useAuthServiceContext } from "../../context/AuthContext.tsx";
+import { Link } from "react-router-dom";
 
 const AccountButton = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -27,7 +28,6 @@ const AccountButton = () => {
             onClose={handleMenuClose}
         >
             <MenuItem>
-                <DarkModeSwitch />
             </MenuItem>
         </Menu>
     );
@@ -40,10 +40,26 @@ const AccountButton = () => {
                 <IconButton edge="end" color="inherit" onClick={handleProfileMenuOpen}>
                     <AccountCircle />
                 </IconButton>
-                <Typography variant="body1" sx={{ display: { xs: 'none', sm: 'block' }, marginLeft: 1 }}>
+
+
+                <Typography
+                    variant="h6"
+                    component={Link}
+                    to="/profile"
+                    sx={{
+                        display: { xs: 'none', sm: 'block' },
+                        marginLeft: 2,
+                        marginRight: 10,
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        fontSize: '1.2rem',
+                    }}
+                >
                     {username || "My Profile"}
                 </Typography>
             </Box>
+
+            <DarkModeSwitch />
 
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button color="inherit" onClick={logout}>

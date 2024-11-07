@@ -10,6 +10,8 @@ import ProtectedRoute from "./service/ProtectedRoute.tsx";
 import SignUp from "./pages/SignUp.tsx";
 import MembershipProvider from "./context/MembershipContext.tsx";
 import CheckMembership from "./components/Membership/CheckMembership.tsx";
+import React from "react";
+import Profile from "./pages/Profile.tsx";
 
 const App = () => {
     return (
@@ -30,6 +32,7 @@ const App = () => {
                         />
                         <Route path="/explore/:categoryName" element={<Explore />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/profile" element={<Profile />} />
                         <Route path="/signup" element={<SignUp />} />
                         <Route path="/testlogin" element={
                             <ProtectedRoute>

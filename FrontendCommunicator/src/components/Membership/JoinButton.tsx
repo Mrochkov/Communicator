@@ -25,7 +25,6 @@ const JoinButton = () => {
     };
 
     useEffect(() => {
-        // Display a reminder message when user is not a member
         if (!isUserMember) {
             setOpenSnackbar(true);
         }
@@ -37,16 +36,15 @@ const JoinButton = () => {
         <>
             <div>isMember: {isUserMember ? "Yes" : "No"}</div>
             {isUserMember ? (
-                <Button variant="contained" onClick={handleLeaveServer}>
+                <Button variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }} onClick={handleLeaveServer}>
                     Leave server
                 </Button>
             ) : (
-                <Button variant="contained" onClick={handleJoinServer}>
+                <Button variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }} onClick={handleJoinServer}>
                     Join server
                 </Button>
             )}
 
-            {/* Snackbar to show a reminder to join */}
             <Snackbar
                 open={openSnackbar}
                 autoHideDuration={6000}

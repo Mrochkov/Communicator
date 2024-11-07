@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
 from chat.views import MessageViewSet
-from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView, SignUpView
+from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView, SignUpView, AvatarUpdateView, UserAvatarByIdView
 
 
 router = DefaultRouter()
@@ -33,7 +33,6 @@ router.register("api/messages", MessageViewSet, basename="message")
 router.register("api/user", UserViewSet, basename="user")
 router.register(r"api/membership/(?P<server_id>\d+)/membership", MembershipViewSet, basename='membership')
 router.register(r"api/server/(?P<server_id>\d+)/channels", ChannelViewSet, basename='channels')
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,7 +44,9 @@ urlpatterns = [
     path('api/signup/', SignUpView.as_view(), name='signup'),
     path('api/server/create/', ServerCreateView.as_view(), name='server-create'),
     path('api/user/servers/', UserServersView.as_view(), name='user_servers'),
-              ] + router.urls
+    path('api/user/avatar/', AvatarUpdateView.as_view(), name='avatar-update'),
+    path('api/user/avatar/<int:user_id>/', UserAvatarByIdView.as_view(), name='user-avatar-by-id'),
+] + router.urls
 
 websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]
 

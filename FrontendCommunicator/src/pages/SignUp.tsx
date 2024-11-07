@@ -54,7 +54,18 @@ const SignUp = () => {
                            onChange={formik.handleChange} error={!!formik.touched.username && !!formik.errors.username} helperText={formik.touched.username && formik.errors.username}></TextField>
                     <TextField margin="normal" fullWidth id="password" name="password" type="password" label="Password" value={formik.values.password}
                            onChange={formik.handleChange} error={!!formik.touched.password && !!formik.errors.password} helperText={formik.touched.password && formik.errors.password}></TextField>
-                    <Button variant="contained" disableElevation type="submit" sx={{ mt: 1, mb: 2}}>Next</Button>
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        type="submit"
+                        sx={{
+                            mt: 2,
+                            mb: 2,
+                            backgroundColor: "gray",
+                            color: "white",
+                            width: "100%",
+                        }}
+                    >Sign up</Button>
                 </Box>
             </Box>
 

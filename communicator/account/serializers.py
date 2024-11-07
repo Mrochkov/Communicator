@@ -54,3 +54,9 @@ class JWTCookieTokenRefreshSerializer(TokenRefreshSerializer):
             return super().validate(attrs)
         else:
             raise InvalidToken("No valid refresh token")
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['avatar']
