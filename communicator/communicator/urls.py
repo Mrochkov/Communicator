@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from rest_framework.routers import DefaultRouter
-from server.views import ServerListViewSet, CategoryListViewSet, MembershipViewSet, ChannelViewSet
+from server.views import ServerListViewSet, CategoryListViewSet, MembershipViewSet, ChannelViewSet, ServerCreateView
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/token/refresh/', JWTCookieTokenRefreshView.as_view(), name='token_refresh'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('api/signup/', SignUpView.as_view(), name='signup'),
+    path('api/server/create/', ServerCreateView.as_view(), name='server-create'),
 ] + router.urls
 
 websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]

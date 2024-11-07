@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import viewsets, status
-from .serializer import ServerSerializer, CategorySerializer, ChannelSerializer
+from rest_framework import viewsets, status, generics
+from .serializer import ServerSerializer, CategorySerializer, ChannelSerializer, ServerCreateSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Count
 from .schema import server_list_docs
 from rest_framework.decorators import action
@@ -126,3 +126,9 @@ class ChannelViewSet(viewsets.ModelViewSet):
         channel = serializer.save(server=server, owner=request.user)
 
         return Response(ChannelSerializer(channel).data, status=status.HTTP_201_CREATED)
+
+
+class ServerCreateView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = Server.objects.all()
+    serializer_class = ServerCreateSerializer
