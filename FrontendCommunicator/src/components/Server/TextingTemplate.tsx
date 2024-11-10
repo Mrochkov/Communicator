@@ -123,7 +123,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
                         primary={
                           <>
                             <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-                              {msg.sender}
+                              {msg.sender}{msg.sender_id}
                             </Typography>
                             <Typography component="span" variant="caption" color="text.secondary">
                               {" at "}{timeStampFormat(msg.timestamp)}
