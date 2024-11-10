@@ -22,7 +22,7 @@ from server.views import ServerListViewSet, CategoryListViewSet, MembershipViewS
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
-from chat.views import MessageViewSet
+from chat.views import MessageViewSet, translate_view
 from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView, SignUpView, AvatarUpdateView, UserAvatarByIdView
 
 
@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/user/servers/', UserServersView.as_view(), name='user_servers'),
     path('api/user/avatar/', AvatarUpdateView.as_view(), name='avatar-update'),
     path('api/user/avatar/<int:user_id>/', UserAvatarByIdView.as_view(), name='user-avatar-by-id'),
+    path('translate/', translate_view, name='translate'),
 ] + router.urls
 
 websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]

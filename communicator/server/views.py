@@ -1,3 +1,5 @@
+import requests
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, status, generics
 from rest_framework.views import APIView
@@ -8,9 +10,9 @@ from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Count
 from .schema import server_list_docs
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from .models import Server, Category, Channel
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import logging
@@ -96,10 +98,8 @@ class ServerListViewSet(viewsets.ViewSet):
                 raise ValidationError(detail="Server value error")
 
         if with_members_num:
-            # Annotate with the number of members for each server
             self.queryset = self.queryset.annotate(members_num=Count("member"))
 
-        # Prefetch related members to optimize the query
         self.queryset = self.queryset.prefetch_related("member")
 
         if qty:
@@ -144,3 +144,4 @@ class UserServersView(APIView):
         user = request.user
         servers = user.servers.all()
         return Response([server.serialize() for server in servers])
+

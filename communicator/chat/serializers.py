@@ -11,3 +11,8 @@ class MessageSerializer(serializers.Serializer):
     class Meta:
         model = Message
         fields = ["id", "sender_id", "content", "timestamp"]
+
+
+class TranslateSerializer(serializers.Serializer):
+    text = serializers.CharField(max_length=500)
+    to = serializers.CharField(max_length=10, default='pl')

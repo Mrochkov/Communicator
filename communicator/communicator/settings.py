@@ -14,7 +14,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
-
+AZURE_TRANSLATOR_KEY = "5w7Pz311T4VSWpa3yrGbt1wUP90ynEaxWfdbs6AdKtmxmn8TMgeSJQQJ99AKAC5RqLJXJ3w3AAAbACOGzfBB"
+AZURE_TRANSLATOR_REGION = "westeurope"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")
 
@@ -158,7 +159,10 @@ SPECTACULAR_SETTINGS = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_HEADERS = [
+    'content-type',
+]
+CORS_ALLOW_METHODS = ['*']
 
 # CORS_ALLOWED_ORIGINS = [
 #     "http://localhost:5173",
