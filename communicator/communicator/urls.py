@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
 from chat.views import MessageViewSet, translate_view
 from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView, SignUpView, AvatarUpdateView, UserAvatarByIdView
+from chatbot.views import ChatbotResponseView
 
 
 router = DefaultRouter()
@@ -47,6 +48,7 @@ urlpatterns = [
     path('api/user/avatar/', AvatarUpdateView.as_view(), name='avatar-update'),
     path('api/user/avatar/<int:user_id>/', UserAvatarByIdView.as_view(), name='user-avatar-by-id'),
     path('translate/', translate_view, name='translate'),
+    path("chatbot/response/", ChatbotResponseView.as_view(), name="chatbot-response"),
 ] + router.urls
 
 websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]

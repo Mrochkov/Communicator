@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "account",
     "server",
     "chat",
+    "chatbot",
 ]
 
 MIDDLEWARE = [
@@ -164,9 +165,9 @@ CORS_ALLOW_HEADERS = [
 ]
 CORS_ALLOW_METHODS = ['*']
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
 
 
 SIMPLE_JWT= {

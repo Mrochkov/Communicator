@@ -1,0 +1,48 @@
+version: '3.1'
+intents:
+  - greet
+  - goodbye
+  - ask_help
+  - thank
+  - ask_bot_name
+  - ask_how_are_you
+  - ask_for_joke
+  - ask_for_fact
+  - ask_about_weather
+  - ask_about_time
+
+responses:
+  utter_greet:
+    - text: "Hello! How can I assist you today?"
+    - text: "Hi there! What’s on your mind?"
+
+  utter_goodbye:
+    - text: "Goodbye! Have a great day."
+    - text: "See you later!"
+
+  utter_ask_help:
+    - text: "I'm here to help! What do you need assistance with?"
+
+  utter_thank:
+    - text: "You're very welcome!"
+    - text: "Happy to help!"
+
+  utter_ask_bot_name:
+    - text: "I'm your assistant, here to chat and assist!"
+
+  utter_ask_how_are_you:
+    - text: "I'm just a bot, but thanks for asking! How can I help you?"
+
+  utter_ask_for_joke:
+    - text: "Why don’t scientists trust atoms? Because they make up everything!"
+    - text: "Why did the scarecrow win an award? Because he was outstanding in his field!"
+
+  utter_ask_for_fact:
+    - text: "Did you know? Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old!"
+    - text: "Fun fact: A day on Venus is longer than a year on Venus!"
+
+  utter_ask_about_weather:
+    - text: "I'm not directly connected to weather data, but I recommend checking your preferred weather app!"
+
+  utter_ask_about_time:
+    - text: "Time flies when we're chatting! Check your clock for the exact time."

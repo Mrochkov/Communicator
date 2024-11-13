@@ -9,12 +9,13 @@ import Scrolling from "../Main/Scrolling.tsx";
 import chatWebSocketHook from "../../service/chatService.ts";
 import { useMembershipContext } from "../../context/MembershipContext.tsx";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
+import Chatbot from "../ChatBot/Chatbot.tsx";
 
 interface Message {
   sender: string;
   content: string;
   timestamp: string;
-  translatedContent?: string; // Add translatedContent as optional field
+  translatedContent?: string;
 }
 
 interface ServerChannelProps {
@@ -34,8 +35,11 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const theme = useTheme();
   const { newMessage, message, setMessage, sendJsonMessage } = chatWebSocketHook(channelId || "", serverId || "");
   const { isUserMember } = useMembershipContext();
-  const [translatedMessages, setTranslatedMessages] = useState<Map<number, string>>(new Map()); // Map to store translations
+  const [translatedMessages, setTranslatedMessages] = useState<Map<number, string>>(new Map());
   const jwtAxios = jwtAxiosInterceptor();
+  const [useChatbot, setUseChatbot] = useState(false);
+  const toggleChatbot = () => setUseChatbot((prev) => !prev);
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && isUserMember) {
@@ -67,7 +71,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const handleTranslate = async (msgContent: string, index: number) => {
   try {
     const response = await jwtAxios.post(
-      'http://127.0.0.1:8000/translate/', // Django API
+      'http://127.0.0.1:8000/translate/',
       {
         text: msgContent,
         to: 'pl'
@@ -96,7 +100,14 @@ const TextingTemplate = (props: ServerChannelProps) => {
 
   return (
     <>
+      <Button onClick={toggleChatbot}>
+        {useChatbot ? "Back to Channels" : "Chat with Bot"}
+      </Button>
+      {useChatbot ? (
+        <Chatbot />
+      ) : (
       <TextingChannelsTemplate data={data} />
+      )}
       {channelId === undefined ? (
         <Box sx={{ overflow: "hidden", p: { xs: 0 }, height: `calc(80vh)`, display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Box sx={{ textAlign: "center" }}>

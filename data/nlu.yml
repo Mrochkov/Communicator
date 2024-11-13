@@ -1,0 +1,135 @@
+version: "3.1"
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - good morning
+    - good evening
+    - good afternoon
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+    - how are you
+
+- intent: ask_help
+  examples: |
+    - I need help
+    - can you help me?
+    - I have a question
+    - could you assist me?
+
+- intent: thank
+  examples: |
+    - thanks
+    - thank you
+    - appreciate it
+    - you are helpful
+
+- intent: ask_bot_name
+  examples: |
+    - what's your name?
+    - who are you?
+    - do you have a name?
+
+- intent: ask_how_are_you
+  examples: |
+    - how are you?
+    - how's it going?
+    - are you doing well?
+
+- intent: ask_for_joke
+  examples: |
+    - tell me a joke
+    - make me laugh
+    - got any jokes?
+
+- intent: ask_for_fact
+  examples: |
+    - tell me a fact
+    - I want to know something interesting
+    - do you have any cool facts?
+
+- intent: ask_about_weather
+  examples: |
+    - what's the weather like?
+    - is it sunny?
+    - tell me about the weather
+
+- intent: ask_about_time
+  examples: |
+    - what time is it?
+    - do you know the time?
+    - tell me the current time
