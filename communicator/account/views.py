@@ -7,19 +7,21 @@ from .models import Account
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer, JWTCookieTokenRefreshSerializer, \
     SignUpSerializer, AccountSerializer
 from .schemas import user_list_docs
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 
 from django.contrib.auth.models import User
 
 class SignUpView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data["username"]
             forbidden_usernames = ["admin", "superuser", "root"]
-            if username is forbidden_usernames:
+            if username in forbidden_usernames:
                 return Response({"error": "This username is forbidden."}, status=status.HTTP_409_CONFLICT)
 
             serializer.save()
