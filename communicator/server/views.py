@@ -64,7 +64,7 @@ class MembershipViewSet(viewsets.ViewSet):
 
 class CategoryListViewSet(viewsets.ViewSet):
     queryset = Category.objects.all()
-
+    permission_classes = [IsAuthenticated]
     @extend_schema(responses=CategorySerializer)
     def list(self, request):
         serializer = CategorySerializer(self.queryset, many=True)
@@ -73,7 +73,7 @@ class CategoryListViewSet(viewsets.ViewSet):
 
 class ServerListViewSet(viewsets.ViewSet):
     queryset = Server.objects.all()
-
+    permission_classes = [IsAuthenticated]
     @server_list_docs
     def list(self, request):
         category = request.query_params.get("category")

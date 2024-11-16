@@ -9,6 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ChatbotResponseView(APIView):
+    permission_classes = [IsAuthenticated]
     """
     Endpoint to interact with the chatbot via Rasa.
     """
