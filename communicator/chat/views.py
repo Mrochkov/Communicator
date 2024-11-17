@@ -20,7 +20,7 @@ class MessageViewSet(viewsets.ViewSet):
 
         try:
             conversation = Conversation.objects.get(channel_id=channel_id)
-            message = conversation.message.all()
+            message = conversation.messages.all()
             serializer = MessageSerializer(message, many=True)
             return Response(serializer.data)
 
