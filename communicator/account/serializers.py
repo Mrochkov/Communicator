@@ -27,9 +27,18 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Account
-        fields = ("username", "id")
+        fields = ['id', 'username', 'avatar_url']
+
+    def get_avatar_url(self, obj):
+        request = self.context.get('request')
+        if obj.avatar:
+            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
+        return None
+
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -57,6 +66,14 @@ class JWTCookieTokenRefreshSerializer(TokenRefreshSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    avatar_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Account
-        fields = ['avatar']
+        fields = ['id', 'username', 'avatar_url']
+
+    def get_avatar_url(self, obj):
+        request = self.context.get('request')
+        if obj.avatar:
+            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
+        return None

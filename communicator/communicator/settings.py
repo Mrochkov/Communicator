@@ -178,3 +178,13 @@ SIMPLE_JWT= {
     "REFRESH_TOKEN_NAME": "refresh_token",
     "JWT_COOKIE_SAMESITE": "Lax",
 }
+
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]

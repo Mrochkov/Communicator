@@ -7,10 +7,12 @@ class MessageSerializer(serializers.Serializer):
     sender_id = serializers.StringRelatedField()
     content = serializers.StringRelatedField()
     timestamp = serializers.DateTimeField()
+    # sender_avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = ["id", "sender_id", "content", "timestamp"]
+        fields = ["id", "sender_id", "sender_avatar", "content", "timestamp"]
+
 
 
 class TranslateSerializer(serializers.Serializer):

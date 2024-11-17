@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
 from chat.views import MessageViewSet, translate_view
-from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView, SignUpView, AvatarUpdateView, UserAvatarByIdView
+from account.views import UserViewSet, JWTCookieTokenObtainPairView, JWTCookieTokenRefreshView, LogoutView, SignUpView, AvatarUpdateView, UserDetailView
 from chatbot.views import ChatbotResponseView
 
 
@@ -45,8 +45,8 @@ urlpatterns = [
     path('api/signup/', SignUpView.as_view(), name='signup'),
     path('api/server/create/', ServerCreateView.as_view(), name='server-create'),
     path('api/user/servers/', UserServersView.as_view(), name='user_servers'),
-    path('api/user/avatar/', AvatarUpdateView.as_view(), name='avatar-update'),
-    path('api/user/avatar/<int:user_id>/', UserAvatarByIdView.as_view(), name='user-avatar-by-id'),
+    path('user/avatar/<int:user_id>/', AvatarUpdateView.as_view(), name='avatar-update'),
+    path('user/<int:user_id>/', UserDetailView.as_view(), name='user-detail'),
     path('translate/', translate_view, name='translate'),
     path("chatbot/response/", ChatbotResponseView.as_view(), name="chatbot-response"),
 ] + router.urls

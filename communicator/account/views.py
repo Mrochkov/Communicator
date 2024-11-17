@@ -46,12 +46,24 @@ class LogoutView(APIView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = AccountSerializer
 
-    @user_list_docs
     def list(self, request):
-        user_id = request.query_params.get('user_id')
-        queryset = Account.objects.get(id=user_id)
-        serializer = UserSerializer(queryset)
+        """
+        Returns a list of all users, serialized with avatar URLs included.
+        """
+        serializer = AccountSerializer(self.queryset, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        """
+        Retrieves a specific user by ID with avatar URL included.
+        """
+        try:
+            user = Account.objects.get(pk=pk)
+        except Account.DoesNotExist:
+            raise NotFound("User not found")
+        serializer = AccountSerializer(user, context={"request": request})
         return Response(serializer.data)
 
 class JWTCookieMixin:
@@ -96,20 +108,18 @@ class AvatarUpdateView(APIView):
         if 'avatar' in request.FILES:
             user.avatar = request.FILES['avatar']
             user.save()
-            print(f'Avatar saved at {user.avatar.url}')
-
-            return Response({'avatar': user.avatar.url}, status=status.HTTP_200_OK)
+            avatar_url = request.build_absolute_uri(user.avatar.url) if request else user.avatar.url
+            return Response({'avatar_url': avatar_url}, status=status.HTTP_200_OK)
         return Response({'detail': 'No avatar uploaded.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserAvatarByIdView(APIView):
+class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id, *args, **kwargs):
         try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
+            user = Account.objects.get(id=user_id)
+        except Account.DoesNotExist:
             raise NotFound("User not found")
-
-        avatar_url = user.account.avatar.url if user.account.avatar else None
-        return Response({"avatar_url": avatar_url})
+        serializer = AccountSerializer(user, context={"request": request})
+        return Response(serializer.data)
