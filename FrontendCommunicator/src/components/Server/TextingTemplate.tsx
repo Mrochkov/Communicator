@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Box, List, ListItem, ListItemText, TextField, Typography, Button } from "@mui/material";
 import TextingChannelsTemplate from "./TextingChannelsTemplate.tsx";
@@ -10,12 +10,14 @@ import chatWebSocketHook from "../../service/chatService.ts";
 import { useMembershipContext } from "../../context/MembershipContext.tsx";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
 import Chatbot from "../ChatBot/Chatbot.tsx";
+import {MEDIA_URL} from "../../config.ts";
 
 interface Message {
   sender: string;
   content: string;
   timestamp: string;
-  translatedContent?: string;
+  sender_username?: string;
+  sender_avatar?: string;
 }
 
 interface ServerChannelProps {
@@ -39,7 +41,6 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const jwtAxios = jwtAxiosInterceptor();
   const [useChatbot, setUseChatbot] = useState(false);
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
-
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && isUserMember) {
@@ -69,34 +70,26 @@ const TextingTemplate = (props: ServerChannelProps) => {
   }
 
   const handleTranslate = async (msgContent: string, index: number) => {
-  try {
-    const response = await jwtAxios.post(
-      'http://127.0.0.1:8000/translate/',
-      {
-        text: msgContent,
-        to: 'pl'
-      },
-      { withCredentials: true }
-    );
+    try {
+      const response = await jwtAxios.post(
+        'http://127.0.0.1:8000/translate/',
+        { text: msgContent, to: 'pl' },
+        { withCredentials: true }
+      );
 
-    console.log("API Response:", response.data);
+      const translatedText = response.data[0]?.translations?.[0]?.text;
 
-    const translatedText = response.data[0]?.translations?.[0]?.text;
-
-    if (translatedText) {
-      setTranslatedMessages(prevMessages => {
-        const newMessages = new Map(prevMessages);
-        newMessages.set(index, translatedText);
-        console.log('Updated Translated Messages:', newMessages);
-        return newMessages;
-      });
-    } else {
-      console.error("Translation text is missing in the response");
+      if (translatedText) {
+        setTranslatedMessages(prevMessages => {
+          const newMessages = new Map(prevMessages);
+          newMessages.set(index, translatedText);
+          return newMessages;
+        });
+      }
+    } catch (error) {
+      console.error("Translation error:", error.response?.data || error.message);
     }
-  } catch (error) {
-    console.error("Translation error:", error.response?.data || error.message);
-  }
-};
+  };
 
   return (
     <>
@@ -106,7 +99,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
       {useChatbot ? (
         <Chatbot />
       ) : (
-      <TextingChannelsTemplate data={data} />
+        <TextingChannelsTemplate data={data} />
       )}
       {channelId === undefined ? (
         <Box sx={{ overflow: "hidden", p: { xs: 0 }, height: `calc(80vh)`, display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -127,14 +120,14 @@ const TextingTemplate = (props: ServerChannelProps) => {
                   return (
                     <ListItem key={index} alignItems="flex-start">
                       <ListItemAvatar>
-                        <Avatar alt="user image" />
+                        <Avatar alt={msg.sender_username} src={msg.sender_avatar ? `${MEDIA_URL}${msg.sender_avatar}` : `${MEDIA_URL}default-avatar.jpg`} />
                       </ListItemAvatar>
                       <ListItemText
                         primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
                         primary={
                           <>
                             <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-                              {msg.sender}{msg.sender_id}
+                              {msg.sender_username || "Unknown Sender"}
                             </Typography>
                             <Typography component="span" variant="caption" color="text.secondary">
                               {" at "}{timeStampFormat(msg.timestamp)}
@@ -145,7 +138,11 @@ const TextingTemplate = (props: ServerChannelProps) => {
                           <Fragment>
                             <Typography
                               variant="body1"
-                              style={{ overflow: "visible", whiteSpace: "normal", textOverflow: "clip" }}
+                              style={{
+                                overflow: "visible",
+                                whiteSpace: "normal",
+                                textOverflow: "clip",
+                              }}
                               sx={{ display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px" }}
                               component="span"
                               color="text.primary"
