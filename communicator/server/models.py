@@ -52,8 +52,12 @@ class Server(models.Model):
                                validators=[validate_image_extension])
     icon = models.ImageField(upload_to=server_icon_path, null=True, blank=True,
                              validators=[validate_image_size, validate_image_extension])
+    private = models.BooleanField(default=False)
+    password = models.CharField(max_length=128, blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        if self.private and not self.password:
+            raise ValueError("Private servers must have a password.")
         if self.id:
             exists = get_object_or_404(Server, id=self.id)
             if exists.icon != self.icon:
