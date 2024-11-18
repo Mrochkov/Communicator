@@ -10,7 +10,6 @@ import ProtectedRoute from "./service/ProtectedRoute.tsx";
 import SignUp from "./pages/SignUp.tsx";
 import MembershipProvider from "./context/MembershipContext.tsx";
 import CheckMembership from "./components/Membership/CheckMembership.tsx";
-import React from "react";
 import Profile from "./pages/Profile.tsx";
 
 const App = () => {

@@ -10,9 +10,9 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import { Server } from "../../@types/server";
+import { useMembershipContext } from "../../context/MembershipContext.tsx";
 import axios from "axios";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
 
@@ -24,8 +24,9 @@ const ServerChannels = (props: ServerChannelsProps) => {
   const jwtAxios = jwtAxiosInterceptor();
   const { data } = props;
   const theme = useTheme();
-  const server_name = data?.[0]?.name ?? "Server";
   const { serverId } = useParams();
+  const navigate = useNavigate(); // Import useNavigate for redirection
+  const { isUserMember } = useMembershipContext();
 
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
@@ -43,27 +44,23 @@ const ServerChannels = (props: ServerChannelsProps) => {
   };
 
   const handleAddChannel = async () => {
-  try {
-    const response = await jwtAxios.post(
-      `http://127.0.0.1:8000/api/server/${serverId}/channels/`,
-      {
-        name: channelName,
-      },
-      { withCredentials: true }
-    );
-    console.log("Channel added:", response.data);
-
-    window.location.reload();
-
-    handleClose();
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error adding channel:", error.response?.data || error.message);
-    } else {
-      console.error("Unexpected error:", error);
+    try {
+      const response = await jwtAxios.post(
+        `http://127.0.0.1:8000/api/server/${serverId}/channels/`,
+        { name: channelName },
+        { withCredentials: true }
+      );
+      console.log("Channel added:", response.data);
+      window.location.reload();
+      handleClose();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error adding channel:", error.response?.data || error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
-  }
-};
+  };
 
   const fetchChannels = async () => {
     try {
@@ -76,6 +73,13 @@ const ServerChannels = (props: ServerChannelsProps) => {
       console.error("Error fetching channels:", error);
     }
   };
+
+  // Redirect non-members to the server page
+  useEffect(() => {
+    if (!isUserMember) {
+      navigate(`/server/${serverId}`);
+    }
+  }, [isUserMember, navigate, serverId]);
 
   useEffect(() => {
     fetchChannels();
@@ -103,7 +107,7 @@ const ServerChannels = (props: ServerChannelsProps) => {
             whiteSpace: "nowrap",
           }}
         >
-          {server_name}
+          {data?.[0]?.name || "Server"}
         </Typography>
       </Box>
       <List sx={{ py: 0 }}>
@@ -112,34 +116,57 @@ const ServerChannels = (props: ServerChannelsProps) => {
         ) : (
           channels.map((item) => (
             <ListItem disablePadding key={item.id} sx={{ display: "block", maxHeight: "40px" }} dense={true}>
-              <Link to={`/server/${serverId}/${item.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                <ListItemButton sx={{ minHeight: 48 }}>
+              {isUserMember ? (
+                <Link to={`/server/${serverId}/${item.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <ListItemButton sx={{ minHeight: 48 }}>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body1" textAlign="start" paddingLeft={1}>
+                          {item.name}
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </Link>
+              ) : (
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    opacity: 0.5,
+                    pointerEvents: "none",
+                  }}
+                >
                   <ListItemText
                     primary={
                       <Typography variant="body1" textAlign="start" paddingLeft={1}>
-                        {item.name}
+                        {item.name} (Members Only)
                       </Typography>
                     }
                   />
                 </ListItemButton>
-              </Link>
+              )}
             </ListItem>
           ))
         )}
       </List>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
-        <Button onClick={handleOpen} variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }}>
+        <Button
+          onClick={handleOpen}
+          variant="contained"
+          sx={{ backgroundColor: "gray", color: "white" }}
+          disabled={!isUserMember}
+        >
           Add Channel
         </Button>
       </Box>
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
             borderRadius: 2,

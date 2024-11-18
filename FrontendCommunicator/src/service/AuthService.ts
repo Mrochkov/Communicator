@@ -48,7 +48,7 @@ export function useAuthService(): AuthServiceProps {
             localStorage.setItem("user_id", user_id);
             setIsAuthenticated(true);
 
-            await getUserDetails(); // Fetch and set username after login
+            await getUserDetails();
         } catch (err: any) {
             return err.response.status;
         }
@@ -84,7 +84,7 @@ export function useAuthService(): AuthServiceProps {
         localStorage.removeItem("user_id");
         localStorage.removeItem("username");
         setIsAuthenticated(false);
-        setUsername(""); // Clear username on logout
+        setUsername("");
         navigate("/login");
 
         try {

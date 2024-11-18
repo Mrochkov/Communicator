@@ -11,9 +11,10 @@ import { useMembershipContext } from "../../context/MembershipContext.tsx";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
 import Chatbot from "../ChatBot/Chatbot.tsx";
 import {MEDIA_URL} from "../../config.ts";
+import JoinButton from "../Membership/JoinButton.tsx";
 
 interface Message {
-  sender: string;
+  sender_id: string;
   content: string;
   timestamp: string;
   sender_username?: string;
@@ -108,7 +109,8 @@ const TextingTemplate = (props: ServerChannelProps) => {
               Welcome to {server_name}
             </Typography>
             <Typography>{data?.[0]?.description ?? "This is our home"}</Typography>
-            <Typography sx={{ py: "50px" }}>Choose a channel to start talking!</Typography>
+            <Typography variant="h5" sx={{ py: "50px"  }}>Become a member to start interacting with this server!</Typography>
+            <JoinButton />
           </Box>
         </Box>
       ) : (

@@ -71,7 +71,7 @@ const TextingChannelsTemplate = (props: ServerChannelProps) => {
                     {channelName}
                 </Typography>
                 <Box sx={{ flexGrow: 1 }}></Box>
-                <JoinButton />
+                {/*<JoinButton />*/}
                 <Box sx={{display: {xs: "block", sm: "none"} }}>
                     <IconButton color="inherit" edge="end" onClick={toggleDrawer(true)}>
                         <MoreVert />
