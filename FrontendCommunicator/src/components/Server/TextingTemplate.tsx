@@ -14,7 +14,7 @@ import {MEDIA_URL} from "../../config.ts";
 import JoinButton from "../Membership/JoinButton.tsx";
 
 interface Message {
-  sender_id: string;
+  sender: string;
   content: string;
   timestamp: string;
   sender_username?: string;
@@ -129,7 +129,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
                         primary={
                           <>
                             <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-                              {msg.sender_username || "Unknown Sender"}
+                              {msg.sender || "Unknown Sender"}
                             </Typography>
                             <Typography component="span" variant="caption" color="text.secondary">
                               {" at "}{timeStampFormat(msg.timestamp)}

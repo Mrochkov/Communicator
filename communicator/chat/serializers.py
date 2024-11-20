@@ -4,15 +4,15 @@ from .models import Message
 
 class MessageSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    sender_id = serializers.StringRelatedField()
+    sender = serializers.StringRelatedField()
     content = serializers.StringRelatedField()
     timestamp = serializers.DateTimeField()
-    sender_username = serializers.CharField(source='sender_id.username', read_only=True)
-    sender_avatar = serializers.ImageField(source='sender_id.avatar', required=False)
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    sender_avatar = serializers.ImageField(source='sender.avatar', required=False)
 
     class Meta:
         model = Message
-        fields = ["id", "sender_id", "sender_username", "sender_avatar", "content", "timestamp"]
+        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "timestamp"]
 
 
 

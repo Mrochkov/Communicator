@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Count
 from .schema import server_list_docs
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, permission_classes
 from .models import Server, Category, Channel
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from asgiref.sync import async_to_sync
@@ -138,7 +138,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 
 class ServerCreateView(generics.CreateAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Server.objects.all()
     serializer_class = ServerCreateSerializer
 
@@ -175,6 +175,7 @@ class UserServersView(APIView):
         )
     ]
 )
+@permission_classes([AllowAny])
 @api_view(['POST'])
 def validate_password(request, server_id):
     try:

@@ -46,12 +46,12 @@ class ChatConsumer(JsonWebsocketConsumer):
     def receive_json(self, content):
 
         channel_id = self.channel_id
-        sender_id = self.user
+        sender = self.user
         message = content["message"]
 
         conversation, created = Conversation.objects.get_or_create(channel_id=channel_id)
 
-        new_message = Message.objects.create(conversation=conversation, sender_id=sender_id, content=message)
+        new_message = Message.objects.create(conversation=conversation, sender=sender, content=message)
 
         async_to_sync(self.channel_layer.group_send)(
             self.channel_id,
@@ -60,7 +60,8 @@ class ChatConsumer(JsonWebsocketConsumer):
                 "new_message":
                 {
                     "id": new_message.id,
-                    "sender": new_message.sender_id.username,
+                    "sender": new_message.sender.username,
+                    "sender_avatar": new_message.sender.avatar.url if new_message.sender.avatar else None,
                     "content": new_message.content,
                     "timestamp": new_message.timestamp.isoformat(),
                 },
@@ -73,4 +74,4 @@ class ChatConsumer(JsonWebsocketConsumer):
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(self.channel_id, self.channel_name)
         print(f"Disconnected from channel {self.channel_id} with close code {close_code}")
-        super().disconnect(close_code or 1000)
+        # super().disconnect(close_code or 1000)
