@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from rest_framework.routers import DefaultRouter
-from server.views import ServerListViewSet, CategoryListViewSet, MembershipViewSet, ChannelViewSet, ServerCreateView, UserServersView
+from server.views import ServerListViewSet, CategoryListViewSet, MembershipViewSet, ChannelViewSet, ServerCreateView, UserServersView, validate_password
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.consumer import ChatConsumer
@@ -48,7 +48,8 @@ urlpatterns = [
     path('user/avatar/<int:user_id>/', AvatarUpdateView.as_view(), name='avatar-update'),
     path('user/<int:user_id>/', UserDetailView.as_view(), name='user-detail'),
     path('translate/', translate_view, name='translate'),
-    path("chatbot/response/", ChatbotResponseView.as_view(), name="chatbot-response"),
+    path('chatbot/response/', ChatbotResponseView.as_view(), name="chatbot-response"),
+    path('server/<int:server_id>/validate_password/', validate_password, name='validate_password'),
 ] + router.urls
 
 websocket_urlpatterns = [path("<str:serverId>/<str:channelId>", ChatConsumer.as_asgi())]

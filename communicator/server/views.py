@@ -4,7 +4,8 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, status, generics
 from rest_framework.views import APIView
 
-from .serializer import ServerSerializer, CategorySerializer, ChannelSerializer, ServerCreateSerializer
+from .serializer import ServerSerializer, CategorySerializer, ChannelSerializer, ServerCreateSerializer, \
+    PasswordValidationSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -23,6 +24,12 @@ class MembershipViewSet(viewsets.ViewSet):
     def create(self, request, server_id):
         server = get_object_or_404(Server, id=server_id)
         user = request.user
+        password = request.data.get('password', '')
+
+        # if server.private:
+        #     if server.password != password:
+        #         return Response({"error": "Incorrect password"}, status=status.HTTP_403_FORBIDDEN)
+
         if server.member.filter(id=user.id).exists():
             return Response({"error": "User is already a member"}, status=status.HTTP_409_CONFLICT)
 
@@ -145,3 +152,42 @@ class UserServersView(APIView):
         servers = user.servers.all()
         return Response([server.serialize() for server in servers])
 
+@extend_schema(
+    request=PasswordValidationSerializer,
+    responses={
+        200: OpenApiExample(
+            name="Valid password",
+            value={"valid": True, "message": "Password is valid"}
+        ),
+        400: OpenApiExample(
+            name="Invalid password",
+            value={"valid": False, "message": "Incorrect password"}
+        ),
+    },
+    examples=[
+        OpenApiExample(
+            name="Valid request",
+            value={"password": "correct_password"}
+        ),
+        OpenApiExample(
+            name="Invalid request",
+            value={"password": "incorrect_password"}
+        )
+    ]
+)
+@api_view(['POST'])
+def validate_password(request, server_id):
+    try:
+        server = Server.objects.get(id=server_id)
+    except Server.DoesNotExist:
+        return Response({'error': 'Server not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    password = request.data.get('password')
+
+    if password is None:
+        return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if server.private and password == server.password:
+        return Response({'valid': True}, status=status.HTTP_200_OK)
+
+    return Response({'valid': False, 'message': 'Incorrect password'}, status=status.HTTP_400_BAD_REQUEST)
