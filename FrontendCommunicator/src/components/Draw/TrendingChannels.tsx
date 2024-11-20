@@ -11,6 +11,8 @@ import {
   Modal,
   TextField,
   Divider,
+  Checkbox,
+  FormControlLabel
 } from "@mui/material";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
@@ -40,14 +42,15 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   const [serverCategory, setServerCategory] = useState("");
   const [serverIcon, setServerIcon] = useState<any>(null);
   const [serverBanner, setServerBanner] = useState<any>(null);
+  const [isPrivate, setIsPrivate] = useState(false); // Track if the server is private
+  const [password, setPassword] = useState(""); // Track the password
   const { dataCRUD, error, isLoading, fetchData } = thisUseCRUD<Server>([], "/server/select/");
 
   const theme = useTheme();
 
   useEffect(() => {
-        fetchData();
-    }, []);
-
+    fetchData();
+  }, []);
 
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => {
@@ -56,37 +59,41 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
     setServerCategory("");
     setServerIcon(null);
     setServerBanner(null);
+    setIsPrivate(false); // Reset privacy state
+    setPassword(""); // Reset password field
   };
 
   const handleAddServer = async () => {
-  const formData = new FormData();
-  formData.append("name", serverName);
-  formData.append("category", serverCategory);
+    const formData = new FormData();
+    formData.append("name", serverName);
+    formData.append("category", serverCategory);
 
-  if (serverIcon) {
-    formData.append("icon", serverIcon);
-  }
-  if (serverBanner) {
-    formData.append("banner", serverBanner);
-  }
+    if (serverIcon) {
+      formData.append("icon", serverIcon);
+    }
+    if (serverBanner) {
+      formData.append("banner", serverBanner);
+    }
+    if (isPrivate) {
+      formData.append("private", "true");
+      formData.append("password", password); // Add password if private
+    }
 
-  try {
-    const response = await jwtAxios.post("http://127.0.0.1:8000/api/server/create/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true,
-    });
+    try {
+      const response = await jwtAxios.post("http://127.0.0.1:8000/api/server/create/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
 
-    setDataCRUD((prevData) => [...prevData, response.data]);
-
-    fetchData();
-
-    handleClose();
-  } catch (error) {
-    console.error("Error creating server:", error.response?.data || error.message);
-  }
-};
+      setDataCRUD((prevData) => [...prevData, response.data]);
+      fetchData();
+      handleClose();
+    } catch (error) {
+      console.error("Error creating server:", error.response?.data || error.message);
+    }
+  };
 
   return (
     <>
@@ -153,6 +160,30 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             Upload Icon
             <input type="file" hidden onChange={(event) => setServerIcon(event.target.files[0])} />
           </Button>
+
+          {/* Privacy Checkbox */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isPrivate}
+                onChange={(e) => setIsPrivate(e.target.checked)}
+              />
+            }
+            label="Private Server"
+          />
+
+          {/* Conditionally show password field if private */}
+          {isPrivate && (
+            <TextField
+              label="Password"
+              variant="outlined"
+              fullWidth
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+          )}
 
           <Button variant="contained" color="primary" onClick={handleAddServer} disabled={!serverName || !serverCategory}>
             Create Server
