@@ -5,6 +5,8 @@ export interface Server {
     description: string;
     icon: string;
     category: string;
+    private: boolean; 
+    password?: string;
     channel_server: {
         id: number;
         name: string;

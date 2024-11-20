@@ -23,8 +23,8 @@ const useMembership = (): useServerInterface => {
     const joinServer = async (serverId: number): Promise<void> => {
     setIsLoading(true);
     try {
-        await jwtAxios.post(`${BASE_URL}/membership/${serverId}/membership/`, {}, { withCredentials: true });
-        setIsUserMember(true);  // Immediately set after successful join
+        await jwtAxios.post(`http://127.0.0.1:8000/api/membership/${serverId}/membership/`,{}, { withCredentials: true });
+        setIsUserMember(true);
         console.log("User has joined the server");
     } catch (error: any) {
         setError(error);
@@ -37,7 +37,7 @@ const useMembership = (): useServerInterface => {
     const leaveServer = async (serverId: number): Promise<void> =>{
         setIsLoading(true);
         try{
-            await jwtAxios.delete(`${BASE_URL}/membership/${serverId}/membership/remove_member/`, {withCredentials: true});
+            await jwtAxios.delete(`http://127.0.0.1:8000/api/membership/${serverId}/membership/remove_member/`, {withCredentials: true});
             setIsLoading(false)
             setIsUserMember(false)
         }catch (error: any) {
@@ -50,7 +50,7 @@ const useMembership = (): useServerInterface => {
     const isMember = async (serverId: number): Promise<boolean> => {
     setIsLoading(true);
     try {
-        const response = await jwtAxios.get(`${BASE_URL}/membership/${serverId}/membership/is_member/`, { withCredentials: true });
+        const response = await jwtAxios.get(`http://127.0.0.1:8000/api/membership/${serverId}/membership/is_member/`, { withCredentials: true });
         setIsUserMember(response.data.is_member);
         console.log("Updated isUserMember:", response.data.is_member);
         return response.data.is_member;
