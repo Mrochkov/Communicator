@@ -9,11 +9,21 @@ class MessageSerializer(serializers.Serializer):
     timestamp = serializers.DateTimeField()
     sender_username = serializers.CharField(source='sender.username', read_only=True)
     sender_avatar = serializers.ImageField(source='sender.avatar', required=False)
+    reply_to = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "timestamp"]
+        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "timestamp", "reply_to",]
 
+    def get_reply_to(self, obj):
+        if obj.reply_to:
+            return {
+                "id": obj.reply_to.id,
+                "sender": obj.reply_to.sender.username,
+                "content": obj.reply_to.content,
+                "timestamp": obj.reply_to.timestamp,
+            }
+        return None
 
 
 class TranslateSerializer(serializers.Serializer):

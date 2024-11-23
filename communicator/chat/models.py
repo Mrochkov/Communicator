@@ -12,5 +12,5 @@ class Message(models.Model):
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-
+    reply_to = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
 

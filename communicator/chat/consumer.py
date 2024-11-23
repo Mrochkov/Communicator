@@ -1,6 +1,8 @@
 import json
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
+from django.shortcuts import get_object_or_404
+
 from .models import Message, Conversation
 from django.contrib.auth import get_user_model
 from server.models import Server
@@ -16,7 +18,6 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.channel_id = None
         self.user = None
         self.is_member = False
-        # self.server_id = kwargs.get('server_id')
 
     def update_membership(self, event):
         user_id = event["user_id"]
@@ -25,45 +26,60 @@ class ChatConsumer(JsonWebsocketConsumer):
             self.is_member = is_member
 
     def connect(self):
-
         self.user = self.scope["user"]
-        self.accept()
+        self.channel_id = self.scope["url_route"]["kwargs"].get("channelId")
+        print(f"Connecting to channel: {self.channel_id}")  # Debugging
+
         if not self.user.is_authenticated:
-            print(self.user)
             self.close(code=4001)
+            return
 
-        # Called on connection.
-        # To accept the connection call:
-        self.channel_id = self.scope["url_route"]["kwargs"]["channelId"]
+        if not self.channel_id or not self.channel_id.isalnum():
+            print(f"Invalid channel_id: {self.channel_id}")  # Debugging
+            self.close(code=4002)
+            return
 
-        self.user = User.objects.get(id=self.user.id)
-
-        async_to_sync(self.channel_layer.group_add)(
-            self.channel_id,
-            self.channel_name
-        )
+        async_to_sync(self.channel_layer.group_add)(self.channel_id, self.channel_name)
+        self.accept()
 
     def receive_json(self, content):
-
         channel_id = self.channel_id
         sender = self.user
         message = content["message"]
+        reply_to_id = content.get("reply_to")  # Optional reply-to message ID
 
+        # Fetch or create the conversation
         conversation, created = Conversation.objects.get_or_create(channel_id=channel_id)
 
-        new_message = Message.objects.create(conversation=conversation, sender=sender, content=message)
+        # Fetch the replied-to message if provided
+        reply_to_message = None
+        if reply_to_id:
+            reply_to_message = get_object_or_404(Message, id=reply_to_id, conversation=conversation)
 
+        # Create the new message with the reply_to relationship if applicable
+        new_message = Message.objects.create(
+            conversation=conversation,
+            sender=sender,
+            content=message,
+            reply_to=reply_to_message,  # Save the reply-to relationship
+        )
+
+        # Broadcast the message with the reply-to information if available
         async_to_sync(self.channel_layer.group_send)(
             self.channel_id,
             {
                 "type": "chat.message",
-                "new_message":
-                {
+                "new_message": {
                     "id": new_message.id,
                     "sender": new_message.sender.username,
                     "sender_avatar": new_message.sender.avatar.url if new_message.sender.avatar else None,
                     "content": new_message.content,
                     "timestamp": new_message.timestamp.isoformat(),
+                    "reply_to": {
+                        "id": reply_to_message.id,
+                        "content": reply_to_message.content,
+                        "sender": reply_to_message.sender.username,
+                    } if reply_to_message else None,
                 },
             },
         )
