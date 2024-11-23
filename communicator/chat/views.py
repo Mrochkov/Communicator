@@ -14,18 +14,18 @@ from .translator_service import translate_text
 
 class MessageViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
+
     @list_message_docs
     def list(self, request):
         channel_id = request.query_params.get('channel_id')
 
         try:
             conversation = Conversation.objects.get(channel_id=channel_id)
-            message = conversation.message.all()
-            serializer = MessageSerializer(message, many=True)
+            messages = conversation.message.all()
+            serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data)
-
         except Conversation.DoesNotExist:
-            return Response([])
+            return Response([], status=status.HTTP_404_NOT_FOUND)
 
 @extend_schema(
     request=TranslateSerializer,
