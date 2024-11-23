@@ -20,7 +20,7 @@ interface Message {
   timestamp: string;
   sender_username?: string;
   sender_avatar?: string;
-  reply_to?: Message; // Reference to the replied message
+  reply_to?: Message;
 }
 
 interface ServerChannelProps {
@@ -30,7 +30,7 @@ interface ServerChannelProps {
 interface SendMessageData {
   type: string;
   message: string;
-  reply_to?: string; // Include the ID of the message being replied to
+  reply_to?: string;
   [key: string]: any;
 }
 
@@ -48,11 +48,10 @@ const TextingTemplate = (props: ServerChannelProps) => {
 
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
 
-  // On component mount, check if there's a saved "replyTo" in localStorage
   useEffect(() => {
     const savedReplyTo = localStorage.getItem("replyTo");
     if (savedReplyTo) {
-      setReplyTo(JSON.parse(savedReplyTo)); // Restore the replyTo state from localStorage
+      setReplyTo(JSON.parse(savedReplyTo));
     }
   }, []);
 
@@ -75,12 +74,12 @@ const TextingTemplate = (props: ServerChannelProps) => {
       message,
     };
     if (replyTo) {
-      messageData.reply_to = replyTo.id; // Include reply metadata
+      messageData.reply_to = replyTo.id;
     }
     sendJsonMessage(messageData);
-    setMessage(""); // Clear the input
-    setReplyTo(null); // Clear the reply state
-    localStorage.removeItem("replyTo"); // Remove from localStorage after sending
+    setMessage("");
+    setReplyTo(null);
+    localStorage.removeItem("replyTo");
   };
 
   function timeStampFormat(timestamp: string): string {
@@ -114,12 +113,12 @@ const TextingTemplate = (props: ServerChannelProps) => {
 
   const handleReply = (msg: Message) => {
     setReplyTo(msg);
-    localStorage.setItem("replyTo", JSON.stringify(msg)); // Save reply info to localStorage
+    localStorage.setItem("replyTo", JSON.stringify(msg));
   };
 
   const handleCancelReply = () => {
     setReplyTo(null);
-    localStorage.removeItem("replyTo"); // Remove from localStorage when canceled
+    localStorage.removeItem("replyTo");
   };
 
   return (
@@ -169,51 +168,51 @@ const TextingTemplate = (props: ServerChannelProps) => {
                         />
                       </ListItemAvatar>
                       <ListItemText
-  primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
-  primary={
-    <>
-      <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-        {msg.sender || "Unknown Sender"}
-      </Typography>
-      <Typography component="span" variant="caption" color="text.secondary">
-        {" at "}
-        {timeStampFormat(msg.timestamp)}
-      </Typography>
-    </>
-  }
-  secondary={
-    <Fragment>
-      {msg.reply_to && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
-        >
-          Replying to: {msg.reply_to.content}
-        </Typography>
-      )}
-      <Typography
-        variant="body1"
-        style={{
-          overflow: "visible",
-          whiteSpace: "normal",
-          textOverflow: "clip",
-        }}
-        sx={{ display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px" }}
-        component="span"
-        color="text.primary"
-      >
-        {translatedMessages.get(index) || msg.content}
-      </Typography>
-      <Button size="small" onClick={() => handleReply(msg)}>
-        Reply
-      </Button>
-      <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
-        Translate
-      </Button>
-    </Fragment>
-  }
-/>
+                        primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
+                        primary={
+                          <>
+                            <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
+                              {msg.sender || "Unknown Sender"}
+                            </Typography>
+                            <Typography component="span" variant="caption" color="text.secondary">
+                              {" at "}
+                              {timeStampFormat(msg.timestamp)}
+                            </Typography>
+                          </>
+                        }
+                        secondary={
+                          <Fragment>
+                            {msg.reply_to && (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
+                              >
+                                Replying to: {msg.reply_to.content}
+                              </Typography>
+                            )}
+                            <Typography
+                              variant="body1"
+                              style={{
+                                overflow: "visible",
+                                whiteSpace: "normal",
+                                textOverflow: "clip",
+                              }}
+                              sx={{ display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px" }}
+                              component="span"
+                              color="text.primary"
+                            >
+                              {translatedMessages.get(index) || msg.content}
+                            </Typography>
+                            <Button size="small" onClick={() => handleReply(msg)}>
+                              Reply
+                            </Button>
+                            <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
+                              Translate
+                            </Button>
+                          </Fragment>
+                        }
+                      />
                     </ListItem>
                   );
                 })}

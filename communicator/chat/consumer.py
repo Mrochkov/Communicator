@@ -28,14 +28,14 @@ class ChatConsumer(JsonWebsocketConsumer):
     def connect(self):
         self.user = self.scope["user"]
         self.channel_id = self.scope["url_route"]["kwargs"].get("channelId")
-        print(f"Connecting to channel: {self.channel_id}")  # Debugging
+        print(f"Connecting to channel: {self.channel_id}")
 
         if not self.user.is_authenticated:
             self.close(code=4001)
             return
 
         if not self.channel_id or not self.channel_id.isalnum():
-            print(f"Invalid channel_id: {self.channel_id}")  # Debugging
+            print(f"Invalid channel_id: {self.channel_id}")
             self.close(code=4002)
             return
 
@@ -46,25 +46,21 @@ class ChatConsumer(JsonWebsocketConsumer):
         channel_id = self.channel_id
         sender = self.user
         message = content["message"]
-        reply_to_id = content.get("reply_to")  # Optional reply-to message ID
+        reply_to_id = content.get("reply_to")
 
-        # Fetch or create the conversation
         conversation, created = Conversation.objects.get_or_create(channel_id=channel_id)
 
-        # Fetch the replied-to message if provided
         reply_to_message = None
         if reply_to_id:
             reply_to_message = get_object_or_404(Message, id=reply_to_id, conversation=conversation)
 
-        # Create the new message with the reply_to relationship if applicable
         new_message = Message.objects.create(
             conversation=conversation,
             sender=sender,
             content=message,
-            reply_to=reply_to_message,  # Save the reply-to relationship
+            reply_to=reply_to_message,
         )
 
-        # Broadcast the message with the reply-to information if available
         async_to_sync(self.channel_layer.group_send)(
             self.channel_id,
             {
