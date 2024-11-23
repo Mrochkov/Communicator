@@ -68,7 +68,7 @@ const TextingChannelsTemplate = (props: ServerChannelProps) => {
                     </ListItemAvatar>
                 </Box>
                 <Typography noWrap component="div">
-                    {channelName}
+                    Channel: {channelName}
                 </Typography>
                 <Box sx={{ flexGrow: 1 }}></Box>
                 {/*<JoinButton />*/}
