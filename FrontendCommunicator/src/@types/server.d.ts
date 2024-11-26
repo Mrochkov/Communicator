@@ -14,4 +14,5 @@ export interface Server {
         topic: string;
         owner: number;
     }[];
+    member: { id: number; username: string; avatar_url: string | null }[];
 }

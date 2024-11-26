@@ -11,6 +11,7 @@ import SignUp from "./pages/SignUp.tsx";
 import MembershipProvider from "./context/MembershipContext.tsx";
 import CheckMembership from "./components/Membership/CheckMembership.tsx";
 import Profile from "./pages/Profile.tsx";
+import ServerSettings from "./pages/ServerSettings.tsx";
 
 const App = () => {
     return (
@@ -24,6 +25,16 @@ const App = () => {
                                 <MembershipProvider>
                                     <CheckMembership>
                                         <Server />
+                                    </CheckMembership>
+                                </MembershipProvider>
+                            </ProtectedRoute>
+                        }
+                        />
+                        <Route path="/server/:serverId/settings" element={
+                            <ProtectedRoute>
+                                <MembershipProvider>
+                                    <CheckMembership>
+                                        <ServerSettings />
                                     </CheckMembership>
                                 </MembershipProvider>
                             </ProtectedRoute>
