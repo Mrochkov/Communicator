@@ -1,29 +1,30 @@
-<h2>Communicator App</h2>
+<h1>Communicator App</h1>
 
 A modern communicator app built with Django (backend) and React (frontend), offering an intuitive and feature-rich platform similar to Discord. The application integrates AI-powered features to enhance the user experience, making communication smarter and more engaging.
 
-Features
+<h2>Features</h2>
 
-Real-Time Messaging: 
+<h3>Real-Time Messaging:</h3> 
 Seamless, real-time chat functionality.
 Messages language translation.
 
-AI Integration:
+<h3>AI Integration:</h3>
 Chatbot to help new and lonely users.
 Intelligent message suggestions and auto-completion.
 Chat summarization to quickly review past conversations.
 
-Channel and Group Support:
+<h3>Channel and Group Support:</h3>
 Create and manage channels for group discussions or private interactions.
 Role-based access control for managing user permissions within channels.
 
-User Management:
+<h3>User Management:</h3>
 Secure user authentication and profile management.
 You can add your own photo/gif as a profile picture.
 
-Customizable Themes: Personalize the app’s appearance with light and dark modes.
+<h3>Customizable Themes:</h3> 
+Personalize the app’s appearance with light and dark modes.
 
-Tech Stack
+<h3>Tech Stack</h3>
 Frontend: React, MaterialUI.
 Backend: Django with Django REST Framework.
 Database: mySQL.
