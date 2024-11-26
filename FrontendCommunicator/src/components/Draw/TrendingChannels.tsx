@@ -42,8 +42,8 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   const [serverCategory, setServerCategory] = useState("");
   const [serverIcon, setServerIcon] = useState<any>(null);
   const [serverBanner, setServerBanner] = useState<any>(null);
-  const [isPrivate, setIsPrivate] = useState(false); // Track if the server is private
-  const [password, setPassword] = useState(""); // Track the password
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [password, setPassword] = useState("");
   const { dataCRUD, error, isLoading, fetchData } = thisUseCRUD<Server>([], "/server/select/");
 
   const theme = useTheme();
@@ -59,8 +59,8 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
     setServerCategory("");
     setServerIcon(null);
     setServerBanner(null);
-    setIsPrivate(false); // Reset privacy state
-    setPassword(""); // Reset password field
+    setIsPrivate(false);
+    setPassword("");
   };
 
   const handleAddServer = async () => {
@@ -76,7 +76,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
     }
     if (isPrivate) {
       formData.append("private", "true");
-      formData.append("password", password); // Add password if private
+      formData.append("password", password);
     }
 
     try {
@@ -161,7 +161,6 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             <input type="file" hidden onChange={(event) => setServerIcon(event.target.files[0])} />
           </Button>
 
-          {/* Privacy Checkbox */}
           <FormControlLabel
             control={
               <Checkbox
@@ -172,7 +171,6 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             label="Private Server"
           />
 
-          {/* Conditionally show password field if private */}
           {isPrivate && (
             <TextField
               label="Password"

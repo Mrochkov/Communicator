@@ -42,7 +42,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const { newMessage, message, setMessage, sendJsonMessage } = chatWebSocketHook(channelId || "", serverId || "");
   const { isUserMember } = useMembershipContext();
   const [translatedMessages, setTranslatedMessages] = useState<Map<number, string>>(new Map());
-  const [replyTo, setReplyTo] = useState<Message | null>(null); // State for the message being replied to
+  const [replyTo, setReplyTo] = useState<Message | null>(null);
   const jwtAxios = jwtAxiosInterceptor();
   const [useChatbot, setUseChatbot] = useState(false);
 
