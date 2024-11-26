@@ -24,7 +24,7 @@ A modern communicator app built with Django (backend) and React (frontend), offe
 <h3>Customizable Themes:</h3> 
 <p>Personalize the app’s appearance with light and dark modes.</p>
 
-<h3>Tech Stack</h3>
+<h2>Tech Stack</h2>
 <p>Frontend: React, MaterialUI.</p>
 <p>Backend: Django with Django REST Framework.</p>
 <p>Database: mySQL.</p>
