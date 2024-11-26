@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Divider, List, Typography, ListItem, ListItemAvatar, Avatar } from "@mui/material";
 import { useParams } from "react-router-dom";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor";
-import { MEDIA_URL } from "../../config.ts";
+import {MEDIA_URL} from "../config.ts";
 
 const ServerSettings: React.FC = () => {
   const { serverId } = useParams<{ serverId: string }>();
