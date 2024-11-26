@@ -25,8 +25,8 @@ A modern communicator app built with Django (backend) and React (frontend), offe
 <p>Personalize the app’s appearance with light and dark modes.</p>
 
 <h2>Tech Stack</h2>
-<p>Frontend: React, MaterialUI.</p>
-<p>Backend: Django with Django REST Framework.</p>
-<p>Database: mySQL.</p>
-<p>Real-Time Communication: WebSocket implementation using Django Channels.</p>
-<p>AI/ML: Integration of AI APIs/models for chat-related features.</p>
+<p><strong>Frontend:</strong> React, MaterialUI.</p>
+<p><strong>Backend:</strong> Django with Django REST Framework.</p>
+<p><strong>Database:</strong> mySQL.</p>
+<p><strong>Real-Time Communication:</strong> WebSocket implementation using Django Channels.</p>
+<p><strong>AI/ML:</strong> Integration of AI APIs/models for chat-related features.</p>
