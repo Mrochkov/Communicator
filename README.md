@@ -1,4 +1,4 @@
-Communicator App
+<h2>Communicator App</h2>
 
 A modern communicator app built with Django (backend) and React (frontend), offering an intuitive and feature-rich platform similar to Discord. The application integrates AI-powered features to enhance the user experience, making communication smarter and more engaging.
 
