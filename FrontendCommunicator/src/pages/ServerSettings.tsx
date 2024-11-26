@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Divider, List, Typography, ListItem, ListItemAvatar, Avatar } from "@mui/material";
+import {Box, Button, Divider, List, Typography, ListItem, ListItemAvatar, Avatar, Modal, TextField, DialogActions, DialogContent, DialogTitle, Dialog, IconButton, } from "@mui/material";
 import { useParams } from "react-router-dom";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor";
-import {MEDIA_URL} from "../config.ts";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { MEDIA_URL } from "../config.ts";
 
 const ServerSettings: React.FC = () => {
   const { serverId } = useParams<{ serverId: string }>();
-  const [serverDetails, setServerDetails] = useState<any>(null);
+  const [serverDetails, setServerDetails] = useState<any>(null); // Any type for simplicity
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [openServerModal, setOpenServerModal] = useState(false);
+  const [serverName, setServerName] = useState("");
+  const [serverCategory, setServerCategory] = useState("");
+  const [serverDescription, setServerDescription] = useState("");
+  const [selectedChannel, setSelectedChannel] = useState<any>(null); // Channel for editing
   const axiosInstance = jwtAxiosInterceptor();
 
   useEffect(() => {
@@ -40,6 +47,32 @@ const ServerSettings: React.FC = () => {
     console.log("Removing member with ID: ", userId);
   };
 
+  const handleEditServer = () => {
+    setOpenServerModal(true);
+    setServerName(serverDetails.name);
+    setServerCategory(serverDetails.category);
+    setServerDescription(serverDetails.description);
+  };
+
+  const handleSaveServerDetails = () => {
+    console.log("Saving server details", { serverName, serverCategory, serverDescription });
+    setOpenServerModal(false);
+  };
+
+  const handleDeleteChannel = async (channelId: number) => {
+    console.log("Deleting channel with ID:", channelId);
+  };
+
+  const handleEditChannel = (channel: any) => {
+    setSelectedChannel(channel);
+    console.log("Editing channel", channel);
+  };
+
+  const handleSaveChannel = () => {
+    console.log("Saving channel", selectedChannel);
+    setSelectedChannel(null);
+  };
+
   if (isLoading) return <Typography>Loading server settings...</Typography>;
   if (error) return <Typography>Error: {error}</Typography>;
 
@@ -54,6 +87,9 @@ const ServerSettings: React.FC = () => {
           <Typography variant="body1">Name: {serverDetails.name}</Typography>
           <Typography variant="body1">Category: {serverDetails.category}</Typography>
           <Typography variant="body1">Description: {serverDetails.description}</Typography>
+          <Button variant="contained" color="primary" onClick={handleEditServer}>
+            Edit Server Details
+          </Button>
           <Divider sx={{ margin: '20px 0' }} />
 
           <Box sx={{ marginBottom: 4 }}>
@@ -107,8 +143,16 @@ const ServerSettings: React.FC = () => {
             {serverDetails.channel_server && serverDetails.channel_server.length > 0 ? (
               <List>
                 {serverDetails.channel_server.map((channel: any) => (
-                  <ListItem key={channel.id}>
+                  <ListItem key={channel.id} sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Typography variant="body1">{channel.name}</Typography>
+                    <Box>
+                      <IconButton onClick={() => handleEditChannel(channel)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteChannel(channel.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
                   </ListItem>
                 ))}
               </List>
@@ -116,6 +160,103 @@ const ServerSettings: React.FC = () => {
               <Typography>No channels found.</Typography>
             )}
           </Box>
+
+          <Modal open={openServerModal} onClose={() => setOpenServerModal(false)}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "#121212",
+                color: "white",
+                padding: 3,
+                borderRadius: 2,
+                boxShadow: 24,
+                width: 400,
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Edit Server Details
+              </Typography>
+              <TextField
+                label="Server Name"
+                value={serverName}
+                onChange={(e) => setServerName(e.target.value)}
+                fullWidth
+                margin="normal"
+                sx={{ input: { color: 'white' }, label: { color: 'white' } }}  // Input field colors
+              />
+              <TextField
+                label="Category"
+                value={serverCategory}
+                onChange={(e) => setServerCategory(e.target.value)}
+                fullWidth
+                margin="normal"
+                sx={{ input: { color: 'white' }, label: { color: 'white' } }}
+              />
+              <TextField
+                label="Description"
+                value={serverDescription}
+                onChange={(e) => setServerDescription(e.target.value)}
+                fullWidth
+                margin="normal"
+                sx={{ input: { color: 'white' }, label: { color: 'white' } }}
+              />
+              <DialogActions>
+                <Button onClick={() => setOpenServerModal(false)} color="secondary">
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveServerDetails} color="primary">
+                  Save
+                </Button>
+              </DialogActions>
+            </Box>
+          </Modal>
+
+          {selectedChannel && (
+            <Modal
+              open={!!selectedChannel}
+              onClose={() => setSelectedChannel(null)}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "#121212",
+                  color: "white",
+                  padding: 3,
+                  borderRadius: 2,
+                  boxShadow: 24,
+                  width: 400,
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Edit Channel
+                </Typography>
+                <TextField
+                  label="Channel Name"
+                  value={selectedChannel.name}
+                  onChange={(e) =>
+                    setSelectedChannel({ ...selectedChannel, name: e.target.value })
+                  }
+                  fullWidth
+                  margin="normal"
+                  sx={{ input: { color: 'white' }, label: { color: 'white' } }}
+                />
+                <DialogActions>
+                  <Button onClick={() => setSelectedChannel(null)} color="secondary">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveChannel} color="primary">
+                    Save
+                  </Button>
+                </DialogActions>
+              </Box>
+            </Modal>
+          )}
         </>
       ) : (
         <Typography>Server details not found.</Typography>
