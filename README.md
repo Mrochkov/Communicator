@@ -5,28 +5,28 @@ A modern communicator app built with Django (backend) and React (frontend), offe
 <h2>Features</h2>
 
 <h3>Real-Time Messaging:</h3> 
-Seamless, real-time chat functionality.
-Messages language translation.
+<p>Seamless, real-time chat functionality.</p>
+<p>Messages language translation.</p>
 
 <h3>AI Integration:</h3>
-Chatbot to help new and lonely users.
-Intelligent message suggestions and auto-completion.
-Chat summarization to quickly review past conversations.
+<p>Chatbot to help new and lonely users.</p>
+<p>Intelligent message suggestions and auto-completion.</p>
+<p>Chat summarization to quickly review past conversations.</p>
 
 <h3>Channel and Group Support:</h3>
-Create and manage channels for group discussions or private interactions.
-Role-based access control for managing user permissions within channels.
+<p>Create and manage channels for group discussions or private interactions.</p>
+<p>Role-based access control for managing user permissions within channels.</p>
 
 <h3>User Management:</h3>
-Secure user authentication and profile management.
-You can add your own photo/gif as a profile picture.
+<p>Secure user authentication and profile management.</p>
+<p>You can add your own photo/gif as a profile picture.</p>
 
 <h3>Customizable Themes:</h3> 
-Personalize the app’s appearance with light and dark modes.
+<p>Personalize the app’s appearance with light and dark modes.</p>
 
 <h3>Tech Stack</h3>
-Frontend: React, MaterialUI.
-Backend: Django with Django REST Framework.
-Database: mySQL.
-Real-Time Communication: WebSocket implementation using Django Channels.
-AI/ML: Integration of AI APIs/models for chat-related features.
+<p>Frontend: React, MaterialUI.</p>
+<p>Backend: Django with Django REST Framework.</p>
+<p>Database: mySQL.</p>
+<p>Real-Time Communication: WebSocket implementation using Django Channels.</p>
+<p>AI/ML: Integration of AI APIs/models for chat-related features.</p>
