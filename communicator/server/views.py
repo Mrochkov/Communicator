@@ -18,6 +18,12 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import logging
 
+from communicator import settings
+from account.models import Account
+
+from chat.consumer import User
+
+
 class MembershipViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -68,6 +74,36 @@ class MembershipViewSet(viewsets.ViewSet):
         is_member = server.member.filter(id=user.id).exists()
         return Response({"is_member": is_member})
 
+    @action(detail=False, methods=["POST"], url_path="remove_member_from_server/(?P<user_id>\d+)")
+    def remove_member_from_server(self, request, server_id=None, user_id=None):
+        server = get_object_or_404(Server, id=server_id)
+        user_to_remove = get_object_or_404(User, id=user_id)
+
+        if not server.member.filter(id=user_to_remove.id).exists():
+            return Response({"error": "User is not a member of this server"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if request.user != server.owner:
+            return Response({"error": "You are not authorized to remove members from this server"},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        if request.user == user_to_remove:
+            return Response({"error": "The server owner cannot remove themselves from the server"},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        server.member.remove(user_to_remove)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"server_{server_id}",
+            {
+                "type": "update_membership",
+                "user_id": user_to_remove.id,
+                "is_member": False
+            }
+        )
+
+        return Response({"message": "User has been removed from the server"}, status=status.HTTP_200_OK)
+
 
 class CategoryListViewSet(viewsets.ViewSet):
     queryset = Category.objects.all()
@@ -116,6 +152,26 @@ class ServerListViewSet(viewsets.ViewSet):
 
         return Response(serializer.data)
 
+    @action(detail=True, methods=['PATCH'])
+    def edit_details(self, request, pk=None):
+        server = get_object_or_404(Server, id=pk)
+        if request.user != server.owner:
+            return Response({'error': 'Only the owner can edit server details.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = ServerCreateSerializer(server, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['DELETE'])
+    def delete(self, request, pk=None):
+        server = get_object_or_404(Server, id=pk)
+        if request.user != server.owner:
+            return Response({'error': 'Only the owner can delete the server.'}, status=status.HTTP_403_FORBIDDEN)
+
+        server.delete()
+        return Response({'message': 'Server deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 class ChannelViewSet(viewsets.ModelViewSet):
     serializer_class = ChannelSerializer
@@ -136,6 +192,25 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
         return Response(ChannelSerializer(channel).data, status=status.HTTP_201_CREATED)
 
+    def partial_update(self, request, pk=None, server_id=None):
+        channel = get_object_or_404(Channel, id=pk, server_id=server_id)
+        if request.user != channel.owner:
+            return Response({'error': 'Only the channel owner can edit the channel.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = ChannelSerializer(channel, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, pk=None, server_id=None):
+        channel = get_object_or_404(Channel, id=pk, server_id=server_id)
+        if request.user != channel.owner:
+            return Response({'error': 'Only the channel owner can delete the channel.'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        channel.delete()
+        return Response({'message': 'Channel deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 class ServerCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
