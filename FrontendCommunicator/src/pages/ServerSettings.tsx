@@ -1,23 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  List,
-  Typography,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  Modal,
-  TextField,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Dialog,
-  IconButton,
-  CssBaseline,
-  Container,
-  ListItemButton, ListItemIcon, ListItemText,
+import {Box, Button, Divider, List, Typography, ListItem, ListItemAvatar, Avatar, Modal, TextField, DialogActions, DialogContent, DialogTitle, Dialog, IconButton, CssBaseline, Container, ListItemButton, ListItemIcon, ListItemText,
 } from "@mui/material";
 import {Link, useParams} from "react-router-dom";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor";
@@ -25,9 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { MEDIA_URL } from "../config.ts";
 import Navbar from "./templates/Navbar.tsx";
-import ServerUsers from "../components/Server/ServerUsers.tsx";
 import Draw from "./templates/Draw.tsx";
-import {Css} from "@mui/icons-material";
 
 interface User {
     id: number;
@@ -174,28 +154,23 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
   if (error) return <Typography>Error: {error}</Typography>;
 
   return (
-
   <Container maxWidth="sm" sx={{ mt: 5 }}>
   <CssBaseline />
     <Navbar />
-
     <Draw>
-
       <Box
-                sx={{
-                    height: 50,
-                    p: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    flex: "1 1 100%",
-                }}
-            > Current server
-                <Typography sx={{ display: open ? "block" : "none"}}>
-                    Current server
-                </Typography>
-            </Box>
-
-
+          sx={{
+              height: 50,
+              p: 2,
+              display: "flex",
+              alignItems: "center",
+              flex: "1 1 100%",
+          }}
+      > Current server
+          <Typography sx={{ display: open ? "block" : "none"}}>
+              Current server
+          </Typography>
+      </Box>
         <ListItem disablePadding sx={{ display: "flex", flex: 1 }} dense>
           <Link
             to={`/server/${serverDetails?.id}`}
