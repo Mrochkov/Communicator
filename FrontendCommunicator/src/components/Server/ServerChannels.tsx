@@ -15,6 +15,7 @@ import { useTheme } from "@mui/material/styles";
 import { useMembershipContext } from "../../context/MembershipContext.tsx";
 import axios from "axios";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
+import {Server} from "../../@types/server";
 
 interface ServerChannelsProps {
   data: Server[];
@@ -74,7 +75,6 @@ const ServerChannels = (props: ServerChannelsProps) => {
     }
   };
 
-  // Redirect non-members to the server page
   useEffect(() => {
     if (!isUserMember) {
       navigate(`/server/${serverId}`);

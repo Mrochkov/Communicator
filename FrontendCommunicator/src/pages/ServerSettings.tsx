@@ -1,21 +1,66 @@
 import React, { useEffect, useState } from "react";
-import {Box, Button, Divider, List, Typography, ListItem, ListItemAvatar, Avatar, Modal, TextField, DialogActions, DialogContent, DialogTitle, Dialog, IconButton, } from "@mui/material";
-import { useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Divider,
+  List,
+  Typography,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  Modal,
+  TextField,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Dialog,
+  IconButton,
+  CssBaseline,
+  Container,
+  ListItemButton, ListItemIcon, ListItemText,
+} from "@mui/material";
+import {Link, useParams} from "react-router-dom";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { MEDIA_URL } from "../config.ts";
+import Navbar from "./templates/Navbar.tsx";
+import ServerUsers from "../components/Server/ServerUsers.tsx";
+import Draw from "./templates/Draw.tsx";
+import {Css} from "@mui/icons-material";
 
-const ServerSettings: React.FC = () => {
+interface User {
+    id: number;
+    username: string;
+    avatar_url: string | null;
+}
+
+interface Server {
+    id: number;
+    name: string;
+    category: string;
+    icon: string;
+    member: User[];
+}
+
+interface ServerChannelsProps {
+    data: Server[];
+}
+
+type Props = {
+    open: boolean;
+};
+
+const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) => {
   const { serverId } = useParams<{ serverId: string }>();
-  const [serverDetails, setServerDetails] = useState<any>(null); // Any type for simplicity
+  const [serverDetails, setServerDetails] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openServerModal, setOpenServerModal] = useState(false);
   const [serverName, setServerName] = useState("");
   const [serverCategory, setServerCategory] = useState("");
   const [serverDescription, setServerDescription] = useState("");
-  const [selectedChannel, setSelectedChannel] = useState<any>(null); // Channel for editing
+  const [selectedChannel, setSelectedChannel] = useState<any>(null);
   const axiosInstance = jwtAxiosInterceptor();
 
   useEffect(() => {
@@ -44,8 +89,19 @@ const ServerSettings: React.FC = () => {
   };
 
   const handleRemoveMember = async (userId: number) => {
-    console.log("Removing member with ID: ", userId);
-  };
+    try {
+        const response = await axiosInstance.post(
+            `http://127.0.0.1:8000/api/membership/${serverId}/membership/remove_member_from_server/${userId}/`,
+            {
+                data: { member_id: userId },
+            }, {withCredentials: true}
+        );
+        console.log("Member removed:", response.data);
+        fetchServerDetails();
+    } catch (err: any) {
+        console.error("Error removing member:", err.message);
+    }
+};
 
   const handleEditServer = () => {
     setOpenServerModal(true);
@@ -54,29 +110,133 @@ const ServerSettings: React.FC = () => {
     setServerDescription(serverDetails.description);
   };
 
-  const handleSaveServerDetails = () => {
-    console.log("Saving server details", { serverName, serverCategory, serverDescription });
+
+  const handleSaveServerDetails = async () => {
+  try {
+    const response = await axiosInstance.patch(
+      `http://127.0.0.1:8000/api/server/select/${serverId}/edit_details/`,
+      {
+        id: serverId,
+        name: serverName,
+        category: serverCategory,
+        description: serverDescription,
+      },
+      { withCredentials: true }
+    );
+    console.log("Server details updated:", response.data);
+    fetchServerDetails();
     setOpenServerModal(false);
-  };
+  } catch (err: any) {
+    console.error("Error updating server details:", err.message);
+  }
+};
 
   const handleDeleteChannel = async (channelId: number) => {
-    console.log("Deleting channel with ID:", channelId);
-  };
+  try {
+    const response = await axiosInstance.delete(
+      `http://127.0.0.1:8000/api/server/${serverId}/channels/${channelId}/`,
+      {
+        data: { id: channelId },
+        withCredentials: true,
+      }
+    );
+    console.log("Channel deleted:", response.data);
+    fetchServerDetails();
+  } catch (err: any) {
+    console.error("Error deleting channel:", err.message);
+  }
+};
 
   const handleEditChannel = (channel: any) => {
     setSelectedChannel(channel);
     console.log("Editing channel", channel);
   };
 
-  const handleSaveChannel = () => {
-    console.log("Saving channel", selectedChannel);
+  const handleSaveChannel = async () => {
+  try {
+    const response = await axiosInstance.patch(
+      `http://127.0.0.1:8000/api/server/${serverId}/channels/${selectedChannel.id}/`,
+      {
+        id: selectedChannel.id,
+        name: selectedChannel.name,
+      },
+      { withCredentials: true }
+    );
+    console.log("Channel updated:", response.data);
+    fetchServerDetails();
     setSelectedChannel(null);
-  };
+  } catch (err: any) {
+    console.error("Error updating channel:", err.message);
+  }
+};
 
   if (isLoading) return <Typography>Loading server settings...</Typography>;
   if (error) return <Typography>Error: {error}</Typography>;
 
   return (
+
+  <Container maxWidth="sm" sx={{ mt: 5 }}>
+  <CssBaseline />
+    <Navbar />
+
+    <Draw>
+
+      <Box
+                sx={{
+                    height: 50,
+                    p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    flex: "1 1 100%",
+                }}
+            > Current server
+                <Typography sx={{ display: open ? "block" : "none"}}>
+                    Current server
+                </Typography>
+            </Box>
+
+
+        <ListItem disablePadding sx={{ display: "flex", flex: 1 }} dense>
+          <Link
+            to={`/server/${serverDetails?.id}`}
+            style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center" }}
+          >
+            <ListItemAvatar sx={{ minWidth: "50px" }}>
+              <Avatar alt="Server Icon" src={`${MEDIA_URL}${serverDetails?.icon}`} />
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {serverDetails?.name}
+                </Typography>
+              }
+              secondary={
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 500,
+                    lineHeight: 1.2,
+                    color: "textSecondary",
+                  }}
+                >
+                  {serverDetails?.category}
+                </Typography>
+              }
+            />
+          </Link>
+
+        </ListItem>
+    </Draw>
+
     <Box sx={{ padding: 2 }}>
       {serverDetails ? (
         <>
@@ -185,7 +345,7 @@ const ServerSettings: React.FC = () => {
                 onChange={(e) => setServerName(e.target.value)}
                 fullWidth
                 margin="normal"
-                sx={{ input: { color: 'white' }, label: { color: 'white' } }}  // Input field colors
+                sx={{ input: { color: 'white' }, label: { color: 'white' } }}
               />
               <TextField
                 label="Category"
@@ -262,6 +422,7 @@ const ServerSettings: React.FC = () => {
         <Typography>Server details not found.</Typography>
       )}
     </Box>
+</Container>
   );
 };
 
