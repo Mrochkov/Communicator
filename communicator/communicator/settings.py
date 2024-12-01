@@ -14,6 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 AZURE_TRANSLATOR_KEY = "5w7Pz311T4VSWpa3yrGbt1wUP90ynEaxWfdbs6AdKtmxmn8TMgeSJQQJ99AKAC5RqLJXJ3w3AAAbACOGzfBB"
 AZURE_TRANSLATOR_REGION = "westeurope"
 # SECURITY WARNING: don't run with debug turned on in production!
