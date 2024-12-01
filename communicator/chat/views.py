@@ -18,7 +18,8 @@ import logging
 from communicator import settings
 
 openai.api_key = settings.OPENAI_API_KEY
-
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class MessageViewSet(viewsets.ViewSet):
