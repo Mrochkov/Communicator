@@ -123,6 +123,12 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const handleReply = (msg: Message) => {
   setReplyTo(msg);
   localStorage.setItem("replyTo", JSON.stringify(msg));
+  //fetchReplySuggestions(msg.id); // Fetch and show suggestions.
+};
+
+  const handleReplAI = (msg: Message) => {
+  setReplyTo(msg);
+  localStorage.setItem("replyTo", JSON.stringify(msg));
   fetchReplySuggestions(msg.id); // Fetch and show suggestions.
 };
 
@@ -248,6 +254,9 @@ const TextingTemplate = (props: ServerChannelProps) => {
                           </Typography>
                           <Button size="small" onClick={() => handleReply(msg)}>
                             Reply
+                          </Button>
+                          <Button size="small" onClick={() => handleReplAI(msg)}>
+                            ReplAI
                           </Button>
                           <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
                             Translate
