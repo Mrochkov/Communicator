@@ -17,6 +17,8 @@ import ServerChannels from "./ServerChannels.tsx";
 import {useEffect, useState} from "react";
 import {MoreVert} from "@mui/icons-material";
 import JoinButton from "../Membership/JoinButton.tsx";
+import ChannelRecapButton from "../ChatBot/ChannelRecapButton.tsx";
+
 
 interface ServerChannelProps {
     data: Server[];
@@ -71,7 +73,7 @@ const TextingChannelsTemplate = (props: ServerChannelProps) => {
                     Channel: {channelName}
                 </Typography>
                 <Box sx={{ flexGrow: 1 }}></Box>
-                {/*<JoinButton />*/}
+                <ChannelRecapButton channelId={channelId || ""} />
                 <Box sx={{display: {xs: "block", sm: "none"} }}>
                     <IconButton color="inherit" edge="end" onClick={toggleDrawer(true)}>
                         <MoreVert />
