@@ -162,6 +162,8 @@ const TextingTemplate = (props: ServerChannelProps) => {
     return `${dateFormatted} at ${timeFormatted}`;
   };
 
+  // @ts-ignore
+  // @ts-ignore
   return (
     <>
       <Button onClick={toggleChatbot}>
