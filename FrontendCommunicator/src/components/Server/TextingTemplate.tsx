@@ -1,9 +1,18 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Box, List, ListItem, ListItemText, TextField, Typography, Button } from "@mui/material";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+  Button,
+  Modal,
+  ListItemAvatar,
+  Avatar,
+} from "@mui/material";
 import TextingChannelsTemplate from "./TextingChannelsTemplate.tsx";
-import Avatar from "@mui/material/Avatar";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
 import { useTheme } from "@mui/material/styles";
 import Scrolling from "../Main/Scrolling.tsx";
 import chatWebSocketHook from "../../service/chatService.ts";
@@ -45,6 +54,8 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const [replyTo, setReplyTo] = useState<Message | null>(null);
   const jwtAxios = jwtAxiosInterceptor();
   const [useChatbot, setUseChatbot] = useState(false);
+  const [replySuggestions, setReplySuggestions] = useState<string[]>([]);
+  const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
 
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
 
@@ -79,15 +90,48 @@ const TextingTemplate = (props: ServerChannelProps) => {
     sendJsonMessage(messageData);
     setMessage("");
     setReplyTo(null);
+    setReplySuggestions([]);
+    setShowSuggestionsModal(false);
     localStorage.removeItem("replyTo");
   };
 
-  function timeStampFormat(timestamp: string): string {
-    const date = new Date(Date.parse(timestamp));
-    const dateFormatted = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
-    const timeFormatted = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hourCycle: "h24" });
-    return `${dateFormatted} at ${timeFormatted}`;
+  const fetchReplySuggestions = async (msgId: string) => {
+  try {
+    const response = await jwtAxios.post(
+      `http://127.0.0.1:8000/api/messages/${msgId}/reply_suggestions/`,
+      {},
+      { withCredentials: true }
+    );
+    if (response.data.suggestions) {
+      const suggestions = response.data.suggestions[0].split("\n").map((suggestion) => suggestion.trim());
+      setReplySuggestions(suggestions);
+      setShowSuggestionsModal(true);
+    }
+  } catch (error) {
+    console.error("Error fetching reply suggestions:", error);
   }
+};
+
+  const handleSuggestionClick = (suggestion: string) => {
+  const cleanedSuggestion = suggestion.replace(/^\d+\.\s?/, '').replace(/"/g, '').trim();
+
+  setMessage(cleanedSuggestion);
+  setShowSuggestionsModal(false);
+};
+
+
+  const handleReply = (msg: Message) => {
+  setReplyTo(msg);
+  localStorage.setItem("replyTo", JSON.stringify(msg));
+  fetchReplySuggestions(msg.id); // Fetch and show suggestions.
+};
+
+  const handleCancelReply = () => {
+    setReplyTo(null);
+    setReplySuggestions([]);
+    setShowSuggestionsModal(false);
+    localStorage.removeItem("replyTo");
+  };
 
   const handleTranslate = async (msgContent: string, index: number) => {
     try {
@@ -111,14 +155,11 @@ const TextingTemplate = (props: ServerChannelProps) => {
     }
   };
 
-  const handleReply = (msg: Message) => {
-    setReplyTo(msg);
-    localStorage.setItem("replyTo", JSON.stringify(msg));
-  };
-
-  const handleCancelReply = () => {
-    setReplyTo(null);
-    localStorage.removeItem("replyTo");
+  const timeStampFormat = (timestamp: string): string => {
+    const date = new Date(Date.parse(timestamp));
+    const dateFormatted = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+    const timeFormatted = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hourCycle: "h24" });
+    return `${dateFormatted} at ${timeFormatted}`;
   };
 
   return (
@@ -158,64 +199,62 @@ const TextingTemplate = (props: ServerChannelProps) => {
           <Box sx={{ overflow: "hidden", p: 0, height: `calc(100vh - 100px)` }}>
             <Scrolling>
               <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-                {newMessage.map((msg: Message, index: number) => {
-                  return (
-                    <ListItem key={index} alignItems="flex-start">
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={msg.sender_username}
-                          src={msg.sender_avatar ? `${MEDIA_URL}${msg.sender_avatar}` : `${MEDIA_URL}default-avatar.jpg`}
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
-                        primary={
-                          <>
-                            <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-                              {msg.sender || "Unknown Sender"}
-                            </Typography>
-                            <Typography component="span" variant="caption" color="text.secondary">
-                              {" at "}
-                              {timeStampFormat(msg.timestamp)}
-                            </Typography>
-                          </>
-                        }
-                        secondary={
-                          <Fragment>
-                            {msg.reply_to && (
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
-                              >
-                                Replying to: {msg.reply_to.content}
-                              </Typography>
-                            )}
-                            <Typography
-                              variant="body1"
-                              style={{
-                                overflow: "visible",
-                                whiteSpace: "normal",
-                                textOverflow: "clip",
-                              }}
-                              sx={{ display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px" }}
-                              component="span"
-                              color="text.primary"
-                            >
-                              {translatedMessages.get(index) || msg.content}
-                            </Typography>
-                            <Button size="small" onClick={() => handleReply(msg)}>
-                              Reply
-                            </Button>
-                            <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
-                              Translate
-                            </Button>
-                          </Fragment>
-                        }
+                {newMessage.map((msg: Message, index: number) => (
+                  <ListItem key={index} alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar
+                        alt={msg.sender_username}
+                        src={msg.sender_avatar ? `${MEDIA_URL}${msg.sender_avatar}` : `${MEDIA_URL}default-avatar.jpg`}
                       />
-                    </ListItem>
-                  );
-                })}
+                    </ListItemAvatar>
+                    <ListItemText
+                      primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
+                      primary={
+                        <>
+                          <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
+                            {msg.sender || "Unknown Sender"}
+                          </Typography>
+                          <Typography component="span" variant="caption" color="text.secondary">
+                            {" at "}
+                            {timeStampFormat(msg.timestamp)}
+                          </Typography>
+                        </>
+                      }
+                      secondary={
+                        <Fragment>
+                          {msg.reply_to && (
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
+                            >
+                              Replying to: {msg.reply_to.content}
+                            </Typography>
+                          )}
+                          <Typography
+                            variant="body1"
+                            style={{
+                              overflow: "visible",
+                              whiteSpace: "normal",
+                              textOverflow: "clip",
+                            }}
+                            sx={{ display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px" }}
+                            component="span"
+                            color="text.primary"
+                          >
+                            {translatedMessages.get(index) || msg.content}
+                          </Typography>
+                          <Button size="small" onClick={() => handleReply(msg)}>
+                            Reply
+                          </Button>
+                          <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
+                            Translate
+                          </Button>
+                        </Fragment>
+                      }
+                    />
+                  </ListItem>
+                ))}
               </List>
             </Scrolling>
           </Box>
@@ -233,6 +272,35 @@ const TextingTemplate = (props: ServerChannelProps) => {
               </Button>
             </Box>
           )}
+
+          <Modal open={showSuggestionsModal} onClose={() => setShowSuggestionsModal(false)}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                boxShadow: 24,
+                p: 4,
+                borderRadius: 2,
+              }}
+            >
+              <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+                Suggested Replies
+              </Typography>
+              <List>
+                {replySuggestions.map((suggestion, idx) => (
+                  <ListItem key={idx} button onClick={() => handleSuggestionClick(suggestion)}>
+                    <ListItemText primary={suggestion} />
+                  </ListItem>
+                ))}
+              </List>
+              <Button fullWidth variant="outlined" onClick={() => setShowSuggestionsModal(false)}>
+                Close
+              </Button>
+            </Box>
+          </Modal>
 
           <Box sx={{ position: "sticky", bottom: 0, width: "100%" }}>
             <form

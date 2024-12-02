@@ -54,7 +54,7 @@ class MessageViewSet(viewsets.ViewSet):
                      "content": f"The message to reply to is: '{message.content}'. Generate three short and relevant replies."}
                 ],
                 max_tokens=100,
-                n=3
+                n=1
             )
 
 

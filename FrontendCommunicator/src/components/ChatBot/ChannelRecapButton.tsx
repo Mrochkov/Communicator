@@ -23,7 +23,7 @@ const ChannelRecapButton: React.FC<ChannelRecapButtonProps> = ({ channelId }) =>
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [numMessages, setNumMessages] = useState(10); // Default to 10 messages
+  const [numMessages, setNumMessages] = useState(10);
   const jwtAxios = jwtAxiosInterceptor();
 
   const handleOpenChoiceDialog = () => {
@@ -38,12 +38,11 @@ const ChannelRecapButton: React.FC<ChannelRecapButtonProps> = ({ channelId }) =>
     setLoading(true);
     setError(null);
     try {
-      // Close the choice dialog when making the request
       setOpenChoiceDialog(false);
 
       const response = await jwtAxios.post(
         `http://127.0.0.1:8000/api/messages/${channelId}/channel_recap/`,
-        { num_messages: numMessages }, // Send selected number of messages
+        { num_messages: numMessages },
         { withCredentials: true }
       );
       setSummary(response.data.summary);
@@ -51,7 +50,7 @@ const ChannelRecapButton: React.FC<ChannelRecapButtonProps> = ({ channelId }) =>
       setError(err.response?.data?.error || "An unexpected error occurred.");
     } finally {
       setLoading(false);
-      setOpenResultDialog(true); // Show the result dialog
+      setOpenResultDialog(true);
     }
   };
 
@@ -67,7 +66,6 @@ const ChannelRecapButton: React.FC<ChannelRecapButtonProps> = ({ channelId }) =>
         Summarize Channel
       </Button>
 
-      {/* Dialog for selecting number of messages */}
       <Dialog open={openChoiceDialog} onClose={handleChoiceDialogClose} maxWidth="sm" fullWidth>
         <DialogTitle>Select Number of Messages</DialogTitle>
         <DialogContent>
@@ -91,7 +89,6 @@ const ChannelRecapButton: React.FC<ChannelRecapButtonProps> = ({ channelId }) =>
         </DialogActions>
       </Dialog>
 
-      {/* Dialog for displaying the summary */}
       <Dialog open={openResultDialog} onClose={handleResultDialogClose} maxWidth="sm" fullWidth>
         <DialogTitle>Channel Summary</DialogTitle>
         <DialogContent>
