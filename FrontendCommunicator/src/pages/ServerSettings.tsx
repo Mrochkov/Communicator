@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from "react";
-import {Box, Button, Divider, List, Typography, ListItem, ListItemAvatar, Avatar, Modal, TextField, DialogActions, DialogContent, DialogTitle, Dialog, IconButton, CssBaseline, Container, ListItemButton, ListItemIcon, ListItemText,
+import {
+    Box,
+    Button,
+    Divider,
+    List,
+    Typography,
+    ListItem,
+    ListItemAvatar,
+    Avatar,
+    Modal,
+    TextField,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Dialog,
+    IconButton,
+    CssBaseline,
+    Container,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    FormControl, InputLabel, Select, MenuItem,
 } from "@mui/material";
 import {Link, useParams} from "react-router-dom";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor";
@@ -86,7 +107,7 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
   const handleEditServer = () => {
     setOpenServerModal(true);
     setServerName(serverDetails.name);
-    setServerCategory(serverDetails.category);
+    setServerCategory(serverDetails.category.id);
     setServerDescription(serverDetails.description);
   };
 
@@ -322,14 +343,24 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
                 margin="normal"
                 sx={{ input: { color: 'white' }, label: { color: 'white' } }}
               />
-              <TextField
-                label="Category"
-                value={serverCategory}
-                onChange={(e) => setServerCategory(e.target.value)}
-                fullWidth
-                margin="normal"
-                sx={{ input: { color: 'white' }, label: { color: 'white' } }}
-              />
+              <FormControl fullWidth margin="normal">
+  <InputLabel sx={{ color: 'white' }}>Category</InputLabel>
+  <Select
+    value={serverCategory}
+    onChange={(e) => setServerCategory(e.target.value)}
+    sx={{
+      color: 'white',
+      ".MuiSelect-icon": { color: 'white' },
+      ".MuiOutlinedInput-notchedOutline": { borderColor: 'white' },
+    }}
+  >
+    {serverDetails?.categories?.map((category: { id: number; name: string }) => (
+      <MenuItem key={category.id} value={category.id}>
+        {category.name}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
               <TextField
                 label="Description"
                 value={serverDescription}
