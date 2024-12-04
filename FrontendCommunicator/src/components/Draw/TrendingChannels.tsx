@@ -12,7 +12,11 @@ import {
   TextField,
   Divider,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl
 } from "@mui/material";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
@@ -44,13 +48,26 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   const [serverBanner, setServerBanner] = useState<any>(null);
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
   const { dataCRUD, error, isLoading, fetchData } = thisUseCRUD<Server>([], "/server/select/");
 
   const theme = useTheme();
 
   useEffect(() => {
     fetchData();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+  try {
+    const response = await jwtAxios.get("http://127.0.0.1:8000/api/server/category/", {
+      withCredentials: true,
+    });
+    setCategories(response.data); // Store full objects to include both `id` and `name`
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+};
 
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => {
@@ -151,7 +168,27 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             Create a New Server
           </Typography>
           <TextField label="Server Name" variant="outlined" fullWidth value={serverName} onChange={(e) => setServerName(e.target.value)} sx={{ mb: 2 }} />
-          <TextField label="Category" variant="outlined" fullWidth value={serverCategory} onChange={(e) => setServerCategory(e.target.value)} sx={{ mb: 2 }} />
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel id="category-label">Category</InputLabel>
+            <Select
+              labelId="category-label"
+              value={serverCategory}
+              onChange={(e) => setServerCategory(e.target.value)} // Will now set the ID
+            >
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={`http://127.0.0.1:8000${category.icon}`}
+                      alt={category.name}
+                      style={{ width: 24, height: 24, marginRight: 8 }}
+                    />
+                    {category.name}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Button variant="outlined" component="label" fullWidth sx={{ mb: 2 }}>
             Upload Banner
             <input type="file" hidden onChange={(event) => setServerBanner(event.target.files[0])} />
