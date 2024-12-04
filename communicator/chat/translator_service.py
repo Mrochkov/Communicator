@@ -13,7 +13,7 @@ def translate_text(text, target_language):
 
     params = {
         'api-version': '3.0',
-        'from': 'en',
+        # 'from': 'en',
         'to': [target_language],
     }
 

@@ -344,23 +344,23 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
                 sx={{ input: { color: 'white' }, label: { color: 'white' } }}
               />
               <FormControl fullWidth margin="normal">
-  <InputLabel sx={{ color: 'white' }}>Category</InputLabel>
-  <Select
-    value={serverCategory}
-    onChange={(e) => setServerCategory(e.target.value)}
-    sx={{
-      color: 'white',
-      ".MuiSelect-icon": { color: 'white' },
-      ".MuiOutlinedInput-notchedOutline": { borderColor: 'white' },
-    }}
-  >
-    {serverDetails?.categories?.map((category: { id: number; name: string }) => (
-      <MenuItem key={category.id} value={category.id}>
-        {category.name}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+                  <InputLabel sx={{ color: 'white' }}>Category</InputLabel>
+                  <Select
+                    value={serverCategory}
+                    onChange={(e) => setServerCategory(e.target.value)}
+                    sx={{
+                      color: 'white',
+                      ".MuiSelect-icon": { color: 'white' },
+                      ".MuiOutlinedInput-notchedOutline": { borderColor: 'white' },
+                    }}
+                  >
+                    {serverDetails?.categories?.map((category: { id: number; name: string }) => (
+                      <MenuItem key={category.id} value={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               <TextField
                 label="Description"
                 value={serverDescription}
