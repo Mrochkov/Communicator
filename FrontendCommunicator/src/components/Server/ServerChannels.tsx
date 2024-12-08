@@ -80,7 +80,6 @@ const ServerChannels = (props: ServerChannelsProps) => {
     fetchChannels();
   }, [serverId]);
 
-  // Fetch logged-in user ID from local storage
   useEffect(() => {
     const userId = localStorage.getItem("user_id");
     if (userId) {
@@ -88,7 +87,6 @@ const ServerChannels = (props: ServerChannelsProps) => {
     }
   }, []);
 
-  // Check if the logged-in user is the owner
   const isOwner = loggedInUserId === data?.[0]?.owner?.id;
 
   return (
@@ -155,7 +153,7 @@ const ServerChannels = (props: ServerChannelsProps) => {
           ))
         )}
       </List>
-      {isOwner && ( // Render button only if the user is the owner
+      {isOwner && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
           <Button
             onClick={handleOpen}
