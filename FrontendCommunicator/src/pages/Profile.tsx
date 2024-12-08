@@ -19,6 +19,11 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor.ts";
@@ -38,6 +43,9 @@ const Profile = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [language, setLanguage] = useState("en"); // Default language
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const jwtAxios = jwtAxiosInterceptor();
 
   const availableLanguages = [
@@ -141,6 +149,34 @@ const Profile = () => {
     }
   };
 
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      setSnackbarMessage("Passwords do not match.");
+      setOpenSnackbar(true);
+      return;
+    }
+
+    try {
+      const response = await jwtAxios.patch(
+        `http://127.0.0.1:8000/api/user/${userId}/update_password/`,
+        { password: newPassword },  // Only send new password
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setSnackbarMessage("Password updated successfully!");
+        setError("");
+        setOpenSnackbar(true);
+        setOpenPasswordModal(false); // Close the modal after successful password change
+      }
+    } catch (error) {
+      console.error("Failed to change password", error);
+      setSnackbarMessage("Failed to change password.");
+      setError("Failed to change password.");
+      setOpenSnackbar(true);
+    }
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       <Navbar />
@@ -208,12 +244,8 @@ const Profile = () => {
               </Typography>
             </CardContent>
             <Box sx={{ textAlign: "center" }}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                sx={{ mt: 2, width: "80%" }}
-              >
-                Edit Profile Details
+              <Button variant="outlined" color="secondary" sx={{ mt: 2, width: "80%" }} onClick={() => setOpenPasswordModal(true)}>
+                Edit Password
               </Button>
             </Box>
           </Card>
@@ -243,12 +275,7 @@ const Profile = () => {
                   ))}
                 </Select>
               </FormControl>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={saveLanguagePreference}
-                sx={{ mt: 2 }}
-              >
+              <Button variant="outlined" color="secondary" onClick={saveLanguagePreference} sx={{ mt: 2 }}>
                 Save Preferences
               </Button>
             </CardContent>
@@ -257,19 +284,41 @@ const Profile = () => {
       </Grid>
 
       {/* Snackbar Notifications */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-      >
-        <Alert
-          severity={error ? "error" : "success"}
-          sx={{ width: "100%" }}
-          onClose={() => setOpenSnackbar(false)}
-        >
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+        <Alert severity={error ? "error" : "success"} sx={{ width: "100%" }} onClose={() => setOpenSnackbar(false)}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Edit Password Modal */}
+      <Dialog open={openPasswordModal} onClose={() => setOpenPasswordModal(false)}>
+        <DialogTitle>Edit Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="New Password"
+            type="password"
+            fullWidth
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Confirm New Password"
+            type="password"
+            fullWidth
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenPasswordModal(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handlePasswordChange} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

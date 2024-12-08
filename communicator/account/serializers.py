@@ -77,3 +77,11 @@ class AccountSerializer(serializers.ModelSerializer):
         if obj.avatar:
             return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
         return None
+
+class PasswordChangeSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True)
+
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
+        return value
