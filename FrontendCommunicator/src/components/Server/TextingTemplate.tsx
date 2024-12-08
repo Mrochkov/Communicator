@@ -140,26 +140,29 @@ const TextingTemplate = (props: ServerChannelProps) => {
   };
 
   const handleTranslate = async (msgContent: string, index: number) => {
-    try {
-      const response = await jwtAxios.post(
-        "http://127.0.0.1:8000/translate/",
-        { text: msgContent, to: "pl" },
-        { withCredentials: true }
-      );
+  try {
+    const response = await jwtAxios.post(
+      "http://127.0.0.1:8000/translate/",
+      { text: msgContent, to: "pl" },
+      { withCredentials: true }
+    );
 
-      const translatedText = response.data[0]?.translations?.[0]?.text;
+    const translatedText = response.data[0]?.translations?.[0]?.text;
 
-      if (translatedText) {
-        setTranslatedMessages((prevMessages) => {
-          const newMessages = new Map(prevMessages);
-          newMessages.set(index, translatedText);
-          return newMessages;
+    if (translatedText) {
+      setTranslatedMessages((prevMessages) => {
+        const newMessages = new Map(prevMessages);
+        newMessages.set(index, {
+          original: msgContent,
+          translated: translatedText,
         });
-      }
-    } catch (error) {
-      console.error("Translation error:", error.response?.data || error.message);
+        return newMessages;
+      });
     }
-  };
+  } catch (error) {
+    console.error("Translation error:", error.response?.data || error.message);
+  }
+};
 
   const timeStampFormat = (timestamp: string): string => {
     const date = new Date(Date.parse(timestamp));
@@ -216,54 +219,61 @@ const TextingTemplate = (props: ServerChannelProps) => {
                       />
                     </ListItemAvatar>
                     <ListItemText
-                      primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
-                      primary={
-                        <>
-                          <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-                            {msg.sender || "Unknown Sender"}
-                          </Typography>
-                          <Typography component="span" variant="caption" color="text.secondary">
-                            {" at "}
-                            {timeStampFormat(msg.timestamp)}
-                          </Typography>
-                        </>
-                      }
-                      secondary={
-                        <Fragment>
-                          {msg.reply_to && (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
-                            >
-                              Replying to: {msg.reply_to.content}
-                            </Typography>
-                          )}
-                          <Typography
-                            variant="body1"
-                            style={{
-                              overflow: "visible",
-                              whiteSpace: "normal",
-                              textOverflow: "clip",
-                            }}
-                            sx={{ display: "inline", lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px" }}
-                            component="span"
-                            color="text.primary"
-                          >
-                            {translatedMessages.get(index) || msg.content}
-                          </Typography>
-                          <Button size="small" onClick={() => handleReply(msg)}>
-                            Reply
-                          </Button>
-                          <Button size="small" onClick={() => handleReplAI(msg)}>
-                            ReplAI
-                          </Button>
-                          <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
-                            Translate
-                          </Button>
-                        </Fragment>
-                      }
-                    />
+  primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
+  primary={
+    <>
+      <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
+        {msg.sender || "Unknown Sender"}
+      </Typography>
+      <Typography component="span" variant="caption" color="text.secondary">
+        {" at "}
+        {timeStampFormat(msg.timestamp)}
+      </Typography>
+    </>
+  }
+  secondary={
+    <Fragment>
+      {msg.reply_to && (
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
+        >
+          Replying to: {msg.reply_to.content}
+        </Typography>
+      )}
+      <Typography
+        variant="body1"
+        sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mb: 1 }}
+        component="span"
+        color="text.primary"
+      >
+        {msg.content}
+      </Typography>
+      {translatedMessages.get(index)?.translated && (
+        <Typography
+          variant="body2"
+          sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mt: 1, pl: 2 }}
+          component="span"
+          color="text.secondary"
+        >
+          {translatedMessages.get(index).translated}
+        </Typography>
+      )}
+      <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+        <Button size="small" onClick={() => handleReply(msg)}>
+          Reply
+        </Button>
+        <Button size="small" onClick={() => handleReplAI(msg)}>
+          ReplAI
+        </Button>
+        <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
+          Translate
+        </Button>
+      </Box>
+    </Fragment>
+  }
+/>
                   </ListItem>
                 ))}
               </List>
@@ -336,7 +346,10 @@ const TextingTemplate = (props: ServerChannelProps) => {
                   sx={{ flexGrow: 1, marginRight: 1 }}
                   disabled={!isUserMember}
                 />
-                <Button type="submit" variant="contained" sx={{ height: "100%" }} disabled={!isUserMember || !message.trim()}>
+                <Button type="submit" variant="outlined" sx={{ height: "100%" }} >
+                  Image
+                </Button>
+                <Button type="submit" variant="contained" sx={{ height: "100%", ml: 2 }} disabled={!isUserMember || !message.trim()}>
                   Send
                 </Button>
               </Box>

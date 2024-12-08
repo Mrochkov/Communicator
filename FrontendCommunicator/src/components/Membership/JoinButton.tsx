@@ -79,7 +79,7 @@ const JoinButton = () => {
 
     return (
         <>
-            <div>isMember: {isUserMember ? "Yes" : "No"}</div>
+            <div>Membership: {isUserMember ? "Yes" : "No"}</div>
             {serverDetails?.private && !isUserMember && (
                 <TextField
                     label="Password"
@@ -94,11 +94,11 @@ const JoinButton = () => {
                 />
             )}
             {isUserMember ? (
-                <Button variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }} onClick={handleLeaveServer}>
+                <Button variant="contained" sx={{ backgroundColor: 'red', color: 'white', mt: 2 }} onClick={handleLeaveServer}>
                     Leave server
                 </Button>
             ) : (
-                <Button variant="contained" sx={{ backgroundColor: 'gray', color: 'white' }} onClick={handleJoinServer}>
+                <Button variant="outlined" sx={{ backgroundColor: 'green', color: 'white', mt: 2 }} onClick={handleJoinServer}>
                     Join server
                 </Button>
             )}

@@ -13,14 +13,14 @@ interface Message {
 const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const senderId = "user123"; // unique sender ID for tracking conversation
+  const senderId = "You"; // unique sender ID for tracking conversation
   const jwtAxios = jwtAxiosInterceptor();
 
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage: Message = { sender: "User", content: input, timestamp: new Date().toISOString() };
+    const userMessage: Message = { sender: "You", content: input, timestamp: new Date().toISOString() };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
 
     try {

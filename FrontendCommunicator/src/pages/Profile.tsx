@@ -11,13 +11,21 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Card,
+  CardContent,
+  Divider,
+  Grid,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import jwtAxiosInterceptor from "../axios/jwtinterceptor.ts";
 import { useAuthServiceContext } from "../context/AuthContext.tsx";
-import TrendingChannels from "../components/Draw/TrendingChannels.tsx";
-import Draw from "./templates/Draw.tsx";
 import Navbar from "./templates/Navbar.tsx";
+import Draw from "./templates/Draw.tsx";
+import TrendingChannels from "../components/Draw/TrendingChannels.tsx";
 
 const Profile = () => {
   const { username: contextUsername } = useAuthServiceContext();
@@ -29,7 +37,16 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [language, setLanguage] = useState("en"); // Default language
   const jwtAxios = jwtAxiosInterceptor();
+
+  const availableLanguages = [
+    { code: "en", label: "English" },
+    { code: "pl", label: "Polish" },
+    { code: "es", label: "Spanish" },
+    { code: "fr", label: "French" },
+    { code: "de", label: "German" },
+  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -38,10 +55,10 @@ const Profile = () => {
           withCredentials: true,
         });
         if (response.status === 200) {
-          const { username: fetchedUsername, avatar_url } = response.data;
-          console.log("Fetched User Data:", response.data);
+          const { username: fetchedUsername, avatar_url, language: fetchedLanguage } = response.data;
           setUsername(fetchedUsername);
           setAvatarUrl(avatar_url || `/media/avatars/${userId}/avatar.jpg`);
+          setLanguage(fetchedLanguage || "en");
         }
       } catch (error) {
         console.error("Failed to fetch user data", error);
@@ -50,30 +67,48 @@ const Profile = () => {
     fetchUserData();
   }, [userId]);
 
+  const handleLanguageChange = (event) => {
+    setLanguage(event.target.value);
+  };
+
+  const saveLanguagePreference = async () => {
+    try {
+      const response = await jwtAxios.patch(
+        `http://127.0.0.1:8000/api/user/${userId}/`,
+        { language },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setSnackbarMessage("Language preference updated!");
+        setError("");
+        setOpenSnackbar(true);
+      }
+    } catch (error) {
+      console.error("Failed to update language preference", error);
+      setSnackbarMessage("Failed to update language preference.");
+      setError("Failed to update language preference.");
+      setOpenSnackbar(true);
+    }
+  };
+
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      console.log("Selected file:", file);
       setAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarUrl(reader.result);
       };
       reader.readAsDataURL(file);
-    } else {
-      console.log("No file selected.");
     }
   };
 
   const handleAvatarUpload = async () => {
-    console.log("Upload button clicked!");
     if (!avatarFile) {
-      console.error("No file selected.");
       alert("Please select a file before uploading.");
       return;
     }
     if (!userId) {
-      console.error("No userId found.");
       alert("User information not loaded yet. Please try again later.");
       return;
     }
@@ -91,7 +126,6 @@ const Profile = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log("Upload response:", response);
       if (response.status === 200) {
         setSnackbarMessage("Avatar updated successfully!");
         setError("");
@@ -99,7 +133,6 @@ const Profile = () => {
         setAvatarUrl(response.data.avatar_url);
       }
     } catch (error) {
-      console.error("Error uploading avatar:", error);
       setError("Failed to update avatar.");
       setSnackbarMessage("Failed to update avatar.");
       setOpenSnackbar(true);
@@ -109,72 +142,121 @@ const Profile = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 5 }}>
-      <CssBaseline />
+    <Container maxWidth="md" sx={{ mt: 5 }}>
       <Navbar />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: 600, mt: 10 }}>
-          My Profile
-        </Typography>
+      <CssBaseline />
+      <Typography variant="h4" sx={{ fontWeight: 600, mb: 4, textAlign: "center", mt: 20 }}>
+        My Profile
+      </Typography>
+      <Draw>
+        <TrendingChannels open={false} />
+      </Draw>
+      <Grid container spacing={4}>
+        {/* Avatar and Actions Section */}
+        <Grid item xs={12} md={4}>
+          <Card sx={{ p: 1.7, textAlign: "center", height: "100%" }}>
+            <Avatar
+              alt={username}
+              src={avatarUrl}
+              sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
+            />
+            <IconButton
+              sx={{
+                position: "relative",
+                display: "flex",
+                bottom: 60,
+                marginLeft: 5,
+                bgcolor: "primary.main",
+                color: "white",
+              }}
+              onClick={() => document.getElementById("avatar-upload")?.click()}
+            >
+              <Edit />
+            </IconButton>
+            <Input
+              accept="image/*"
+              id="avatar-upload"
+              type="file"
+              sx={{ display: "none" }}
+              onChange={handleAvatarChange}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAvatarUpload}
+              disabled={loading || !avatarFile}
+              sx={{ mt: 2 }}
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Upload Avatar"}
+            </Button>
+          </Card>
+        </Grid>
 
-        <Draw>
-          <TrendingChannels open={false} />
-        </Draw>
+        {/* Profile Details Section */}
+        <Grid item xs={12} md={8}>
+          <Card sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", p: 2 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Profile Information
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Typography variant="body1" sx={{ mb: 1 }}>
+                <strong>Username:</strong> {username || "Loading..."}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 1 }}>
+                <strong>Email:</strong> {username ? `${username}@example.com` : "Loading..."}
+              </Typography>
+            </CardContent>
+            <Box sx={{ textAlign: "center" }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                sx={{ mt: 2, width: "80%" }}
+              >
+                Edit Profile Details
+              </Button>
+            </Box>
+          </Card>
+        </Grid>
 
-        <Box sx={{ position: "relative", mb: 3 }}>
-          <Avatar alt={username} src={avatarUrl} sx={{ width: 100, height: 100 }} />
-          <IconButton
-            sx={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              bgcolor: "primary.main",
-              color: "white",
-            }}
-            onClick={() => document.getElementById("avatar-upload")?.click()}
-          >
-            <Edit />
-          </IconButton>
-          <Input
-            accept="image/*"
-            id="avatar-upload"
-            type="file"
-            sx={{ display: "none" }}
-            onChange={handleAvatarChange}
-          />
-        </Box>
+        {/* Language Preference Section */}
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Language Preferences
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <FormControl fullWidth>
+                <InputLabel id="language-select-label">Preferred Language</InputLabel>
+                <Select
+                  labelId="language-select-label"
+                  id="language-select"
+                  value={language}
+                  label="Preferred Language"
+                  onChange={handleLanguageChange}
+                >
+                  {availableLanguages.map((lang) => (
+                    <MenuItem key={lang.code} value={lang.code}>
+                      {lang.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={saveLanguagePreference}
+                sx={{ mt: 2 }}
+              >
+                Save Preferences
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
-        <Typography variant="h5">Username: {username || "Loading..."}</Typography>
-        <Typography variant="h6">Email: {username ? `${username}@example.com` : "Loading..."}</Typography>
-        <Typography variant="body1" sx={{ my: 2 }}>
-          Welcome to your profile page. You can update your avatar and manage your account settings here.
-        </Typography>
-
-        <Box sx={{ mt: 4 }}>
-          <Button variant="outlined" color="secondary">
-            Change Password
-          </Button>
-        </Box>
-
-        <Box sx={{ mt: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAvatarUpload}
-            disabled={loading || !avatarFile}
-          >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Upload Avatar"}
-          </Button>
-        </Box>
-      </Box>
-
+      {/* Snackbar Notifications */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}

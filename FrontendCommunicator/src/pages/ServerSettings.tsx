@@ -234,200 +234,212 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
     </Draw>
 
     <Box sx={{ padding: 2 }}>
-      {serverDetails ? (
-        <>
-          <Typography variant="h6" gutterBottom>
-            Server Details
-          </Typography>
-          <Typography variant="body1">ID: {serverDetails.id}</Typography>
-          <Typography variant="body1">Name: {serverDetails.name}</Typography>
-          <Typography variant="body1">Category: {serverDetails.category}</Typography>
-          <Typography variant="body1">Description: {serverDetails.description}</Typography>
-          <Button variant="contained" color="primary" onClick={handleEditServer}>
-            Edit Server Details
-          </Button>
-          <Divider sx={{ margin: '20px 0' }} />
+  {serverDetails ? (
+    <>
+      {/* Server Details Section */}
+      <Box sx={{ marginBottom: 4, padding: 2, backgroundColor: "#1e1e1e", borderRadius: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Server Details
+        </Typography>
+        <Typography variant="body1">ID: {serverDetails.id}</Typography>
+        <Typography variant="body1">Name: {serverDetails.name}</Typography>
+        <Typography variant="body1">Category: {serverDetails.category}</Typography>
+        <Typography variant="body1">Description: {serverDetails.description}</Typography>
+        <Button variant="outlined" color="secondary" onClick={handleEditServer} sx={{ mt: 2 }}>
+          Edit Server Details
+        </Button>
+      </Box>
 
-          <Box sx={{ marginBottom: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Server Members
-            </Typography>
-            {serverDetails.member && serverDetails.member.length > 0 ? (
-              <List>
-                {serverDetails.member.map((member: any) => (
-                  <ListItem
-                    key={member.id}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <ListItemAvatar>
-                        <Avatar
-                          src={
-                            member.avatar_url
-                              ? `${MEDIA_URL}${member.avatar_url}`
-                              : `${MEDIA_URL}default-avatar.jpg`
-                          }
-                          alt={member.username}
-                        />
-                      </ListItemAvatar>
-                      <Typography variant="body1">{member.username}</Typography>
-                    </Box>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleRemoveMember(member.id)}
-                    >
-                      Remove
-                    </Button>
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Typography>No members found.</Typography>
-            )}
-            <Divider sx={{ margin: '20px 0' }} />
-          </Box>
-
-          <Box sx={{ marginBottom: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Server Channels
-            </Typography>
-            {serverDetails.channel_server && serverDetails.channel_server.length > 0 ? (
-              <List>
-                {serverDetails.channel_server.map((channel: any) => (
-                  <ListItem key={channel.id} sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <Typography variant="body1">{channel.name}</Typography>
-                    <Box>
-                      <IconButton onClick={() => handleEditChannel(channel)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleDeleteChannel(channel.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Typography>No channels found.</Typography>
-            )}
-          </Box>
-
-          <Modal open={openServerModal} onClose={() => setOpenServerModal(false)}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "#121212",
-                color: "white",
-                padding: 3,
-                borderRadius: 2,
-                boxShadow: 24,
-                width: 400,
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Edit Server Details
-              </Typography>
-              <TextField
-                label="Server Name"
-                value={serverName}
-                onChange={(e) => setServerName(e.target.value)}
-                fullWidth
-                margin="normal"
-                sx={{ input: { color: 'white' }, label: { color: 'white' } }}
-              />
-              <FormControl fullWidth margin="normal">
-                  <InputLabel sx={{ color: 'white' }}>Category</InputLabel>
-                  <Select
-                    value={serverCategory}
-                    onChange={(e) => setServerCategory(e.target.value)}
-                    sx={{
-                      color: 'white',
-                      ".MuiSelect-icon": { color: 'white' },
-                      ".MuiOutlinedInput-notchedOutline": { borderColor: 'white' },
-                    }}
-                  >
-                    {serverDetails?.categories?.map((category: { id: number; name: string }) => (
-                      <MenuItem key={category.id} value={category.id}>
-                        {category.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              <TextField
-                label="Description"
-                value={serverDescription}
-                onChange={(e) => setServerDescription(e.target.value)}
-                fullWidth
-                margin="normal"
-                sx={{ input: { color: 'white' }, label: { color: 'white' } }}
-              />
-              <DialogActions>
-                <Button onClick={() => setOpenServerModal(false)} color="secondary">
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveServerDetails} color="primary">
-                  Save
-                </Button>
-              </DialogActions>
-            </Box>
-          </Modal>
-
-          {selectedChannel && (
-            <Modal
-              open={!!selectedChannel}
-              onClose={() => setSelectedChannel(null)}
-            >
-              <Box
+      {/* Server Members Section */}
+      <Box sx={{ marginBottom: 4, padding: 2, backgroundColor: "#1e1e1e", borderRadius: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Server Members
+        </Typography>
+        {serverDetails.member && serverDetails.member.length > 0 ? (
+          <List>
+            {serverDetails.member.map((member: any) => (
+              <ListItem
+                key={member.id}
                 sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  bgcolor: "#121212",
-                  color: "white",
-                  padding: 3,
-                  borderRadius: 2,
-                  boxShadow: 24,
-                  width: 400,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Typography variant="h6" gutterBottom>
-                  Edit Channel
-                </Typography>
-                <TextField
-                  label="Channel Name"
-                  value={selectedChannel.name}
-                  onChange={(e) =>
-                    setSelectedChannel({ ...selectedChannel, name: e.target.value })
-                  }
-                  fullWidth
-                  margin="normal"
-                  sx={{ input: { color: 'white' }, label: { color: 'white' } }}
-                />
-                <DialogActions>
-                  <Button onClick={() => setSelectedChannel(null)} color="secondary">
-                    Cancel
-                  </Button>
-                  <Button onClick={handleSaveChannel} color="primary">
-                    Save
-                  </Button>
-                </DialogActions>
-              </Box>
-            </Modal>
-          )}
-        </>
-      ) : (
-        <Typography>Server details not found.</Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      src={
+                        member.avatar_url
+                          ? `${MEDIA_URL}${member.avatar_url}`
+                          : `${MEDIA_URL}default-avatar.jpg`
+                      }
+                      alt={member.username}
+                    />
+                  </ListItemAvatar>
+                  <Typography variant="body1">{member.username}</Typography>
+                </Box>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleRemoveMember(member.id)}
+                >
+                  Remove
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography>No members found.</Typography>
+        )}
+      </Box>
+
+      {/* Server Channels Section */}
+      <Box sx={{ marginBottom: 4, padding: 2, backgroundColor: "#1e1e1e", borderRadius: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Server Channels
+        </Typography>
+        {serverDetails.channel_server && serverDetails.channel_server.length > 0 ? (
+          <List>
+            {serverDetails.channel_server.map((channel: any) => (
+              <ListItem
+                key={channel.id}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">{channel.name}</Typography>
+                <Box>
+                  <IconButton onClick={() => handleEditChannel(channel)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteChannel(channel.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography>No channels found.</Typography>
+        )}
+      </Box>
+
+      {/* Edit Server Modal */}
+      <Modal open={openServerModal} onClose={() => setOpenServerModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "#121212",
+            color: "white",
+            padding: 3,
+            borderRadius: 2,
+            boxShadow: 24,
+            width: 400,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Edit Server Details
+          </Typography>
+          <TextField
+            label="Server Name"
+            value={serverName}
+            onChange={(e) => setServerName(e.target.value)}
+            fullWidth
+            margin="normal"
+            sx={{ input: { color: "white" }, label: { color: "white" } }}
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel sx={{ color: "white" }}>Category</InputLabel>
+            <Select
+              value={serverCategory}
+              onChange={(e) => setServerCategory(e.target.value)}
+              sx={{
+                color: "white",
+                ".MuiSelect-icon": { color: "white" },
+                ".MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+              }}
+            >
+              {serverDetails?.categories?.map((category: { id: number; name: string }) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            label="Description"
+            value={serverDescription}
+            onChange={(e) => setServerDescription(e.target.value)}
+            fullWidth
+            margin="normal"
+            sx={{ input: { color: "white" }, label: { color: "white" } }}
+          />
+          <DialogActions>
+            <Button onClick={() => setOpenServerModal(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveServerDetails} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Box>
+      </Modal>
+
+      {/* Edit Channel Modal */}
+      {selectedChannel && (
+        <Modal
+          open={!!selectedChannel}
+          onClose={() => setSelectedChannel(null)}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "#121212",
+              color: "white",
+              padding: 3,
+              borderRadius: 2,
+              boxShadow: 24,
+              width: 400,
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Edit Channel
+            </Typography>
+            <TextField
+              label="Channel Name"
+              value={selectedChannel.name}
+              onChange={(e) =>
+                setSelectedChannel({ ...selectedChannel, name: e.target.value })
+              }
+              fullWidth
+              margin="normal"
+              sx={{ input: { color: "white" }, label: { color: "white" } }}
+            />
+            <DialogActions>
+              <Button onClick={() => setSelectedChannel(null)} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={handleSaveChannel} color="primary">
+                Save
+              </Button>
+            </DialogActions>
+          </Box>
+        </Modal>
       )}
-    </Box>
+    </>
+  ) : (
+    <Typography>Server details not found.</Typography>
+  )}
+</Box>
 </Container>
   );
 };

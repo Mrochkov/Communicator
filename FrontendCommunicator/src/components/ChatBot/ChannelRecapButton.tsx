@@ -62,7 +62,8 @@ const ChannelRecapButton: React.FC<ChannelRecapButtonProps> = ({ channelId }) =>
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleOpenChoiceDialog}>
+      <Button variant="contained" color="primary" onClick={handleOpenChoiceDialog} sx={{ backgroundColor: "gray", color: "white" }}
+>
         Summarize Channel
       </Button>
 

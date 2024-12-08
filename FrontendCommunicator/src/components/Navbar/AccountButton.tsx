@@ -55,7 +55,7 @@ const AccountButton = () => {
                         fontSize: '1.2rem',
                     }}
                 >
-                    {username || "My Profile"}
+                    {"My Profile"}
                 </Typography>
             </Box>
 
