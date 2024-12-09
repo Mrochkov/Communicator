@@ -75,6 +75,9 @@ class ServerCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Password is required for private servers.")
 
         server = Server.objects.create(**validated_data)
+
+        server.member.add(user)
+
         return server
 
 

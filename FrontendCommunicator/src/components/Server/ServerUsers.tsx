@@ -7,13 +7,13 @@ import {
   Box,
   Typography,
   Divider,
-  Button
+  Button,
 } from "@mui/material";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import { MEDIA_URL } from "../../config.ts";
-import { Link } from "react-router-dom";
-import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 interface User {
   id: number;
@@ -27,6 +27,7 @@ interface Server {
   category: string;
   icon: string;
   member: User[];
+  owner: { id: number };
 }
 
 interface ServerChannelsProps {
@@ -38,6 +39,22 @@ type Props = {
 };
 
 const ServerUsers: React.FC<Props & ServerChannelsProps> = ({ open, data }) => {
+  const navigate = useNavigate();
+  const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("user_id");
+    if (userId) {
+      setLoggedInUserId(Number(userId));
+    }
+  }, []);
+
+  const isOwner = (serverOwnerId: number) => loggedInUserId === serverOwnerId;
+
+  const handleSettingsRedirect = (serverId: number) => {
+    navigate(`/server/${serverId}/settings`);
+  };
+
   return (
     <>
       <Box
@@ -130,15 +147,18 @@ const ServerUsers: React.FC<Props & ServerChannelsProps> = ({ open, data }) => {
           </List>
           <Divider />
 
-          {/* Center the button */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Button
-              variant="contained"
-              sx={{ backgroundColor: "gray", color: "white" }}
-            >
-              Server Settings
-            </Button>
-          </Box>
+          {/* Show the button only for the owner */}
+          {isOwner(server.owner.id) && (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: "gray", color: "white" }}
+                onClick={() => handleSettingsRedirect(server.id)}
+              >
+                Server Settings
+              </Button>
+            </Box>
+          )}
         </Box>
       ))}
     </>

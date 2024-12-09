@@ -7,12 +7,12 @@ export interface Server {
     category: string;
     private: boolean; 
     password?: string;
+    owner: string;
     channel_server: {
         id: number;
         name: string;
         server: number;
         topic: string;
-        owner: number;
     }[];
     member: { id: number; username: string; avatar_url: string | null }[];
 }

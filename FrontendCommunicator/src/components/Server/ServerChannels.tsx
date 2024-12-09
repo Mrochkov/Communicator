@@ -13,9 +13,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useMembershipContext } from "../../context/MembershipContext.tsx";
-import axios from "axios";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
-import {Server} from "../../@types/server";
+import { Server } from "../../@types/server";
 
 interface ServerChannelsProps {
   data: Server[];
@@ -26,13 +25,13 @@ const ServerChannels = (props: ServerChannelsProps) => {
   const { data } = props;
   const theme = useTheme();
   const { serverId } = useParams();
-  const navigate = useNavigate(); // Import useNavigate for redirection
+  const navigate = useNavigate();
   const { isUserMember } = useMembershipContext();
 
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channels, setChannels] = useState(data?.[0]?.channel_server || []);
-  const [refreshFlag, setRefreshFlag] = useState(false);
+  const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -55,11 +54,7 @@ const ServerChannels = (props: ServerChannelsProps) => {
       window.location.reload();
       handleClose();
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error adding channel:", error.response?.data || error.message);
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      console.error("Error adding channel:", error);
     }
   };
 
@@ -83,7 +78,16 @@ const ServerChannels = (props: ServerChannelsProps) => {
 
   useEffect(() => {
     fetchChannels();
-  }, [serverId, refreshFlag]);
+  }, [serverId]);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("user_id");
+    if (userId) {
+      setLoggedInUserId(Number(userId));
+    }
+  }, []);
+
+  const isOwner = loggedInUserId === data?.[0]?.owner?.id;
 
   return (
     <>
@@ -149,16 +153,17 @@ const ServerChannels = (props: ServerChannelsProps) => {
           ))
         )}
       </List>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
-        <Button
-          onClick={handleOpen}
-          variant="contained"
-          sx={{ backgroundColor: "gray", color: "white" }}
-          disabled={!isUserMember}
-        >
-          Add Channel
-        </Button>
-      </Box>
+      {isOwner && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
+          <Button
+            onClick={handleOpen}
+            variant="contained"
+            sx={{ backgroundColor: "gray", color: "white" }}
+          >
+            Add Channel
+          </Button>
+        </Box>
+      )}
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{

@@ -4,6 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {useEffect, useState} from "react";
 import Explore from "../Explore.tsx";
 import AccountButton from "../../components/Navbar/AccountButton.tsx";
+import TrendingChannels from "../../components/Draw/TrendingChannels.tsx";
 
 const Navbar = () => {
     const [sideMenu, setSideMenu] = useState(false)
@@ -49,7 +50,9 @@ const Navbar = () => {
             </Box>
 
             <Drawer anchor="left" open={sideMenu} onClose={toggleDrawer(false)}>
-                {list()}
+                <Box sx={{mt: 5}}>
+                <TrendingChannels />
+                </Box>
             </Drawer>
 
             <Link href="/" underline="none" color="inherit">
