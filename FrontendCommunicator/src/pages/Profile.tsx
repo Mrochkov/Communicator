@@ -160,18 +160,18 @@ const Profile = () => {
     try {
       const response = await jwtAxios.patch(
         `http://127.0.0.1:8000/api/user/${userId}/update_password/`,
-        { password: newPassword },  // Only send new password
+        { password: newPassword },
         { withCredentials: true }
       );
       if (response.status === 200) {
         setSnackbarMessage("Password updated successfully!");
         setError("");
         setOpenSnackbar(true);
-        setOpenPasswordModal(false); // Close the modal after successful password change
+        setOpenPasswordModal(false);
       }
     } catch (error) {
       console.error("Failed to change password", error);
-      setSnackbarMessage("Failed to change password.");
+      setSnackbarMessage("Password must be at least 8 characters long.");
       setError("Failed to change password.");
       setOpenSnackbar(true);
     }

@@ -29,6 +29,7 @@ interface Message {
   timestamp: string;
   sender_username?: string;
   sender_avatar?: string;
+  sender_language?: string;
   reply_to?: Message;
 }
 
@@ -56,6 +57,8 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const [useChatbot, setUseChatbot] = useState(false);
   const [replySuggestions, setReplySuggestions] = useState<string[]>([]);
   const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("en");
+
 
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
 
@@ -64,6 +67,21 @@ const TextingTemplate = (props: ServerChannelProps) => {
     if (savedReplyTo) {
       setReplyTo(JSON.parse(savedReplyTo));
     }
+    const fetchPreferredLanguage = async () => {
+      try {
+        const userId = localStorage.getItem("user_id");
+        console.log("userid:", userId);
+        const response = await jwtAxios.get(`http://127.0.0.1:8000/api/user/${userId}`, {
+          withCredentials: true,
+        });
+        setPreferredLanguage(response.data.language || "en");
+        console.log(response.data.language);
+      } catch (error) {
+        console.error("Error fetching preferred language:", error);
+      }
+    };
+
+    fetchPreferredLanguage();
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -129,7 +147,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const handleReplAI = (msg: Message) => {
   setReplyTo(msg);
   localStorage.setItem("replyTo", JSON.stringify(msg));
-  fetchReplySuggestions(msg.id); // Fetch and show suggestions.
+  fetchReplySuggestions(msg.id);
 };
 
   const handleCancelReply = () => {
@@ -143,7 +161,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   try {
     const response = await jwtAxios.post(
       "http://127.0.0.1:8000/translate/",
-      { text: msgContent, to: "pl" },
+      { text: msgContent, to: preferredLanguage },
       { withCredentials: true }
     );
 

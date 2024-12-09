@@ -5,4 +5,5 @@ export interface AuthServiceProps {
     refreshAccessToken: () => Promise<void>
     signUp: (username: string, password: string) => Promise<any>;
     username: string;
+    language: string;
 }
