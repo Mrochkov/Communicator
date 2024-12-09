@@ -80,6 +80,28 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=["patch"], permission_classes=[IsAuthenticated])
+    def update_language(self, request, pk=None):
+        """
+        Updates the language preference for the user.
+        """
+        try:
+            user = self.get_object()
+        except Account.DoesNotExist:
+            raise NotFound("User not found")
+
+        language = request.data.get("language")
+        if language not in ["en", "pl", "es", "fr", "de"]:
+            return Response(
+                {"error": "Invalid language choice."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.language = language
+        user.save()
+        return Response({"message": "Language updated successfully.", "language": user.language},
+                        status=status.HTTP_200_OK)
+
 class JWTCookieMixin:
     def finalize_response(self, request, response, *args, **kwargs):
         if response.data.get("refresh"):

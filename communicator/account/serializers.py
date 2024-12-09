@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'username', 'avatar_url']
+        fields = ['id', 'username', 'avatar_url', 'language']
 
     def get_avatar_url(self, obj):
         request = self.context.get('request')
@@ -70,7 +70,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'username', 'avatar_url']
+        fields = ['id', 'username', 'avatar_url', 'language']
 
     def get_avatar_url(self, obj):
         request = self.context.get('request')
