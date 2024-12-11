@@ -5,11 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Account
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer, JWTCookieTokenRefreshSerializer, \
-    SignUpSerializer, AccountSerializer
+    SignUpSerializer, AccountSerializer, PasswordChangeSerializer
 from .schemas import user_list_docs
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 from django.contrib.auth.models import User
 
@@ -65,6 +66,41 @@ class UserViewSet(viewsets.ModelViewSet):
             raise NotFound("User not found")
         serializer = AccountSerializer(user, context={"request": request})
         return Response(serializer.data)
+
+    @action(detail=True, methods=["patch"], permission_classes=[IsAuthenticated])
+    def update_password(self, request, pk=None):
+        user = self.get_object()
+
+        serializer = PasswordChangeSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user.password = make_password(serializer.validated_data["password"])  # Hash the password
+            user.save()
+            return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["patch"], permission_classes=[IsAuthenticated])
+    def update_language(self, request, pk=None):
+        """
+        Updates the language preference for the user.
+        """
+        try:
+            user = self.get_object()
+        except Account.DoesNotExist:
+            raise NotFound("User not found")
+
+        language = request.data.get("language")
+        if language not in ["en", "pl", "es", "fr", "de"]:
+            return Response(
+                {"error": "Invalid language choice."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.language = language
+        user.save()
+        return Response({"message": "Language updated successfully.", "language": user.language},
+                        status=status.HTTP_200_OK)
 
 class JWTCookieMixin:
     def finalize_response(self, request, response, *args, **kwargs):

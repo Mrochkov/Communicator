@@ -10,10 +10,11 @@ class MessageSerializer(serializers.Serializer):
     sender_username = serializers.CharField(source='sender.username', read_only=True)
     sender_avatar = serializers.ImageField(source='sender.avatar', required=False)
     reply_to = serializers.SerializerMethodField()
+    sender_language = serializers.CharField(source='sender.language', read_only=True)
 
     class Meta:
         model = Message
-        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "timestamp", "reply_to",]
+        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "timestamp", "reply_to", "sender_language",]
 
     def get_reply_to(self, obj):
         if obj.reply_to:
@@ -28,4 +29,4 @@ class MessageSerializer(serializers.Serializer):
 
 class TranslateSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=500)
-    to = serializers.CharField(max_length=10, default='pl')
+    to = serializers.CharField(max_length=10)

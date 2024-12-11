@@ -29,6 +29,7 @@ interface Message {
   timestamp: string;
   sender_username?: string;
   sender_avatar?: string;
+  sender_language?: string;
   reply_to?: Message;
 }
 
@@ -56,6 +57,8 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const [useChatbot, setUseChatbot] = useState(false);
   const [replySuggestions, setReplySuggestions] = useState<string[]>([]);
   const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("en");
+
 
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
 
@@ -64,6 +67,21 @@ const TextingTemplate = (props: ServerChannelProps) => {
     if (savedReplyTo) {
       setReplyTo(JSON.parse(savedReplyTo));
     }
+    const fetchPreferredLanguage = async () => {
+      try {
+        const userId = localStorage.getItem("user_id");
+        console.log("userid:", userId);
+        const response = await jwtAxios.get(`http://127.0.0.1:8000/api/user/${userId}`, {
+          withCredentials: true,
+        });
+        setPreferredLanguage(response.data.language || "en");
+        console.log(response.data.language);
+      } catch (error) {
+        console.error("Error fetching preferred language:", error);
+      }
+    };
+
+    fetchPreferredLanguage();
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -129,7 +147,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const handleReplAI = (msg: Message) => {
   setReplyTo(msg);
   localStorage.setItem("replyTo", JSON.stringify(msg));
-  fetchReplySuggestions(msg.id); // Fetch and show suggestions.
+  fetchReplySuggestions(msg.id);
 };
 
   const handleCancelReply = () => {
@@ -143,7 +161,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   try {
     const response = await jwtAxios.post(
       "http://127.0.0.1:8000/translate/",
-      { text: msgContent, to: "pl" },
+      { text: msgContent, to: preferredLanguage },
       { withCredentials: true }
     );
 
@@ -219,61 +237,61 @@ const TextingTemplate = (props: ServerChannelProps) => {
                       />
                     </ListItemAvatar>
                     <ListItemText
-  primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
-  primary={
-    <>
-      <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-        {msg.sender || "Unknown Sender"}
-      </Typography>
-      <Typography component="span" variant="caption" color="text.secondary">
-        {" at "}
-        {timeStampFormat(msg.timestamp)}
-      </Typography>
-    </>
-  }
-  secondary={
-    <Fragment>
-      {msg.reply_to && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
-        >
-          Replying to: {msg.reply_to.content}
-        </Typography>
-      )}
-      <Typography
-        variant="body1"
-        sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mb: 1 }}
-        component="span"
-        color="text.primary"
-      >
-        {msg.content}
-      </Typography>
-      {translatedMessages.get(index)?.translated && (
-        <Typography
-          variant="body2"
-          sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mt: 1, pl: 2 }}
-          component="span"
-          color="text.secondary"
-        >
-          {translatedMessages.get(index).translated}
-        </Typography>
-      )}
-      <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-        <Button size="small" onClick={() => handleReply(msg)}>
-          Reply
-        </Button>
-        <Button size="small" onClick={() => handleReplAI(msg)}>
-          ReplAI
-        </Button>
-        <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
-          Translate
-        </Button>
-      </Box>
-    </Fragment>
-  }
-/>
+                      primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
+                      primary={
+                        <>
+                          <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
+                            {msg.sender || "Unknown Sender"}
+                          </Typography>
+                          <Typography component="span" variant="caption" color="text.secondary">
+                            {" at "}
+                            {timeStampFormat(msg.timestamp)}
+                          </Typography>
+                        </>
+                      }
+                      secondary={
+                        <Fragment>
+                          {msg.reply_to && (
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
+                            >
+                              Replying to: {msg.reply_to.content}
+                            </Typography>
+                          )}
+                          <Typography
+                            variant="body1"
+                            sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mb: 1 }}
+                            component="span"
+                            color="text.primary"
+                          >
+                            {msg.content}
+                          </Typography>
+                          {translatedMessages.get(index)?.translated && (
+                            <Typography
+                              variant="body2"
+                              sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mt: 1, pl: 2 }}
+                              component="span"
+                              color="text.secondary"
+                            >
+                              {translatedMessages.get(index).translated}
+                            </Typography>
+                          )}
+                          <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                            <Button size="small" onClick={() => handleReply(msg)}>
+                              Reply
+                            </Button>
+                            <Button size="small" onClick={() => handleReplAI(msg)}>
+                              ReplAI
+                            </Button>
+                            <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
+                              Translate
+                            </Button>
+                          </Box>
+                        </Fragment>
+                      }
+                    />
                   </ListItem>
                 ))}
               </List>
