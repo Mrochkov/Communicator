@@ -63,7 +63,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
     const response = await jwtAxios.get("http://127.0.0.1:8000/api/server/category/", {
       withCredentials: true,
     });
-    setCategories(response.data); // Store full objects to include both `id` and `name`
+    setCategories(response.data);
   } catch (error) {
     console.error("Error fetching categories:", error);
   }
@@ -116,7 +116,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
     <>
       <Box sx={{ height: "50px", display: "flex", alignItems: "center", px: 2, borderBottom: `1px solid ${theme.palette.divider}`, position: "sticky", top: 1, backgroundColor: theme.palette.background.default }}>
         <Typography variant="body1" sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-          All Servers
+          Joined Servers
         </Typography>
       </Box>
 
