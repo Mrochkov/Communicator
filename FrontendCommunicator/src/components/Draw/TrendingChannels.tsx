@@ -207,7 +207,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             }
             label="Private Server"
           />
-
+          <br/>
           {isPrivate && (
             <TextField
               label="Password"
@@ -220,7 +220,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             />
           )}
 
-          <Button variant="contained" color="primary" onClick={handleAddServer} disabled={!serverName || !serverCategory}>
+          <Button variant="contained" color="primary" onClick={handleAddServer} disabled={!serverName || !serverCategory} sx={{width: "100%" }}>
             Create Server
           </Button>
         </Box>
