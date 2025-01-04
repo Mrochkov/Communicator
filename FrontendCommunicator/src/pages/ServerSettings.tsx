@@ -233,15 +233,14 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
         </ListItem>
     </Draw>
 
-    <Box sx={{ padding: 2 }}>
+    <Box sx={{ padding: 2, textAlign: "center", fontSize: 30}}>Manage your server details here!
   {serverDetails ? (
     <>
       {/* Server Details Section */}
       <Box sx={{ marginBottom: 4, padding: 2, backgroundColor: "#1e1e1e", borderRadius: 2 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           Server Details
         </Typography>
-        <Typography variant="body1">ID: {serverDetails.id}</Typography>
         <Typography variant="body1">Name: {serverDetails.name}</Typography>
         <Typography variant="body1">Category: {serverDetails.category}</Typography>
         <Typography variant="body1">Description: {serverDetails.description}</Typography>

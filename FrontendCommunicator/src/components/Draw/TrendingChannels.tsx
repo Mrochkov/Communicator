@@ -49,7 +49,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
-  const { dataCRUD, error, isLoading, fetchData } = thisUseCRUD<Server>([], "/server/select/");
+  const { dataCRUD, error, isLoading, fetchData } = thisUseCRUD<Server>([], "/server/select/?by_user=true");
 
   const theme = useTheme();
 
@@ -173,7 +173,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
             <Select
               labelId="category-label"
               value={serverCategory}
-              onChange={(e) => setServerCategory(e.target.value)} // Will now set the ID
+              onChange={(e) => setServerCategory(e.target.value)}
             >
               {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>

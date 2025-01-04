@@ -43,7 +43,7 @@ const Login = () => {
                 <Typography variant="h5" component="h1" sx={{ fontWeight: 500, pb: 2 }}>
                     Log in
                 </Typography>
-                <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>Log in to your account.
                     <TextField
                         autoFocus
                         fullWidth
