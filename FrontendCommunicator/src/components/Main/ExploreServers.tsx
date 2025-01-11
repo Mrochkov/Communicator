@@ -27,11 +27,12 @@ interface Server {
   category: string;
   icon: string;
   banner: string;
+  members_num: number;
 }
 
 const ExploreServers = () => {
   const { categoryName } = useParams();
-  const url = categoryName ? `/server/select/?category=${categoryName}` : "/server/select";
+  const url = categoryName ? `/server/select/?category=${categoryName}` : "/server/select/?with_members_num=true";
   const { dataCRUD, fetchData } = thisUseCRUD<Server>([], url);
 
   useEffect(() => {
@@ -74,7 +75,7 @@ const ExploreServers = () => {
         </Typography>
 
         <Scrolling>
-          <Grid container spacing={{ xs: 0, sm: 2 }}>
+          <Grid container spacing={{ xs: 0, sm: 2 }} sx={{ pb: 12}}>
             {dataCRUD.map((item) => (
               <Grid item key={item.id} xs={12} sm={6} md={6} lg={3}>
                 <Card sx={{ height: "100%", display: "flex", flexDirection: "column", boxShadow: "none", backgroundImage: "none", borderRadius: 0 }}>
@@ -98,7 +99,14 @@ const ExploreServers = () => {
                                 {item.name}
                               </Typography>
                             }
-                            secondary={<Typography variant="body2">{item.category}</Typography>}
+                            secondary={
+                              <>
+                                <Typography variant="body2">{item.category}</Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                  members: {item.members_num}
+                                </Typography>
+                              </>
+                            }
                           />
                         </ListItem>
                       </List>
