@@ -59,10 +59,11 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
   const [error, setError] = useState<string | null>(null);
   const [openServerModal, setOpenServerModal] = useState(false);
   const [serverName, setServerName] = useState("");
+  const [categories, setCategories] = useState<any[]>([]);
   const [serverCategory, setServerCategory] = useState("");
   const [serverDescription, setServerDescription] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<any>(null);
-  const axiosInstance = jwtAxiosInterceptor();
+  const jwtAxios = jwtAxiosInterceptor();
 
   useEffect(() => {
     if (!serverId) {
@@ -70,12 +71,26 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
       return;
     }
     fetchServerDetails();
+    fetchCategories();
   }, [serverId]);
+
+
+  const fetchCategories = async () => {
+  try {
+    const response = await jwtAxios.get("http://127.0.0.1:8000/api/server/category/", {
+      withCredentials: true,
+    });
+    setCategories(response.data);
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+};
 
   const fetchServerDetails = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(
+      const response = await jwtAxios.get(
         `http://127.0.0.1:8000/api/server/select/?by_server_id=${serverId}`,
         { withCredentials: true }
       );
@@ -91,7 +106,7 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
 
   const handleRemoveMember = async (userId: number) => {
     try {
-        const response = await axiosInstance.post(
+        const response = await jwtAxios.post(
             `http://127.0.0.1:8000/api/membership/${serverId}/membership/remove_member_from_server/${userId}/`,
             {
                 data: { member_id: userId },
@@ -107,14 +122,14 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
   const handleEditServer = () => {
     setOpenServerModal(true);
     setServerName(serverDetails.name);
-    setServerCategory(serverDetails.category.id);
+    setServerCategory(serverDetails.category);
     setServerDescription(serverDetails.description);
   };
 
 
   const handleSaveServerDetails = async () => {
   try {
-    const response = await axiosInstance.patch(
+    const response = await jwtAxios.patch(
       `http://127.0.0.1:8000/api/server/select/${serverId}/edit_details/`,
       {
         id: serverId,
@@ -134,7 +149,7 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
 
   const handleDeleteChannel = async (channelId: number) => {
   try {
-    const response = await axiosInstance.delete(
+    const response = await jwtAxios.delete(
       `http://127.0.0.1:8000/api/server/${serverId}/channels/${channelId}/`,
       {
         data: { id: channelId },
@@ -155,7 +170,7 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
 
   const handleSaveChannel = async () => {
   try {
-    const response = await axiosInstance.patch(
+    const response = await jwtAxios.patch(
       `http://127.0.0.1:8000/api/server/${serverId}/channels/${selectedChannel.id}/`,
       {
         id: selectedChannel.id,
@@ -353,20 +368,23 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
             margin="normal"
             sx={{ input: { color: "white" }, label: { color: "white" } }}
           />
-          <FormControl fullWidth margin="normal">
-            <InputLabel sx={{ color: "white" }}>Category</InputLabel>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel id="category-label">Category</InputLabel>
             <Select
+              labelId="category-label"
               value={serverCategory}
               onChange={(e) => setServerCategory(e.target.value)}
-              sx={{
-                color: "white",
-                ".MuiSelect-icon": { color: "white" },
-                ".MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-              }}
             >
-              {serverDetails?.categories?.map((category: { id: number; name: string }) => (
+              {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
-                  {category.name}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={`http://127.0.0.1:8000${category.icon}`}
+                      alt={category.name}
+                      style={{ width: 24, height: 24, marginRight: 8 }}
+                    />
+                    {category.name}
+                  </Box>
                 </MenuItem>
               ))}
             </Select>

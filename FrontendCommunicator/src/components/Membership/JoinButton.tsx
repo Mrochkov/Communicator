@@ -19,7 +19,6 @@ const JoinButton = () => {
             try {
                 const response = await jwtAxios.get(`http://127.0.0.1:8000/api/server/select/?by_server_id=${serverId}`, {withCredentials: true});
                 setServerDetails(response.data[0]);
-                console.log(response.data[0]);
             } catch (error) {
                 console.error("Error fetching server details:", error);
             }
@@ -36,10 +35,10 @@ const JoinButton = () => {
         );
         if (response.data.valid) {
             setPasswordError(null);
-            return true; // Validation successful
+            return true;
         } else {
             setPasswordError("Incorrect password. Please try again.");
-            return false; // Validation failed
+            return false;
         }
     } catch (error) {
         console.error("Error validating password:", error);

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "server",
     "chat",
     "chatbot",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -80,12 +81,23 @@ WSGI_APPLICATION = "communicator.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'communicator_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        # 'OPTIONS': {
+        #     'sql_mode': 'STRICT_TRANS_TABLES',  # Optional for strict SQL mode
+        # },
     }
 }
 
+GRAPH_MODELS = {
+    "all_applications": True,
+    "group_models": True,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
