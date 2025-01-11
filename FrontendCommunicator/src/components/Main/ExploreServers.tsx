@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import {
   List,
   ListItem,
@@ -11,6 +11,7 @@ import {
   CardMedia,
   CardContent,
   Grid,
+  TextField,
 } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -32,12 +33,16 @@ interface Server {
 
 const ExploreServers = () => {
   const { categoryName } = useParams();
-  const url = categoryName ? `/server/select/?category=${categoryName}` : "/server/select/?with_members_num=true";
+  const [searchTerm, setSearchTerm] = useState("");
+  const url = categoryName
+    ? `/server/select/?category=${categoryName}&search=${searchTerm}`
+    : `/server/select/?search=${searchTerm}&with_members_num=true`;
+
   const { dataCRUD, fetchData } = thisUseCRUD<Server>([], url);
 
   useEffect(() => {
     fetchData();
-  }, [categoryName]);
+  }, [categoryName, searchTerm]);
 
   return (
     <>
@@ -66,16 +71,25 @@ const ExploreServers = () => {
               textAlign: { xs: "center", sm: "left" },
             }}
           >
-            {categoryName ? `Channels talking about ${categoryName}` : "Check out other popular channels"}
+            {categoryName ? `Channels talking about ${categoryName}` : "Most popular servers"}
           </Typography>
         </Box>
-
-        <Typography variant="h6" sx={{ pt: 6, pb: 1, fontWeight: 700, letterSpacing: "-1px" }}>
+        <Box sx={{ pt: 3, pb: 3 }}>
+          <TextField
+            label="Search Servers"
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by server name or category"
+          />
+        </Box>
+        <Typography variant="h6" sx={{ pt: 2, pb: 1, fontWeight: 700, letterSpacing: "-1px" }}>
           Click on a channel to join in and see what's there!
         </Typography>
 
         <Scrolling>
-          <Grid container spacing={{ xs: 0, sm: 2 }} sx={{ pb: 12}}>
+          <Grid container spacing={{ xs: 0, sm: 2 }} sx={{ pb: 20}}>
             {dataCRUD.map((item) => (
               <Grid item key={item.id} xs={12} sm={6} md={6} lg={3}>
                 <Card sx={{ height: "100%", display: "flex", flexDirection: "column", boxShadow: "none", backgroundImage: "none", borderRadius: 0 }}>

@@ -124,6 +124,7 @@ class ServerListViewSet(viewsets.ViewSet):
         by_user = request.query_params.get("by_user") == "true"
         by_server_id = request.query_params.get("by_server_id")
         with_members_num = request.query_params.get("with_members_num") == "true"
+        search = request.query_params.get("search")
 
         if category:
             self.queryset = self.queryset.filter(category__name=category)
@@ -139,6 +140,10 @@ class ServerListViewSet(viewsets.ViewSet):
                     raise ValidationError(detail=f"Server with id {by_server_id} not found")
             except ValueError:
                 raise ValidationError(detail="Server value error")
+
+        if search:
+            self.queryset = self.queryset.filter(
+                name__icontains=search)  # Search for server names containing the search string
 
         if with_members_num:
             self.queryset = self.queryset.annotate(members_num=Count("member"))
