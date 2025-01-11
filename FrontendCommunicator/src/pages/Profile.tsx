@@ -185,7 +185,7 @@ const Profile = () => {
         My Profile
       </Typography>
       <Draw>
-        <TrendingChannels open={false} />
+        <TrendingChannels  open={false} />
       </Draw>
       <Grid container spacing={4}>
         {/* Avatar and Actions Section */}

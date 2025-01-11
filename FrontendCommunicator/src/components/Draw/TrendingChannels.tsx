@@ -26,6 +26,7 @@ import axios from "axios";
 import { useTheme } from "@mui/material/styles";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
 import thisUseCRUD from "../../hooks/thisUseCRUD.ts";
+import Scrolling from "../Main/Scrolling.tsx";
 
 interface Server {
   id: number;
@@ -114,12 +115,17 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
 
   return (
     <>
-      <Box sx={{ height: "50px", display: "flex", alignItems: "center", px: 2, borderBottom: `1px solid ${theme.palette.divider}`, position: "sticky", top: 1, backgroundColor: theme.palette.background.default }}>
-        <Typography variant="body1" sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+      <Box sx={{ height: "50px", display: "flex", alignItems: "center", px: 2, borderBottom: (theme) => `1px solid ${theme.palette.divider}`, position: "sticky", top: 0, zIndex: 10, backgroundColor: (theme) => theme.palette.background.default,}}>
+        <Typography variant="body1" sx={{
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+          }}
+        >
           Joined Servers
         </Typography>
       </Box>
-
+    <Scrolling>
       <Box sx={{ p: 2 }}>
         {dataCRUD.length === 0 ? (
           <Typography variant="body2" color="textSecondary">No servers available.</Typography>
@@ -153,6 +159,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
           </List>
         )}
       </Box>
+    </Scrolling>
 
       <Divider />
 

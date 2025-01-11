@@ -28,6 +28,20 @@ const AccountButton = () => {
             onClose={handleMenuClose}
         >
             <MenuItem>
+                <Typography
+                    variant="h6"
+                    component={Link}
+                    to="/profile"
+                    sx={{
+                        marginLeft: 2,
+                        marginRight: 10,
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        fontSize: '1.2rem',
+                    }}
+                >
+                    {"My Profile"}
+                </Typography>
             </MenuItem>
         </Menu>
     );
