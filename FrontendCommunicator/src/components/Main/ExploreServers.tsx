@@ -81,7 +81,7 @@ const ExploreServers = () => {
             fullWidth
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by server name or category"
+            placeholder="Search by server name"
           />
         </Box>
         <Typography variant="h6" sx={{ pt: 2, pb: 1, fontWeight: 700, letterSpacing: "-1px" }}>
