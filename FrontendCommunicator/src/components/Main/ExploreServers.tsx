@@ -114,7 +114,7 @@ const ExploreServers = () => {
           Click on a channel to join in and see what's there!
         </Typography>
 
-        <Scrolling>
+        <Scrolling scrollToTop={true}>
           <Grid container spacing={{ xs: 0, sm: 2 }} sx={{ pb: 20 }}>
             {dataCRUD.map((item) => (
               <Grid item key={item.id} xs={12} sm={6} md={6} lg={3}>

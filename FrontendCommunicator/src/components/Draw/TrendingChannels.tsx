@@ -125,7 +125,7 @@ const TrendingChannels: React.FC<Props> = ({ open }) => {
           Joined Servers
         </Typography>
       </Box>
-    <Scrolling>
+    <Scrolling scrollToTop={true}>
       <Box sx={{ p: 2 }}>
         {dataCRUD.length === 0 ? (
           <Typography variant="body2" color="textSecondary">No servers available.</Typography>
