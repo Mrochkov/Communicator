@@ -117,6 +117,7 @@ class CategoryListViewSet(viewsets.ViewSet):
 class ServerListViewSet(viewsets.ViewSet):
     queryset = Server.objects.all()
     permission_classes = [IsAuthenticated]
+
     @server_list_docs
     def list(self, request):
         category = request.query_params.get("category")
@@ -125,9 +126,15 @@ class ServerListViewSet(viewsets.ViewSet):
         by_server_id = request.query_params.get("by_server_id")
         with_members_num = request.query_params.get("with_members_num") == "true"
         search = request.query_params.get("search")
+        sort = request.query_params.get("sort")
 
+        # Apply category filter first
         if category:
             self.queryset = self.queryset.filter(category__name=category)
+
+        # Apply other filters (search, sort, etc.) separately
+        if search:
+            self.queryset = self.queryset.filter(name__icontains=search)
 
         if by_user and request.user.is_authenticated:
             user_id = request.user.id
@@ -141,21 +148,27 @@ class ServerListViewSet(viewsets.ViewSet):
             except ValueError:
                 raise ValidationError(detail="Server value error")
 
-        if search:
-            self.queryset = self.queryset.filter(
-                name__icontains=search)  # Search for server names containing the search string
-
+        # Annotate the queryset with the number of members if required
         if with_members_num:
             self.queryset = self.queryset.annotate(members_num=Count("member"))
 
+        # Apply sorting separately based on members_num
+        if sort:
+            if sort == "asc":
+                self.queryset = self.queryset.order_by("members_num")
+            elif sort == "desc":
+                self.queryset = self.queryset.order_by("-members_num")
+
         self.queryset = self.queryset.prefetch_related("member")
 
+        # Limit results based on qty
         if qty:
             self.queryset = self.queryset[: int(qty)]
 
         serializer = ServerSerializer(self.queryset, many=True, context={"members_num": with_members_num})
 
         return Response(serializer.data)
+
 
     @action(detail=True, methods=['PATCH'])
     def edit_details(self, request, pk=None):

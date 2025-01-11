@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   List,
   ListItem,
@@ -12,6 +12,10 @@ import {
   CardContent,
   Grid,
   TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -34,15 +38,17 @@ interface Server {
 const ExploreServers = () => {
   const { categoryName } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("desc");
+
   const url = categoryName
-    ? `/server/select/?category=${categoryName}&search=${searchTerm}`
-    : `/server/select/?search=${searchTerm}&with_members_num=true`;
+    ? `/server/select/?category=${categoryName}&with_members_num=true&search=${searchTerm}&sort=${sortOrder}`
+    : `/server/select/?search=${searchTerm}&with_members_num=true&sort=${sortOrder}`;
 
   const { dataCRUD, fetchData } = thisUseCRUD<Server>([], url);
 
   useEffect(() => {
     fetchData();
-  }, [categoryName, searchTerm]);
+  }, [categoryName, searchTerm, sortOrder]);
 
   return (
     <>
@@ -74,22 +80,42 @@ const ExploreServers = () => {
             {categoryName ? `Channels talking about ${categoryName}` : "Most popular servers"}
           </Typography>
         </Box>
+
         <Box sx={{ pt: 3, pb: 3 }}>
-          <TextField
-            label="Search Servers"
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by server name"
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Search Servers"
+                variant="outlined"
+                fullWidth
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by server name"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Sort by Members</InputLabel>
+                <Select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  label="Sort by Members"
+                >
+                  <MenuItem value="desc">Most Members</MenuItem>
+                  <MenuItem value="asc">Fewest Members</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
         </Box>
+
         <Typography variant="h6" sx={{ pt: 2, pb: 1, fontWeight: 700, letterSpacing: "-1px" }}>
           Click on a channel to join in and see what's there!
         </Typography>
 
         <Scrolling>
-          <Grid container spacing={{ xs: 0, sm: 2 }} sx={{ pb: 20}}>
+          <Grid container spacing={{ xs: 0, sm: 2 }} sx={{ pb: 20 }}>
             {dataCRUD.map((item) => (
               <Grid item key={item.id} xs={12} sm={6} md={6} lg={3}>
                 <Card sx={{ height: "100%", display: "flex", flexDirection: "column", boxShadow: "none", backgroundImage: "none", borderRadius: 0 }}>
@@ -105,11 +131,7 @@ const ExploreServers = () => {
                           </ListItemIcon>
                           <ListItemText
                             primary={
-                              <Typography
-                                variant="body2"
-                                textAlign="start"
-                                sx={{ fontWeight: 700, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}
-                              >
+                              <Typography variant="body2" textAlign="start" sx={{ fontWeight: 700, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
                                 {item.name}
                               </Typography>
                             }
