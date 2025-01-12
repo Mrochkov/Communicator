@@ -1,15 +1,16 @@
-import json
-from channels.generic.websocket import JsonWebsocketConsumer
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from asgiref.sync import async_to_sync
+from channels.generic.websocket import JsonWebsocketConsumer
 from django.shortcuts import get_object_or_404
-
+from django.conf import settings
 from .models import Message, Conversation
 from django.contrib.auth import get_user_model
-from server.models import Server
-
-#from communicator.server.models import Server
+import base64
+import uuid
 
 User = get_user_model()
+
 
 class ChatConsumer(JsonWebsocketConsumer):
 
@@ -17,25 +18,16 @@ class ChatConsumer(JsonWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.channel_id = None
         self.user = None
-        self.is_member = False
-
-    def update_membership(self, event):
-        user_id = event["user_id"]
-        is_member = event["is_member"]
-        if self.user.id == user_id:
-            self.is_member = is_member
 
     def connect(self):
         self.user = self.scope["user"]
         self.channel_id = self.scope["url_route"]["kwargs"].get("channelId")
-        print(f"Connecting to channel: {self.channel_id}")
 
         if not self.user.is_authenticated:
             self.close(code=4001)
             return
 
         if not self.channel_id or not self.channel_id.isalnum():
-            print(f"Invalid channel_id: {self.channel_id}")
             self.close(code=4002)
             return
 
@@ -45,19 +37,25 @@ class ChatConsumer(JsonWebsocketConsumer):
     def receive_json(self, content):
         channel_id = self.channel_id
         sender = self.user
-        message = content["message"]
+        message_content = content.get("message")
+        image_data = content.get("image")
         reply_to_id = content.get("reply_to")
 
-        conversation, created = Conversation.objects.get_or_create(channel_id=channel_id)
+        conversation, _ = Conversation.objects.get_or_create(channel_id=channel_id)
 
         reply_to_message = None
         if reply_to_id:
             reply_to_message = get_object_or_404(Message, id=reply_to_id, conversation=conversation)
 
+        image_file = None
+        if image_data:
+            image_file = self.save_image(image_data)
+
         new_message = Message.objects.create(
             conversation=conversation,
             sender=sender,
-            content=message,
+            content=message_content,
+            image=image_file,
             reply_to=reply_to_message,
         )
 
@@ -70,6 +68,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                     "sender": new_message.sender.username,
                     "sender_avatar": new_message.sender.avatar.url if new_message.sender.avatar else None,
                     "content": new_message.content,
+                    "image_url": new_message.image.url if new_message.image else None,
                     "timestamp": new_message.timestamp.isoformat(),
                     "reply_to": {
                         "id": reply_to_message.id,
@@ -85,5 +84,21 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(self.channel_id, self.channel_name)
-        print(f"Disconnected from channel {self.channel_id} with close code {close_code}")
-        # super().disconnect(close_code or 1000)
+
+    def save_image(self, image_data):
+        """
+        Decodes base64 image data, saves the image file, and returns the file path.
+        """
+        try:
+            format, img_str = image_data.split(";base64,")
+            ext = format.split("/")[-1]
+            img_data = base64.b64decode(img_str)
+
+            file_name = f"{uuid.uuid4()}.{ext}"
+            file_path = f"uploads/{file_name}"
+
+            default_storage.save(file_path, ContentFile(img_data))
+            return file_path
+        except Exception as e:
+            print(f"Error saving image: {e}")
+            return None

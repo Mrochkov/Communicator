@@ -11,10 +11,10 @@ class MessageSerializer(serializers.Serializer):
     sender_avatar = serializers.ImageField(source='sender.avatar', required=False)
     reply_to = serializers.SerializerMethodField()
     sender_language = serializers.CharField(source='sender.language', read_only=True)
-
+    image_url = serializers.SerializerMethodField()
     class Meta:
         model = Message
-        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "timestamp", "reply_to", "sender_language",]
+        fields = ["id", "sender", "sender_username", "sender_avatar", "content", "image_url", "timestamp", "reply_to", "sender_language",]
 
     def get_reply_to(self, obj):
         if obj.reply_to:
@@ -24,6 +24,14 @@ class MessageSerializer(serializers.Serializer):
                 "content": obj.reply_to.content,
                 "timestamp": obj.reply_to.timestamp,
             }
+        return None
+
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
         return None
 
 

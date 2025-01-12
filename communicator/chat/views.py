@@ -53,7 +53,7 @@ class MessageViewSet(viewsets.ViewSet):
                     {"role": "user",
                      "content": f"The message to reply to is: '{message.content}'. Generate three short and relevant replies."}
                 ],
-                max_tokens=100,
+                max_tokens=200,
                 n=1
             )
 
@@ -97,7 +97,7 @@ class MessageViewSet(viewsets.ViewSet):
                     {"role": "system", "content": "You are an assistant summarizing chat conversations."},
                     {"role": "user", "content": f"Summarize the following conversation:\n\n{messages_text}"}
                 ],
-                max_tokens=200
+                max_tokens=300
             )
 
             summary = response.choices[0].message['content']

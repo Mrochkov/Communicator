@@ -31,6 +31,7 @@ interface Message {
   sender_avatar?: string;
   sender_language?: string;
   reply_to?: Message;
+  image_url?: string;
 }
 
 interface ServerChannelProps {
@@ -40,6 +41,7 @@ interface ServerChannelProps {
 interface SendMessageData {
   type: string;
   message: string;
+  image?: string;
   reply_to?: string;
   [key: string]: any;
 }
@@ -58,6 +60,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const [replySuggestions, setReplySuggestions] = useState<string[]>([]);
   const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
   const [preferredLanguage, setPreferredLanguage] = useState<string>("en");
+  const [image, setImage] = useState<File | null>(null);
 
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
 
@@ -93,22 +96,40 @@ const TextingTemplate = (props: ServerChannelProps) => {
     sendMessage();
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!isUserMember || !message.trim()) return;
+
     const messageData: SendMessageData = {
       type: "message",
       message,
     };
-    if (replyTo) {
-      messageData.reply_to = replyTo.id;
+
+    if (image) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        messageData.image = reader.result?.toString();
+        sendJsonMessage(messageData);
+        resetInput();
+      };
+      reader.readAsDataURL(image);
+    } else {
+      sendJsonMessage(messageData);
+      resetInput();
     }
-    sendJsonMessage(messageData);
+  };
+
+  const resetInput = () => {
     setMessage("");
     setReplyTo(null);
-    setReplySuggestions([]);
-    setShowSuggestionsModal(false);
-    localStorage.removeItem("replyTo");
+    setImage(null); // Reset image
   };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  if (event.target.files?.[0]) {
+    setImage(event.target.files[0]);
+    event.target.value = ""; // Reset the input value
+  }
+};
 
   const fetchReplySuggestions = async (msgId: string) => {
     try {
@@ -186,203 +207,267 @@ const TextingTemplate = (props: ServerChannelProps) => {
 
   // @ts-ignore
   return (
-    <>
-      <Button onClick={toggleChatbot}>
-        {useChatbot ? "Back to Channels" : "Chat with Bot"}
-      </Button>
-      {useChatbot ? (
-        <Chatbot />
-      ) : (
-        <TextingChannelsTemplate data={data} />
-      )}
-      {channelId === undefined ? (
-        <Box
-          sx={{
-            overflow: "hidden",
-            p: { xs: 0 },
-            height: `calc(80vh)`,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ textAlign: "center" }}>
-            <Typography variant="h4" fontWeight={700} letterSpacing={"-0.5px"} sx={{ px: 5, maxWidth: "600" }}>
-              Welcome to {server_name}
-            </Typography>
-            <Typography>{data?.[0]?.description ?? "This is our home"}</Typography>
-            <Typography variant="h5" sx={{ py: "50px" }}>
-              Become a member to start interacting with this server!
-            </Typography>
-            <JoinButton />
-          </Box>
+  <>
+    <Button onClick={toggleChatbot}>
+      {useChatbot ? "Back to Channels" : "Chat with Bot"}
+    </Button>
+    {useChatbot ? (
+      <Chatbot />
+    ) : (
+      <TextingChannelsTemplate data={data} />
+    )}
+    {channelId === undefined ? (
+      <Box
+        sx={{
+          overflow: "hidden",
+          p: { xs: 0 },
+          height: `calc(80vh)`,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ textAlign: "center" }}>
+          <Typography
+            variant="h4"
+            fontWeight={700}
+            letterSpacing={"-0.5px"}
+            sx={{ px: 5, maxWidth: "600" }}
+          >
+            Welcome to {server_name}
+          </Typography>
+          <Typography>{data?.[0]?.description ?? "This is our home"}</Typography>
+          <Typography variant="h5" sx={{ py: "50px" }}>
+            Become a member to start interacting with this server!
+          </Typography>
+          <JoinButton />
         </Box>
-      ) : (
-        <>
-          <Box sx={{ overflow: "hidden", p: 0, height: `calc(100vh - 100px)` }}>
-            <Scrolling>
-              <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-  {newMessage.map((msg: Message, index: number) => (
-    <ListItem key={index} alignItems="flex-start">
-      <ListItemAvatar>
-        <Avatar
-          alt={msg.sender_username}
-          src={msg.sender_avatar ? `${MEDIA_URL}${msg.sender_avatar}` : `${MEDIA_URL}default-avatar.jpg`}
-        />
-      </ListItemAvatar>
-      <ListItemText
-        primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
-        primary={
-          <>
-            <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-              {msg.sender || "Unknown Sender"}
-            </Typography>
-            <Typography component="span" variant="caption" color="text.secondary">
-              {" at "}
-              {timeStampFormat(msg.timestamp)}
-            </Typography>
-          </>
-        }
-        secondary={
-          <Fragment>
-            {msg.reply_to && (
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
-              >
-                Replying to: {msg.reply_to.content}
-              </Typography>
-            )}
-            <Typography
-              variant="body1"
-              sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mb: 1 }}
-              component="span"
-              color="text.primary"
-            >
-              {msg.content}
-            </Typography>
+      </Box>
+    ) : (
+      <>
+        <Box sx={{ overflow: "hidden", p: 0, height: `calc(100vh - 100px)` }}>
+          <Scrolling>
+            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+              {newMessage.map((msg: Message, index: number) => (
+                <ListItem key={index} alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar
+                      alt={msg.sender_username}
+                      src={
+                        msg.sender_avatar
+                          ? `${MEDIA_URL}${msg.sender_avatar}`
+                          : `${MEDIA_URL}default-avatar.jpg`
+                      }
+                    />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
+                    primary={
+                      <>
+                        <Typography
+                          component="span"
+                          variant="body1"
+                          color="text.primary"
+                          sx={{ display: "inline", fontWeight: 600 }}
+                        >
+                          {msg.sender || "Unknown Sender"}
+                        </Typography>
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          color="text.secondary"
+                        >
+                          {" at "}
+                          {timeStampFormat(msg.timestamp)}
+                        </Typography>
+                      </>
+                    }
+                    secondary={
+                      <Fragment>
+                        {msg.reply_to && (
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                              paddingLeft: 2,
+                              borderLeft: "2px solid",
+                              marginBottom: 1,
+                            }}
+                          >
+                            Replying to: {msg.reply_to.content}
+                          </Typography>
+                        )}
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            lineHeight: 1.2,
+                            fontWeight: 400,
+                            letterSpacing: "-0.2px",
+                            mb: 1,
+                          }}
+                          component="span"
+                          color="text.primary"
+                        >
+                          {msg.content}
+                        </Typography>
 
-            {/* Display the image if it exists */}
-            {msg.image_url && (
-              <Box sx={{ maxWidth: "100%", mt: 1 }}>
-                <img
-                  src={`${MEDIA_URL}${msg.image_url}`}
-                  alt="Message Image"
-                  style={{ maxWidth: "100%", borderRadius: "8px" }}
-                />
-              </Box>
-            )}
+                        {msg.image_url && (
+                          <Box sx={{ maxWidth: "100%", mt: 1 }}>
+                            <img
+                              src={`${MEDIA_URL}${msg.image_url}`}
+                              alt="Message Image"
+                              style={{ maxWidth: "100%", borderRadius: "8px" }}
+                            />
+                          </Box>
+                        )}
 
-            {translatedMessages.get(index)?.translated && (
-              <Typography
-                variant="body2"
-                sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mt: 1, pl: 2 }}
-                component="span"
-                color="text.secondary"
-              >
-                {translatedMessages.get(index).translated}
+                        {translatedMessages.get(index)?.translated && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              lineHeight: 1.2,
+                              fontWeight: 400,
+                              letterSpacing: "-0.2px",
+                              mt: 1,
+                              pl: 2,
+                            }}
+                            component="span"
+                            color="text.secondary"
+                          >
+                            {translatedMessages.get(index).translated}
+                          </Typography>
+                        )}
+                        <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                          <Button size="small" onClick={() => handleReply(msg)}>
+                            Reply
+                          </Button>
+                          <Button size="small" onClick={() => handleReplAI(msg)}>
+                            ReplAI
+                          </Button>
+                          <Button
+                            size="small"
+                            onClick={() => handleTranslate(msg.content, index)}
+                          >
+                            Translate
+                          </Button>
+                        </Box>
+                      </Fragment>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Scrolling>
+        </Box>
+
+        {replyTo && (
+          <Box sx={{ padding: 1, backgroundColor: theme.palette.action.hover }}>
+            <Typography variant="body2">
+              Replying to:{" "}
+              <Typography variant="body1" component="span" fontWeight={600}>
+                {replyTo.content}
               </Typography>
-            )}
-            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-              <Button size="small" onClick={() => handleReply(msg)}>
-                Reply
-              </Button>
-              <Button size="small" onClick={() => handleReplAI(msg)}>
-                ReplAI
-              </Button>
-              <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
-                Translate
-              </Button>
-            </Box>
-          </Fragment>
-        }
-      />
-    </ListItem>
-  ))}
-</List>
-            </Scrolling>
+            </Typography>
+            <Button size="small" onClick={handleCancelReply}>
+              Cancel
+            </Button>
           </Box>
+        )}
 
-          {replyTo && (
-            <Box sx={{ padding: 1, backgroundColor: theme.palette.action.hover }}>
-              <Typography variant="body2">
-                Replying to:{" "}
-                <Typography variant="body1" component="span" fontWeight={600}>
-                  {replyTo.content}
-                </Typography>
-              </Typography>
-              <Button size="small" onClick={handleCancelReply}>
-                Cancel
-              </Button>
-            </Box>
-          )}
-
-          <Modal open={showSuggestionsModal} onClose={() => setShowSuggestionsModal(false)}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                boxShadow: 24,
-                p: 4,
-                borderRadius: 2,
-              }}
+        <Modal open={showSuggestionsModal} onClose={() => setShowSuggestionsModal(false)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+            }}
+          >
+            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+              Suggested Replies
+            </Typography>
+            <List>
+              {replySuggestions.map((suggestion, idx) => (
+                <ListItem
+                  key={idx}
+                  button
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <ListItemText primary={suggestion} />
+                </ListItem>
+              ))}
+            </List>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => setShowSuggestionsModal(false)}
             >
-              <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-                Suggested Replies
-              </Typography>
-              <List>
-                {replySuggestions.map((suggestion, idx) => (
-                  <ListItem key={idx} button onClick={() => handleSuggestionClick(suggestion)}>
-                    <ListItemText primary={suggestion} />
-                  </ListItem>
-                ))}
-              </List>
-              <Button fullWidth variant="outlined" onClick={() => setShowSuggestionsModal(false)}>
-                Close
-              </Button>
-            </Box>
-          </Modal>
-
-          <Box sx={{ position: "sticky", bottom: 0, width: "100%" }}>
-            <form
-              onSubmit={handleSubmit}
-              style={{
-                bottom: 0,
-                right: 0,
-                padding: "1rem",
-                backgroundColor: theme.palette.background.default,
-                zIndex: 1,
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <TextField
-                  fullWidth
-                  multiline
-                  value={message}
-                  minRows={1}
-                  maxRows={4}
-                  onKeyDown={handleKeyDown}
-                  onChange={(e) => setMessage(e.target.value)}
-                  sx={{ flexGrow: 1, marginRight: 1 }}
-                  disabled={!isUserMember}
-                />
-                <Button type="submit" variant="outlined" sx={{ height: "100%" }} >
-                  Image
-                </Button>
-                <Button type="submit" variant="contained" sx={{ height: "100%", ml: 2 }} disabled={!isUserMember || !message.trim()}>
-                  Send
-                </Button>
-              </Box>
-            </form>
+              Close
+            </Button>
           </Box>
-        </>
-      )}
-    </>
-  );
+        </Modal>
+
+        <Box sx={{ position: "sticky", bottom: 0, width: "100%" }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              bottom: 0,
+              right: 0,
+              padding: "1rem",
+              backgroundColor: theme.palette.background.default,
+              zIndex: 1,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <TextField
+                fullWidth
+                multiline
+                value={message}
+                minRows={1}
+                maxRows={4}
+                onKeyDown={handleKeyDown}
+                onChange={(e) => setMessage(e.target.value)}
+                sx={{ flexGrow: 1, marginRight: 1 }}
+                disabled={!isUserMember}
+              />
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{ height: "100%" }}
+              >
+                Upload Image
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(event) => {
+                    if (event.target.files?.[0]) {
+                      setImage(event.target.files[0]);
+                      event.target.value = "";
+                    }
+                  }}
+                />
+              </Button>
+              <Button
+                  type="submit"
+                  variant="contained"
+                sx={{ height: "100%", ml: 2 }}
+                disabled={!isUserMember || !message.trim()}
+              >
+                Send
+              </Button>
+            </Box>
+          </form>
+        </Box>
+      </>
+    )}
+  </>
+);
+
 };
 
 export default TextingTemplate;
