@@ -128,11 +128,9 @@ class ServerListViewSet(viewsets.ViewSet):
         search = request.query_params.get("search")
         sort = request.query_params.get("sort")
 
-        # Apply category filter first
         if category:
-            self.queryset = self.queryset.filter(category__name=category)
+            self.queryset = self.queryset.filter(category_name=category)
 
-        # Apply other filters (search, sort, etc.) separately
         if search:
             self.queryset = self.queryset.filter(name__icontains=search)
 
@@ -148,11 +146,9 @@ class ServerListViewSet(viewsets.ViewSet):
             except ValueError:
                 raise ValidationError(detail="Server value error")
 
-        # Annotate the queryset with the number of members if required
         if with_members_num:
             self.queryset = self.queryset.annotate(members_num=Count("member"))
 
-        # Apply sorting separately based on members_num
         if sort:
             if sort == "asc":
                 self.queryset = self.queryset.order_by("members_num")
@@ -161,7 +157,6 @@ class ServerListViewSet(viewsets.ViewSet):
 
         self.queryset = self.queryset.prefetch_related("member")
 
-        # Limit results based on qty
         if qty:
             self.queryset = self.queryset[: int(qty)]
 

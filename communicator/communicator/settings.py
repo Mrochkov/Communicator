@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "chat",
     "chatbot",
     "django_extensions",
+    "communicator",
 ]
 
 MIDDLEWARE = [
@@ -84,9 +85,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'communicator_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'USER': 'admin',
+        'PASSWORD': 'adminpassword',
+        'HOST': 'mysql-db',
         'PORT': '3306',
         # 'OPTIONS': {
         #     'sql_mode': 'STRICT_TRANS_TABLES',  # Optional for strict SQL mode

@@ -59,7 +59,6 @@ const TextingTemplate = (props: ServerChannelProps) => {
   const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
   const [preferredLanguage, setPreferredLanguage] = useState<string>("en");
 
-
   const toggleChatbot = () => setUseChatbot((prev) => !prev);
 
   useEffect(() => {
@@ -70,12 +69,10 @@ const TextingTemplate = (props: ServerChannelProps) => {
     const fetchPreferredLanguage = async () => {
       try {
         const userId = localStorage.getItem("user_id");
-        console.log("userid:", userId);
         const response = await jwtAxios.get(`http://127.0.0.1:8000/api/user/${userId}`, {
           withCredentials: true,
         });
         setPreferredLanguage(response.data.language || "en");
-        console.log(response.data.language);
       } catch (error) {
         console.error("Error fetching preferred language:", error);
       }
@@ -114,41 +111,39 @@ const TextingTemplate = (props: ServerChannelProps) => {
   };
 
   const fetchReplySuggestions = async (msgId: string) => {
-  try {
-    const response = await jwtAxios.post(
-      `http://127.0.0.1:8000/api/messages/${msgId}/reply_suggestions/`,
-      {},
-      { withCredentials: true }
-    );
-    if (response.data.suggestions) {
-      const suggestions = response.data.suggestions[0].split("\n").map((suggestion) => suggestion.trim());
-      setReplySuggestions(suggestions);
-      setShowSuggestionsModal(true);
+    try {
+      const response = await jwtAxios.post(
+        `http://127.0.0.1:8000/api/messages/${msgId}/reply_suggestions/`,
+        {},
+        { withCredentials: true }
+      );
+      if (response.data.suggestions) {
+        const suggestions = response.data.suggestions[0].split("\n").map((suggestion) => suggestion.trim());
+        setReplySuggestions(suggestions);
+        setShowSuggestionsModal(true);
+      }
+    } catch (error) {
+      console.error("Error fetching reply suggestions:", error);
     }
-  } catch (error) {
-    console.error("Error fetching reply suggestions:", error);
-  }
-};
+  };
 
   const handleSuggestionClick = (suggestion: string) => {
-  const cleanedSuggestion = suggestion.replace(/^\d+\.\s?/, '').replace(/"/g, '').trim();
+    const cleanedSuggestion = suggestion.replace(/^\d+\.\s?/, '').replace(/"/g, '').trim();
 
-  setMessage(cleanedSuggestion);
-  setShowSuggestionsModal(false);
-};
-
+    setMessage(cleanedSuggestion);
+    setShowSuggestionsModal(false);
+  };
 
   const handleReply = (msg: Message) => {
-  setReplyTo(msg);
-  localStorage.setItem("replyTo", JSON.stringify(msg));
-  //fetchReplySuggestions(msg.id); // Fetch and show suggestions.
-};
+    setReplyTo(msg);
+    localStorage.setItem("replyTo", JSON.stringify(msg));
+  };
 
   const handleReplAI = (msg: Message) => {
-  setReplyTo(msg);
-  localStorage.setItem("replyTo", JSON.stringify(msg));
-  fetchReplySuggestions(msg.id);
-};
+    setReplyTo(msg);
+    localStorage.setItem("replyTo", JSON.stringify(msg));
+    fetchReplySuggestions(msg.id);
+  };
 
   const handleCancelReply = () => {
     setReplyTo(null);
@@ -158,29 +153,29 @@ const TextingTemplate = (props: ServerChannelProps) => {
   };
 
   const handleTranslate = async (msgContent: string, index: number) => {
-  try {
-    const response = await jwtAxios.post(
-      "http://127.0.0.1:8000/translate/",
-      { text: msgContent, to: preferredLanguage },
-      { withCredentials: true }
-    );
+    try {
+      const response = await jwtAxios.post(
+        "http://127.0.0.1:8000/translate/",
+        { text: msgContent, to: preferredLanguage },
+        { withCredentials: true }
+      );
 
-    const translatedText = response.data[0]?.translations?.[0]?.text;
+      const translatedText = response.data[0]?.translations?.[0]?.text;
 
-    if (translatedText) {
-      setTranslatedMessages((prevMessages) => {
-        const newMessages = new Map(prevMessages);
-        newMessages.set(index, {
-          original: msgContent,
-          translated: translatedText,
+      if (translatedText) {
+        setTranslatedMessages((prevMessages) => {
+          const newMessages = new Map(prevMessages);
+          newMessages.set(index, {
+            original: msgContent,
+            translated: translatedText,
+          });
+          return newMessages;
         });
-        return newMessages;
-      });
+      }
+    } catch (error) {
+      console.error("Translation error:", error.response?.data || error.message);
     }
-  } catch (error) {
-    console.error("Translation error:", error.response?.data || error.message);
-  }
-};
+  };
 
   const timeStampFormat = (timestamp: string): string => {
     const date = new Date(Date.parse(timestamp));
@@ -189,7 +184,6 @@ const TextingTemplate = (props: ServerChannelProps) => {
     return `${dateFormatted} at ${timeFormatted}`;
   };
 
-  // @ts-ignore
   // @ts-ignore
   return (
     <>
@@ -228,73 +222,85 @@ const TextingTemplate = (props: ServerChannelProps) => {
           <Box sx={{ overflow: "hidden", p: 0, height: `calc(100vh - 100px)` }}>
             <Scrolling>
               <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-                {newMessage.map((msg: Message, index: number) => (
-                  <ListItem key={index} alignItems="flex-start">
-                    <ListItemAvatar>
-                      <Avatar
-                        alt={msg.sender_username}
-                        src={msg.sender_avatar ? `${MEDIA_URL}${msg.sender_avatar}` : `${MEDIA_URL}default-avatar.jpg`}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
-                      primary={
-                        <>
-                          <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
-                            {msg.sender || "Unknown Sender"}
-                          </Typography>
-                          <Typography component="span" variant="caption" color="text.secondary">
-                            {" at "}
-                            {timeStampFormat(msg.timestamp)}
-                          </Typography>
-                        </>
-                      }
-                      secondary={
-                        <Fragment>
-                          {msg.reply_to && (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
-                            >
-                              Replying to: {msg.reply_to.content}
-                            </Typography>
-                          )}
-                          <Typography
-                            variant="body1"
-                            sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mb: 1 }}
-                            component="span"
-                            color="text.primary"
-                          >
-                            {msg.content}
-                          </Typography>
-                          {translatedMessages.get(index)?.translated && (
-                            <Typography
-                              variant="body2"
-                              sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mt: 1, pl: 2 }}
-                              component="span"
-                              color="text.secondary"
-                            >
-                              {translatedMessages.get(index).translated}
-                            </Typography>
-                          )}
-                          <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                            <Button size="small" onClick={() => handleReply(msg)}>
-                              Reply
-                            </Button>
-                            <Button size="small" onClick={() => handleReplAI(msg)}>
-                              ReplAI
-                            </Button>
-                            <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
-                              Translate
-                            </Button>
-                          </Box>
-                        </Fragment>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
+  {newMessage.map((msg: Message, index: number) => (
+    <ListItem key={index} alignItems="flex-start">
+      <ListItemAvatar>
+        <Avatar
+          alt={msg.sender_username}
+          src={msg.sender_avatar ? `${MEDIA_URL}${msg.sender_avatar}` : `${MEDIA_URL}default-avatar.jpg`}
+        />
+      </ListItemAvatar>
+      <ListItemText
+        primaryTypographyProps={{ fontSize: "12px", variant: "body2" }}
+        primary={
+          <>
+            <Typography component="span" variant="body1" color="text.primary" sx={{ display: "inline", fontWeight: 600 }}>
+              {msg.sender || "Unknown Sender"}
+            </Typography>
+            <Typography component="span" variant="caption" color="text.secondary">
+              {" at "}
+              {timeStampFormat(msg.timestamp)}
+            </Typography>
+          </>
+        }
+        secondary={
+          <Fragment>
+            {msg.reply_to && (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ paddingLeft: 2, borderLeft: "2px solid", marginBottom: 1 }}
+              >
+                Replying to: {msg.reply_to.content}
+              </Typography>
+            )}
+            <Typography
+              variant="body1"
+              sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mb: 1 }}
+              component="span"
+              color="text.primary"
+            >
+              {msg.content}
+            </Typography>
+
+            {/* Display the image if it exists */}
+            {msg.image_url && (
+              <Box sx={{ maxWidth: "100%", mt: 1 }}>
+                <img
+                  src={`${MEDIA_URL}${msg.image_url}`}
+                  alt="Message Image"
+                  style={{ maxWidth: "100%", borderRadius: "8px" }}
+                />
+              </Box>
+            )}
+
+            {translatedMessages.get(index)?.translated && (
+              <Typography
+                variant="body2"
+                sx={{ lineHeight: 1.2, fontWeight: 400, letterSpacing: "-0.2px", mt: 1, pl: 2 }}
+                component="span"
+                color="text.secondary"
+              >
+                {translatedMessages.get(index).translated}
+              </Typography>
+            )}
+            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+              <Button size="small" onClick={() => handleReply(msg)}>
+                Reply
+              </Button>
+              <Button size="small" onClick={() => handleReplAI(msg)}>
+                ReplAI
+              </Button>
+              <Button size="small" onClick={() => handleTranslate(msg.content, index)}>
+                Translate
+              </Button>
+            </Box>
+          </Fragment>
+        }
+      />
+    </ListItem>
+  ))}
+</List>
             </Scrolling>
           </Box>
 
