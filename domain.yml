@@ -3,13 +3,23 @@ intents:
   - greet
   - goodbye
   - ask_help
-  - thank
+  - ask_how_to_create_server
+  - ask_how_to_change_profile
+  - ask_how_to_manage_server
   - ask_bot_name
   - ask_how_are_you
   - ask_for_joke
   - ask_for_fact
   - ask_about_weather
   - ask_about_time
+  - ask_about_favorite_food
+  - ask_about_hobbies
+  - ask_about_music
+  - ask_about_movies
+  - ask_about_books
+  - ask_about_travel
+  - ask_for_compliments
+  - ask_for_advice
 
 responses:
   utter_greet:
@@ -46,3 +56,45 @@ responses:
 
   utter_ask_about_time:
     - text: "Time flies when we're chatting! Check your clock for the exact time."
+
+  utter_how_to_create_server:
+    - text: "To create a new server, click on the 'Create New Server' button. You'll need to provide a server name, choose a category, upload a server icon and banner. You can also choose whether the server is private, and if so, you can set a password for it."
+
+  utter_how_to_change_profile:
+    - text: "To change your profile information, go to the 'My Profile' section. From there, you can update your avatar, change your password, and select your preferred language for translations."
+
+  utter_how_to_manage_server:
+    - text: "To manage your server, you need to be the server owner. Once you're the owner, you can add categories, change the server details, and make any other necessary changes."
+
+  utter_ask_about_favorite_food:
+    - text: "If I had to pick, I’d say pizza is always a favorite! What's your favorite food?"
+    - text: "I don't eat, but if I could, I'd probably enjoy a big bowl of pasta. What about you?"
+
+  utter_ask_about_hobbies:
+    - text: "I enjoy chatting with people and helping out! What about you? What are your hobbies?"
+    - text: "I'm always learning new things and sharing knowledge. How about you, do you have any fun hobbies?"
+
+  utter_ask_about_music:
+    - text: "I like to imagine listening to electronic or lo-fi beats! What about you? What's your favorite type of music?"
+    - text: "Music is such a great way to unwind! What kind of tunes do you vibe with?"
+
+  utter_ask_about_movies:
+    - text: "Movies are awesome! I'd probably enjoy sci-fi or comedies. Do you have a favorite movie?"
+    - text: "I can't watch movies, but if I could, I'd love a good thriller. How about you?"
+
+  utter_ask_about_books:
+    - text: "I love learning about new ideas and stories. What about you, do you enjoy reading?"
+    - text: "Books can take you to incredible places. What’s the last book you read?"
+
+  utter_ask_about_travel:
+    - text: "I’d love to visit all the historical landmarks of the world! Where would you want to travel?"
+    - text: "If I could travel, I'd probably start with a trip to space. What's your dream travel destination?"
+
+  utter_ask_for_compliments:
+    - text: "You’re awesome! Keep being amazing."
+    - text: "I’m sure you’re doing great, keep it up!"
+
+  utter_ask_for_advice:
+    - text: "Here’s some advice: never stop learning and trying new things!"
+    - text: "My advice: follow your dreams and don’t be afraid to take risks!"
+

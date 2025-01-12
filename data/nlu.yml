@@ -73,8 +73,7 @@ nlu:
     - unhappy
     - not good
     - not very good
-    - extremly sad
-    - so saad
+    - extremely sad
     - so sad
 - intent: bot_challenge
   examples: |
@@ -83,53 +82,98 @@ nlu:
     - am I talking to a bot?
     - am I talking to a human?
     - how are you
-
 - intent: ask_help
   examples: |
     - I need help
     - can you help me?
     - I have a question
     - could you assist me?
-
-- intent: thank
+- intent: ask_how_to_create_server
   examples: |
-    - thanks
-    - thank you
-    - appreciate it
-    - you are helpful
-
+    - how can I create a new server?
+    - How do I create a server?
+    - What do I need to create a new server?
+    - Can you guide me through creating a server?
+- intent: ask_how_to_change_profile
+  examples: |
+    - How do I change my profile information?
+    - How can I update my profile?
+    - Can I edit my profile details?
+    - How do I change my avatar or password?
+- intent: ask_how_to_manage_server
+  examples: |
+    - How do I manage my server?
+    - How can I change my server settings?
+    - What can I do to manage my server?
+    - Can I add categories to my server?
+    - How do I change server details?
 - intent: ask_bot_name
   examples: |
     - what's your name?
     - who are you?
     - do you have a name?
-
 - intent: ask_how_are_you
   examples: |
     - how are you?
     - how's it going?
     - are you doing well?
-
 - intent: ask_for_joke
   examples: |
     - tell me a joke
     - make me laugh
     - got any jokes?
-
 - intent: ask_for_fact
   examples: |
     - tell me a fact
     - I want to know something interesting
     - do you have any cool facts?
-
 - intent: ask_about_weather
   examples: |
     - what's the weather like?
     - is it sunny?
     - tell me about the weather
-
 - intent: ask_about_time
   examples: |
     - what time is it?
     - do you know the time?
     - tell me the current time
+- intent: ask_about_favorite_food
+  examples: |
+    - what's your favorite food?
+    - do you like pizza?
+    - what's your go-to snack?
+- intent: ask_about_hobbies
+  examples: |
+    - what are your hobbies?
+    - what do you like to do in your free time?
+    - tell me about your hobbies
+- intent: ask_about_music
+  examples: |
+    - what kind of music do you like?
+    - do you listen to music?
+    - what's your favorite genre of music?
+- intent: ask_about_movies
+  examples: |
+    - do you like movies?
+    - what's your favorite movie?
+    - have you seen any good movies lately?
+- intent: ask_about_books
+  examples: |
+    - do you like reading?
+    - what's the last book you read?
+    - do you have a favorite book?
+- intent: ask_about_travel
+  examples: |
+    - where would you like to travel?
+    - what's your dream vacation destination?
+    - if you could travel anywhere, where would you go?
+- intent: ask_for_compliments
+  examples: |
+    - give me a compliment
+    - can you say something nice about me?
+    - say something kind
+- intent: ask_for_advice
+  examples: |
+    - do you have any advice for me?
+    - can you give me some life advice?
+    - any tips for success?
