@@ -103,31 +103,34 @@ const TextingTemplate = (props: ServerChannelProps) => {
       type: "message",
       message,
     };
+    if (replyTo) {
+      messageData.reply_to = replyTo.id;
 
-    if (image) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        messageData.image = reader.result?.toString();
+      if (image) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          messageData.image = reader.result?.toString();
+          sendJsonMessage(messageData);
+          resetInput();
+        };
+        reader.readAsDataURL(image);
+      } else {
         sendJsonMessage(messageData);
         resetInput();
-      };
-      reader.readAsDataURL(image);
-    } else {
-      sendJsonMessage(messageData);
-      resetInput();
+      }
     }
   };
 
   const resetInput = () => {
     setMessage("");
     setReplyTo(null);
-    setImage(null); // Reset image
+    setImage(null);
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   if (event.target.files?.[0]) {
     setImage(event.target.files[0]);
-    event.target.value = ""; // Reset the input value
+    event.target.value = "";
   }
 };
 
@@ -247,7 +250,7 @@ const TextingTemplate = (props: ServerChannelProps) => {
       <>
         <Box sx={{ overflow: "hidden", p: 0, height: `calc(100vh - 100px)` }}>
           <Scrolling>
-            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+            <List sx={{ width: "100%", bgcolor: "background.paper", pb: 6 }}>
               {newMessage.map((msg: Message, index: number) => (
                 <ListItem key={index} alignItems="flex-start">
                   <ListItemAvatar>

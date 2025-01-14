@@ -18,7 +18,7 @@ def category_icon_path(instance, filename):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
     icon = models.FileField(upload_to=category_icon_path, null=True, blank=True)
 
@@ -43,7 +43,7 @@ class Category(models.Model):
 
 
 class Server(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="server_owner")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="server_category")
     description = models.CharField(max_length=250, blank=True, null=True)
