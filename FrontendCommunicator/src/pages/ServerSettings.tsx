@@ -149,7 +149,7 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
 };
 
  const handleDeleteServer = () => {
-  setOpenDeleteConfirm(true); // Open confirmation dialog
+  setOpenDeleteConfirm(true);
 };
 
   const handleConfirmDeleteServer = async () => {
