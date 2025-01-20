@@ -1,9 +1,9 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { Box, List, ListItem, ListItemText, TextField, Typography, Button } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import axios from "axios";
 import jwtAxiosInterceptor from "../../axios/jwtinterceptor.ts";
+
 interface Message {
   sender: string;
   content: string;
@@ -13,9 +13,9 @@ interface Message {
 const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const senderId = "You"; // unique sender ID for tracking conversation
+  const senderId = "You";
   const jwtAxios = jwtAxiosInterceptor();
-
+  const scrollRef = useRef<HTMLDivElement>(null); // Ref for the scrollable container
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -24,10 +24,14 @@ const Chatbot = () => {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
 
     try {
-      const response = await jwtAxios.post("http://127.0.0.1:8000/chatbot/response/", {
-        sender: senderId,
-        message: input,
-      }, {withCredentials: true});
+      const response = await jwtAxios.post(
+        "http://127.0.0.1:8000/chatbot/response/",
+        {
+          sender: senderId,
+          message: input,
+        },
+        { withCredentials: true }
+      );
 
       const botResponses = response.data;
       botResponses.forEach((botReply: any) => {
@@ -48,8 +52,6 @@ const Chatbot = () => {
     setInput("");
   };
 
-
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -57,34 +59,52 @@ const Chatbot = () => {
     }
   };
 
+  // Scroll to bottom whenever messages update
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <Box>
-      <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-        {messages.map((msg, index) => (
-          <ListItem key={index} alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt={msg.sender === "User" ? "User Avatar" : "Bot Avatar"} />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Fragment>
-                  <Typography component="span" variant="body1" sx={{ fontWeight: 600 }}>
-                    {msg.sender}
+      <Box
+        ref={scrollRef}
+        sx={{
+          height: 600,
+          overflowY: "auto",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          mb: 2, // Margin below the chat area
+        }}
+      >
+        <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+          {messages.map((msg, index) => (
+            <ListItem key={index} alignItems="flex-start">
+              <ListItemAvatar>
+                <Avatar alt={msg.sender === "User" ? "User Avatar" : "Bot Avatar"} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Fragment>
+                    <Typography component="span" variant="body1" sx={{ fontWeight: 600 }}>
+                      {msg.sender}
+                    </Typography>
+                    <Typography component="span" variant="caption" sx={{ marginLeft: "10px" }}>
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </Typography>
+                  </Fragment>
+                }
+                secondary={
+                  <Typography variant="body1" color="text.primary">
+                    {msg.content}
                   </Typography>
-                  <Typography component="span" variant="caption" sx={{ marginLeft: "10px" }}>
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </Typography>
-                </Fragment>
-              }
-              secondary={
-                <Typography variant="body1" color="text.primary">
-                  {msg.content}
-                </Typography>
-              }
-            />
-          </ListItem>
-        ))}
-      </List>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", p: 1, borderTop: "1px solid #ddd" }}>
         <TextField

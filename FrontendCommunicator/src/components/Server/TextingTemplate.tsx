@@ -97,29 +97,31 @@ const TextingTemplate = (props: ServerChannelProps) => {
   };
 
   const sendMessage = async () => {
-    if (!isUserMember || !message.trim()) return;
+  if (!isUserMember || !message.trim()) return;
 
-    const messageData: SendMessageData = {
-      type: "message",
-      message,
-    };
-    if (replyTo) {
-      messageData.reply_to = replyTo.id;
-
-      if (image) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          messageData.image = reader.result?.toString();
-          sendJsonMessage(messageData);
-          resetInput();
-        };
-        reader.readAsDataURL(image);
-      } else {
-        sendJsonMessage(messageData);
-        resetInput();
-      }
-    }
+  const messageData: SendMessageData = {
+    type: "message",
+    message,
   };
+
+  // Include replyTo only if it is set
+  if (replyTo) {
+    messageData.reply_to = replyTo.id;
+  }
+
+  if (image) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      messageData.image = reader.result?.toString();
+      sendJsonMessage(messageData);
+      resetInput();
+    };
+    reader.readAsDataURL(image);
+  } else {
+    sendJsonMessage(messageData);
+    resetInput();
+  }
+};
 
   const resetInput = () => {
     setMessage("");

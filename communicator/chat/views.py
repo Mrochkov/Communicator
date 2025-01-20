@@ -51,7 +51,7 @@ class MessageViewSet(viewsets.ViewSet):
                     {"role": "system",
                      "content": "You are an assistant generating quick replies for a chat application."},
                     {"role": "user",
-                     "content": f"The message to reply to is: '{message.content}'. Generate three short and relevant replies."}
+                     "content": f"The message to reply to is: '{message.content}'. Generate two short and one longer relevant replies."}
                 ],
                 max_tokens=200,
                 n=1
@@ -95,7 +95,7 @@ class MessageViewSet(viewsets.ViewSet):
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are an assistant summarizing chat conversations."},
-                    {"role": "user", "content": f"Summarize the following conversation:\n\n{messages_text}"}
+                    {"role": "user", "content": f"Summarize the following conversation (do that in reverse order than you were provided with data):\n\n{messages_text}"}
                 ],
                 max_tokens=300
             )

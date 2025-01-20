@@ -85,9 +85,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'communicator_db',
-        'USER': 'admin',
-        'PASSWORD': 'adminpassword',
-        'HOST': 'mysql-db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '3306',
         # 'OPTIONS': {
         #     'sql_mode': 'STRICT_TRANS_TABLES',  # Optional for strict SQL mode

@@ -2,40 +2,6 @@ version: "3.1"
 
 stories:
 
-#- story: happy path
-#  steps:
-#  - intent: greet
-#  - action: utter_greet
-#  - intent: mood_great
-#  - action: utter_happy
-#
-#- story: sad path 1
-#  steps:
-#  - intent: greet
-#  - action: utter_greet
-#  - intent: mood_unhappy
-#  - action: utter_cheer_up
-#  - action: utter_did_that_help
-#  - intent: affirm
-#  - action: utter_happy
-#
-#- story: sad path 2
-#  steps:
-#  - intent: greet
-#  - action: utter_greet
-#  - intent: mood_unhappy
-#  - action: utter_cheer_up
-#  - action: utter_did_that_help
-#  - intent: deny
-#  - action: utter_goodbye
-#
-#- story: interactive_story_1
-#  steps:
-#  - intent: greet
-#  - action: utter_greet
-#  - intent: bot_challenge
-#  - action: utter_iamabot
-
 - story: greet and ask for help
   steps:
   - intent: greet
@@ -67,3 +33,69 @@ stories:
   steps:
   - intent: ask_for_fact
   - action: utter_ask_for_fact
+
+- story: ask how to create a server
+  steps:
+  - intent: ask_how_to_create_server
+  - action: utter_how_to_create_server
+
+- story: ask how to change profile
+  steps:
+  - intent: ask_how_to_change_profile
+  - action: utter_how_to_change_profile
+
+- story: ask how to manage server
+  steps:
+  - intent: ask_how_to_manage_server
+  - action: utter_how_to_manage_server
+
+- story: ask about favorite food
+  steps:
+  - intent: ask_about_favorite_food
+  - action: utter_ask_about_favorite_food
+
+- story: ask about hobbies
+  steps:
+  - intent: ask_about_hobbies
+  - action: utter_ask_about_hobbies
+
+- story: ask about music
+  steps:
+  - intent: ask_about_music
+  - action: utter_ask_about_music
+
+- story: ask about movies
+  steps:
+  - intent: ask_about_movies
+  - action: utter_ask_about_movies
+
+- story: ask about books
+  steps:
+  - intent: ask_about_books
+  - action: utter_ask_about_books
+
+- story: ask about travel
+  steps:
+  - intent: ask_about_travel
+  - action: utter_ask_about_travel
+
+- story: ask for compliments
+  steps:
+  - intent: ask_for_compliments
+  - action: utter_ask_for_compliments
+
+- story: ask for advice
+  steps:
+  - intent: ask_for_advice
+  - action: utter_ask_for_advice
+
+- story: multi-turn conversation 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_bot_name
+  - action: utter_ask_bot_name
+  - intent: ask_how_are_you
+  - action: utter_ask_how_are_you
+  - intent: ask_for_joke
+  - action: utter_ask_for_joke

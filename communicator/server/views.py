@@ -129,7 +129,7 @@ class ServerListViewSet(viewsets.ViewSet):
         sort = request.query_params.get("sort")
 
         if category:
-            self.queryset = self.queryset.filter(category_name=category)
+            self.queryset = self.queryset.filter(category__name=category)
 
         if search:
             self.queryset = self.queryset.filter(name__icontains=search)
