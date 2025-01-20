@@ -30,3 +30,22 @@ A modern communicator app built with Django (backend) and React (frontend), offe
 <p><strong>Database:</strong> mySQL.</p>
 <p><strong>Real-Time Communication:</strong> WebSocket implementation using Django Channels.</p>
 <p><strong>AI/ML:</strong> Integration of AI APIs/models for chat-related features.</p>
+
+<hr>
+
+<h2><strong>How to run</strong></h2>
+
+<p>Install all requirements for the project</p>
+
+<p>pip install --no-deps --no-cache-dir -r requirements.txt</p>
+
+<p>backend - cd /communicator -> uvicorn communicator.asgi:application --port 8000 --log-level debug</p>
+<p>frontend - cd /FrontendCommunicator -> npm run dev</p>
+<p>rasa - rasa run</p>
+
+<p>Application will work on port http://127.0.0.1:5173</p>
+
+<hr>
+<p>For this to work must have docker engine installed on your machine</p>
+<p><strike>Rasa model is not started with docker</strike></p>
+Docker-compose up --build
