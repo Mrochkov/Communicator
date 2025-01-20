@@ -43,6 +43,8 @@ A modern communicator app built with Django (backend) and React (frontend), offe
 <p>frontend - cd /FrontendCommunicator -> npm run dev</p>
 <p>rasa - rasa run</p>
 
+<p>Application will work on port http://127.0.0.1:5173</p>
+
 <hr>
 <p>For this to work must have docker engine installed on your machine</p>
 <p><strike>Rasa model is not started with docker</strike></p>
