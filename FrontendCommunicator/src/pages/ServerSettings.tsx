@@ -64,6 +64,7 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
   const [serverDescription, setServerDescription] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<any>(null);
   const jwtAxios = jwtAxiosInterceptor();
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (!serverId) {
@@ -145,6 +146,29 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
   } catch (err: any) {
     console.error("Error updating server details:", err.message);
   }
+};
+
+ const handleDeleteServer = () => {
+  setOpenDeleteConfirm(true); // Open confirmation dialog
+};
+
+  const handleConfirmDeleteServer = async () => {
+  try {
+    const response = await jwtAxios.delete(
+      `http://127.0.0.1:8000/api/server/select/${serverId}/delete/`,
+      { withCredentials: true }
+    );
+    console.log("Server deleted:", response.data);
+    window.location.href = '/';
+  } catch (err: any) {
+    console.error("Error deleting server:", err.message);
+  } finally {
+    setOpenDeleteConfirm(false);
+  }
+};
+
+const handleCancelDeleteServer = () => {
+  setOpenDeleteConfirm(false);
 };
 
   const handleDeleteChannel = async (channelId: number) => {
@@ -452,6 +476,31 @@ const ServerSettings: React.FC<ServerChannelsProps & Props> = ({ open, data }) =
           </Box>
         </Modal>
       )}
+       <Box sx={{ textAlign: "center", mt: 4 }}>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleDeleteServer}
+                sx={{ width: "100%", padding: "10px" }}
+              >
+                Delete Server
+              </Button>
+            </Box>
+        {/* Confirmation Dialog */}
+            <Dialog open={openDeleteConfirm} onClose={handleCancelDeleteServer}>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogContent>
+                <Typography>Are you sure you want to delete this server? This action cannot be undone.</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCancelDeleteServer} color="secondary">
+                  Cancel
+                </Button>
+                <Button onClick={handleConfirmDeleteServer} color="primary">
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
     </>
   ) : (
     <Typography>Server details not found.</Typography>
